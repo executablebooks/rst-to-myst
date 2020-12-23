@@ -3,12 +3,19 @@ requires = ["flit_core >=2,<4"]
 build-backend = "flit_core.buildapi"
 
 [tool.flit.metadata]
+dist-name = "rst-to-myst"
 module = "rst_to_myst"
 author = "Chris Sewell"
 author-email = "executablebooks@gmail.com"
 home-page = "https://github.com/executablebooks/rst-to-myst"
-classifiers = ["License :: OSI Approved :: MIT License"]
+classifiers = [
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
 description-file = "README.md"
+keywords = "restructuredtext,markdown,myst"
 
 requires-python=">=3.6"
 requires=["docutils==0.15", "click~=7.1"]
