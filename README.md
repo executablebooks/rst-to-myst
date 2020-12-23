@@ -1,5 +1,9 @@
 # rst-to-myst [UNDER-DEVELOPMENT]
 
+[![Build Status][ci-badge]][ci-link]
+[![codecov.io][cov-badge]][cov-link]
+[![PyPI version][pypi-badge]][pypi-link]
+
 Convert [ReStructuredText](https://docutils.sourceforge.io/) to [MyST Markdown](https://myst-parser.readthedocs.io/).
 
 ## Install
@@ -97,3 +101,10 @@ flit publish
 or trigger the GitHub Action job, by creating a release with a tag equal to the version, e.g. `v0.0.1`.
 
 Note, this requires generating an API key on PyPi and adding it to the repository `Settings/Secrets`, under the name `PYPI_KEY`.
+
+[ci-badge]: https://github.com/executablebooks/rst-to-myst/workflows/CI/badge.svg?branch=main
+[ci-link]: https://github.com/executablebooks/rst-to-myst/actions?query=workflow%3ACI+branch%3Amain+event%3Apush
+[cov-badge]: https://codecov.io/gh/executablebooks/rst-to-myst/branch/main/graph/badge.svg
+[cov-link]: https://codecov.io/gh/executablebooks/rst-to-myst
+[pypi-badge]: https://img.shields.io/pypi/v/rst-to-myst.svg
+[pypi-link]: https://pypi.org/project/rst-to-myst
