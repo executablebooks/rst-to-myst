@@ -1,0 +1,168 @@
+inline:
+.
+a *some emphasis* **some bold** b
+c :role:`content` d
+e ``literal`` f
+g reference_ h
+i `a phrase`_ j
+k `text <ref_>`_ l
+m anonymous__ n
+o (inline target not supported) p
+q |sub| r
+s [1]_ [#]_ [*]_ t
+u [CIT2002]_ v
+w http://a.net/ x
+y `uri <a.org>`_ z
+
+.. _reference: http://www.example.com
+
+.. __:
+
+anonymous target paragraph
+
+.. [#] auto-number footnote.
+.. [*] auto-symbol footnote.
+    next line
+
+    new paragraph
+.. [CIT2002] *a* citation footnote
+
+.
+a *some emphasis* **some bold** b
+c {role}`content` d
+e `literal` f
+g [reference][reference] h
+i [a phrase](a phrase) j
+k [text](ref) l
+m [anonymous](id5) n
+o (inline target not supported) p
+q {{ sub }} r
+s [^1] [^id6] [^id7] t
+u [^cite_cit2002] v
+w <http://a.net/> x
+y [uri](<a.org>) z
+
+[reference]: http://www.example.com
+
+(id5)=
+
+anonymous target paragraph
+
+[^id6]: auto-number footnote.
+
+[^id7]: auto-symbol footnote.
+  next line
+
+  new paragraph
+
+[^cite_cit2002]: *a* citation footnote
+.
+
+titles:
+.
+header 1
+========
+
+header 2a
+---------
+
+header 3
+........
+
+header 2b
+---------
+.
+# header 1
+
+## header 2a
+
+### header 3
+
+## header 2b
+
+.
+
+comments:
+.
+.. This is a comment.
+.
+<!---
+This is a comment.
+-->
+.
+
+transition:
+.
+----
+.
+---
+
+.
+
+directives:
+.
+.. image:: images/ball1.gif
+
+.. figure:: images/ball1.gif
+  :option: value
+
+  Content
+
+.. note::
+
+    .. tip::
+
+        Content
+.
+```{eval-rst}
+.. image:: images/ball1.gif
+```
+
+```{eval-rst}
+.. figure:: images/ball1.gif
+  :option: value
+
+  Content
+```
+
+```{eval-rst}
+.. note:: 
+
+    .. tip::
+
+        Content
+```
+.
+
+lists:
+.
+a
+
+- b
+- *c*
+
+  * x
+
+1. d
+2. e
+   f
+
+   g
+
+   5. x
+.
+a
+
+- b
+- *c*
+
+  * x
+
+1. d
+2. e
+   f
+
+   g
+
+   5. x
+.

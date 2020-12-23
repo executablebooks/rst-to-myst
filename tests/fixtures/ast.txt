@@ -1,0 +1,387 @@
+inline:
+.
+a *some emphasis* **some bold** b
+c :role:`content` d
+e ``literal`` f
+g Reference_ h
+i `a Phrase`_ j
+k `text <ref_>`_ l
+m anonymous__ n
+o _`Target` p
+q |sub| r
+s [1]_ [#]_ [*]_ t
+u [CIT2002]_ v
+w http://a.net/ x
+y `uri <a.org>`_ z
+
+.. __: anonymous-target
+
+.. [1] normal footnote
+.. [#] auto-number footnote.
+.. [*] auto-symbol footnote.
+.. [a] citation footnote
+   next line
+
+   new paragraph
+.
+<document source="source">
+    <paragraph>
+        a 
+        <emphasis>
+            some emphasis
+         
+        <strong>
+            some bold
+         b
+        c 
+        <RoleNode role="role" text="content">
+         d
+        e 
+        <literal>
+            literal
+         f
+        g 
+        <reference name="Reference" refname="reference">
+            Reference
+         h
+        i 
+        <reference name="a Phrase" refname="a phrase">
+            a Phrase
+         j
+        k 
+        <reference embedded="True" name="text" refname="ref">
+            text
+         l
+        m 
+        <reference anonymous="1" name="anonymous" refuri="anonymous-target">
+            anonymous
+         n
+        o 
+        <target ids="target" inline="True" names="target">
+            Target
+         p
+        q 
+        <substitution_reference refname="sub">
+            sub
+         r
+        s 
+        <footnote_reference ids="id1" refid="id6">
+            1
+         
+        <footnote_reference auto="1" ids="id2" refid="id7">
+            2
+         
+        <footnote_reference auto="*" ids="id3" refid="id8">
+            *
+         t
+        u 
+        <citation_reference ids="id4" refname="cit2002">
+            CIT2002
+         v
+        w 
+        <reference refuri="http://a.net/" standalone_uri="True">
+            http://a.net/
+         x
+        y 
+        <reference embedded="True" name="uri" refuri="a.org">
+            uri
+         z
+    <target anonymous="1" ids="id5" refuri="anonymous-target">
+    <footnote backrefs="id1" ids="id6" names="1">
+        <paragraph>
+            normal footnote
+    <footnote auto="1" backrefs="id2" ids="id7" names="2">
+        <paragraph>
+            auto-number footnote.
+    <footnote auto="*" backrefs="id3" ids="id8">
+        <paragraph>
+            auto-symbol footnote.
+    <citation ids="a" names="a">
+        <paragraph>
+            citation footnote
+            next line
+        <paragraph>
+            new paragraph
+.
+
+titles:
+.
+header 1
+========
+
+header 2a
+---------
+
+header 3
+........
+
+header 2b
+---------
+
+.
+<document source="source">
+    <section ids="header-1" names="header\ 1">
+        <title level="1">
+            header 1
+        <section ids="header-2a" names="header\ 2a">
+            <title level="2">
+                header 2a
+            <section ids="header-3" names="header\ 3">
+                <title level="3">
+                    header 3
+        <section ids="header-2b" names="header\ 2b">
+            <title level="2">
+                header 2b
+.
+
+targets:
+.
+.. _Python: http://www.python.org/
+
+.. _example:
+
+This is an example cross-reference target.
+.
+<document source="source">
+    <target ids="python" names="python" refuri="http://www.python.org/">
+    <target refid="example">
+    <paragraph ids="example" names="example">
+        This is an example cross-reference target.
+.
+
+roles:
+.
+:a:`b` :c:`d` `f`:e:
+:xyz:`123`
+.
+<document source="source">
+    <paragraph>
+        <RoleNode role="a" text="b">
+         
+        <RoleNode role="c" text="d">
+         
+        <RoleNode role="e" text="f">
+        
+        <RoleNode role="xyz" text="123">
+.
+
+directive:
+.
+.. name:: argument
+
+.. xyz::
+  :opt: value
+
+.. lmp::
+
+   content
+
+.. hij:: argument
+    :opt: value1
+    :opt2: value2
+
+.. hij:: argument
+    :opt: value1
+    :opt2: value2
+
+    content
+
+.
+<document source="source">
+    <DirectiveNode indent="0" indented="['argument', '']" name="name">
+    <DirectiveNode indent="2" indented="['', ':opt: value', '']" name="xyz">
+    <DirectiveNode indent="3" indented="['', '', 'content', '']" name="lmp">
+    <DirectiveNode indent="4" indented="['argument', ':opt: value1', ':opt2: value2', '']" name="hij">
+    <DirectiveNode indent="4" indented="['argument', ':opt: value1', ':opt2: value2', '', 'content', '']" name="hij">
+.
+
+transition:
+.
+----
+.
+<document source="source">
+    <transition>
+.
+
+full:
+.
+.. _a-link:
+
+title
+=====
+
+`a-link`_
+
+sub-title
+---------
+
+:abc:`xyz`
+
+.. abc:: x
+    :a: b
+
+    abc
+
+.. xyz:: lkjhlkj
+
+|x|
+
+.. |name| replace:: replacement *text*
+
+.. |caution| image:: warning.png
+             :alt: Warning!
+
+a
+  b
+
+.. This is a comment.
+
+- a
+- b
+
+  * c
+
+1. a
+2. b
+
+   1. c
+
+.. [#f1] Text of the first footnote.
+
+.. [Ref] Book or article reference, URL or whatever.
+
+:fieldname a: Field content
+
+=====  =====  =======
+A      B      A and B
+=====  =====  =======
+False  False  False
+True   False  False
+False  True   False
+True   True   True
+=====  =====  =======
+.
+<document source="source">
+    <target refid="a-link">
+    <section ids="title a-link" names="title a-link">
+        <title level="1">
+            title
+        <paragraph>
+            <reference name="a-link" refname="a-link">
+                a-link
+        <section ids="sub-title" names="sub-title">
+            <title level="2">
+                sub-title
+            <paragraph>
+                <RoleNode role="abc" text="xyz">
+            <DirectiveNode indent="4" indented="['x', ':a: b', '', 'abc', '']" name="abc">
+            <DirectiveNode indent="0" indented="['lkjhlkj', '']" name="xyz">
+            <paragraph>
+                <substitution_reference refname="x">
+                    x
+            <substitution_definition names="name">
+                <DirectiveNode indent="0" indented="['replacement *text*']" name="replace">
+            <substitution_definition names="caution">
+                <DirectiveNode indent="13" indented="['warning.png', ':alt: Warning!']" name="image">
+            <definition_list>
+                <definition_list_item>
+                    <term>
+                        a
+                    <definition>
+                        <paragraph>
+                            b
+            <comment xml:space="preserve">
+                This is a comment.
+            <bullet_list bullet="-">
+                <list_item prefix="- " style="bullet">
+                    <paragraph>
+                        a
+                <list_item prefix="- " style="bullet">
+                    <paragraph>
+                        b
+                    <bullet_list bullet="*">
+                        <list_item prefix="* " style="bullet">
+                            <paragraph>
+                                c
+            <enumerated_list enumtype="arabic" prefix="" suffix=".">
+                <list_item prefix="1. " style="enumerated">
+                    <paragraph>
+                        a
+                <list_item prefix="2. " style="enumerated">
+                    <paragraph>
+                        b
+                    <enumerated_list enumtype="arabic" prefix="" suffix=".">
+                        <list_item prefix="1. " style="enumerated">
+                            <paragraph>
+                                c
+            <footnote auto="1" ids="f1" names="f1">
+                <paragraph>
+                    Text of the first footnote.
+            <citation ids="ref" names="ref">
+                <paragraph>
+                    Book or article reference, URL or whatever.
+            <field_list>
+                <field>
+                    <field_name>
+                        fieldname a
+                    <field_body>
+                        <paragraph>
+                            Field content
+            <table>
+                <tgroup cols="3">
+                    <colspec colwidth="5">
+                    <colspec colwidth="5">
+                    <colspec colwidth="7">
+                    <thead>
+                        <row>
+                            <entry>
+                                <paragraph>
+                                    A
+                            <entry>
+                                <paragraph>
+                                    B
+                            <entry>
+                                <paragraph>
+                                    A and B
+                    <tbody>
+                        <row>
+                            <entry>
+                                <paragraph>
+                                    False
+                            <entry>
+                                <paragraph>
+                                    False
+                            <entry>
+                                <paragraph>
+                                    False
+                        <row>
+                            <entry>
+                                <paragraph>
+                                    True
+                            <entry>
+                                <paragraph>
+                                    False
+                            <entry>
+                                <paragraph>
+                                    False
+                        <row>
+                            <entry>
+                                <paragraph>
+                                    False
+                            <entry>
+                                <paragraph>
+                                    True
+                            <entry>
+                                <paragraph>
+                                    False
+                        <row>
+                            <entry>
+                                <paragraph>
+                                    True
+                            <entry>
+                                <paragraph>
+                                    True
+                            <entry>
+                                <paragraph>
+                                    True
+.

@@ -1,0 +1,34 @@
+[build-system]
+requires = ["flit_core >=2,<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.flit.metadata]
+module = "rst_to_myst"
+author = "Chris Sewell"
+author-email = "executablebooks@gmail.com"
+home-page = "https://github.com/executablebooks/rst-to-myst"
+classifiers = ["License :: OSI Approved :: MIT License"]
+description-file = "README.md"
+
+requires-python=">=3.6"
+requires=["docutils==0.15", "click~=7.1"]
+
+[tool.flit.entrypoints."console_scripts"]
+rst2myst = "rst_to_myst.cli:main"
+
+[tool.flit.metadata.requires-extra]
+test = [
+    "pytest~=6.0",
+    "coverage",
+    "pytest-cov",
+]
+
+[tool.flit.sdist]
+include = ["LICENSE", "README.md"]
+exclude = [".github/", "tests/"]
+
+[tool.isort]
+profile = "black"
+known_first_party = ["rst_to_myst", "tests"]
+# Group first party and local folder imports together
+no_lines_before = ["LOCALFOLDER"]

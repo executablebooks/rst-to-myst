@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags:
+      - 'v*'
+  pull_request:
+
+jobs:
+
+  pre-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+    - uses: pre-commit/action@v2.0.0
+
+  tests:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        python-version: [3.6, 3.7, 3.8, 3.9.0-rc.1]
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Installation (deps and package)
+      # we install with flit --pth-file,
+      # so that coverage will be recorded up for the module
+      run: |
+        pip install flit
+        flit install --deps=production --extras=test --pth-file
+
+    - name: Run pytest
+      run: |
+        pytest --cov=rst_to_myst --cov-report=xml --cov-report=term-missing
+
+    - name: Upload to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        name: pytests
+        flags: pytests
+        file: ./coverage.xml
+        fail_ci_if_error: true
+
+
+  publish:
+    name: Publish to PyPi
+    needs: [pre-commit, tests, pre-commit-hook]
+    if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout source
+      uses: actions/checkout@v2
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+    - name: install flit
+      run: |
+        pip install flit~=3.0
+    - name: Build and publish
+      run: |
+        flit publish
+      env:
+        FLIT_USERNAME: __token__
+        FLIT_PASSWORD: ${{ secrets.PYPI_KEY }}
