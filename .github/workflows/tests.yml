@@ -24,7 +24,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8, 3.9.0-rc.1]
+        python-version: [3.6, 3.7, 3.8, 3.9]
         os: [ubuntu-latest, windows-latest]
 
     steps:
@@ -57,7 +57,7 @@ jobs:
 
   publish:
     name: Publish to PyPi
-    needs: [pre-commit, tests, pre-commit-hook]
+    needs: [pre-commit, tests]
     if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
     runs-on: ubuntu-latest
     steps:
