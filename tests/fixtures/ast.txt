@@ -165,7 +165,7 @@ roles:
         <RoleNode role="xyz" text="123">
 .
 
-directive:
+directive-eval-rst:
 .
 .. name:: argument
 
@@ -188,11 +188,56 @@ directive:
 
 .
 <document source="source">
-    <DirectiveNode indent="0" indented="['argument', '']" name="name">
-    <DirectiveNode indent="2" indented="['', ':opt: value', '']" name="xyz">
-    <DirectiveNode indent="3" indented="['', '', 'content', '']" name="lmp">
-    <DirectiveNode indent="4" indented="['argument', ':opt: value1', ':opt2: value2', '']" name="hij">
-    <DirectiveNode indent="4" indented="['argument', ':opt: value1', ':opt2: value2', '', 'content', '']" name="hij">
+    <DirectiveNode delimiter="```" indent="0" indented="['argument', '']" name="name" type="eval_rst">
+    <DirectiveNode delimiter="```" indent="2" indented="['', ':opt: value', '']" name="xyz" type="eval_rst">
+    <DirectiveNode delimiter="```" indent="3" indented="['', '', 'content', '']" name="lmp" type="eval_rst">
+    <DirectiveNode delimiter="```" indent="4" indented="['argument', ':opt: value1', ':opt2: value2', '']" name="hij" type="eval_rst">
+    <DirectiveNode delimiter="```" indent="4" indented="['argument', ':opt: value1', ':opt2: value2', '', 'content', '']" name="hij" type="eval_rst">
+
+
+.
+
+directive-admonition:
+.
+
+.. admonition:: Abc *d*
+   :class: xyz
+   :name: df
+
+   A *b*
+
+   .. note::
+
+     lmn
+
+.. note::
+
+    .. tip::
+
+        Content
+.
+<document source="source">
+    <DirectiveNode arg_block="['Abc *d*']" delimiter="::::" name="admonition" options_list="('class',\ 'xyz') ('name',\ 'df')" type="argument_content_colon">
+        <ArgumentNode>
+            Abc 
+            <emphasis>
+                d
+        <ContentNode>
+            <paragraph>
+                A 
+                <emphasis>
+                    b
+            <DirectiveNode arg_block="[]" delimiter=":::" name="note" options_list="" type="content_only_colon">
+                <ContentNode>
+                    <paragraph>
+                        lmn
+    <DirectiveNode arg_block="[]" delimiter="::::" name="note" options_list="" type="content_only_colon">
+        <ContentNode>
+            <DirectiveNode arg_block="[]" delimiter=":::" name="tip" options_list="" type="content_only_colon">
+                <ContentNode>
+                    <paragraph>
+                        Content
+
 .
 
 transition:
@@ -274,15 +319,15 @@ True   True   True
                 sub-title
             <paragraph>
                 <RoleNode role="abc" text="xyz">
-            <DirectiveNode indent="4" indented="['x', ':a: b', '', 'abc', '']" name="abc">
-            <DirectiveNode indent="0" indented="['lkjhlkj', '']" name="xyz">
+            <DirectiveNode delimiter="```" indent="4" indented="['x', ':a: b', '', 'abc', '']" name="abc" type="eval_rst">
+            <DirectiveNode delimiter="```" indent="0" indented="['lkjhlkj', '']" name="xyz" type="eval_rst">
             <paragraph>
                 <substitution_reference refname="x">
                     x
             <substitution_definition names="name">
-                <DirectiveNode indent="0" indented="['replacement *text*']" name="replace">
+                <DirectiveNode delimiter="```" indent="0" indented="['replacement *text*']" name="replace" type="eval_rst">
             <substitution_definition names="caution">
-                <DirectiveNode indent="13" indented="['warning.png', ':alt: Warning!']" name="image">
+                <DirectiveNode arg_block="['warning.png']" delimiter="```" name="image" options_list="('alt',\ 'Warning!')" type="direct">
             <definition_list>
                 <definition_list_item>
                     <term>
@@ -384,4 +429,5 @@ True   True   True
                             <entry>
                                 <paragraph>
                                     True
+
 .

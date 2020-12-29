@@ -7,3 +7,11 @@ class RoleNode(nodes.Element):
 
 class DirectiveNode(nodes.Element):
     pass
+
+
+class ArgumentNode(nodes.Element):
+    pass
+
+
+class ContentNode(nodes.Element):
+    pass

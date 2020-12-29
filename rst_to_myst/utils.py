@@ -21,3 +21,17 @@ def read_fixture_file(path):
 
             last_pos = i
     return tests
+
+
+def list_directives_docutils():
+    # see also https://docutils.sourceforge.io/docs/ref/rst/directives.html
+    from docutils.parsers.rst.directives import _directive_registry
+
+    return [
+        f"docutils.parsers.rst.directives.{mod}.{klass}"
+        for mod, klass in _directive_registry.values()
+    ]
+
+
+if __name__ == "__main__":
+    print("\n".join(sorted(f"{t}: eval_rst" for t in list_directives_docutils())))

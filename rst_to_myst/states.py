@@ -3,9 +3,14 @@ import re
 from docutils import nodes
 from docutils.nodes import fully_normalize_name as normalize_name
 from docutils.parsers.rst import states
-from docutils.utils import escape2null
+from docutils.utils import (
+    BadOptionDataError,
+    BadOptionError,
+    escape2null,
+    extract_options,
+)
 
-from .nodes import DirectiveNode
+from .nodes import ArgumentNode, ContentNode, DirectiveNode
 
 # Alphanumerics with isolated internal [-._+:] chars (i.e. not 2 together):
 SIMPLENAME_RE = r"(?:(?!_)\w)+(?:[-._+:](?:(?!_)\w)+)*"
@@ -95,7 +100,104 @@ class ExplicitMixin:
         """Returns a 2-tuple: list of nodes, and a "blank finish" boolean."""
         type_name = match.group(1)
 
-        # lineno = self.state_machine.abs_line_number()
+        (
+            block_text,
+            indented,
+            indent,
+            lineno,
+            line_offset,
+            blank_finish,
+        ) = self.parse_directive_match(match)
+
+        directive_node = DirectiveNode(
+            block_text,
+            name=type_name,
+            delimiter="`",
+        )
+
+        # try to get directive class
+        # directive_class, messages = directives.directive(
+        #     type_name, self.memo.language, self.document
+        # )
+        directive_class = self.document.settings.namespace.get_directive(type_name)
+
+        # default to eval rst
+        if directive_class is None:
+            # TODO warning message?
+            return self.eval_rst(directive_node, indent, indented, blank_finish)
+
+        # get directive path for lookup
+        directive_path = f"{directive_class.__module__}.{directive_class.__name__}"
+
+        # lookup directive path
+        conversion = self.document.settings.directive_data.get(directive_path, None)
+
+        if (not conversion) or conversion == "eval_rst":
+            return self.eval_rst(directive_node, indent, indented, blank_finish)
+
+        if conversion not in [
+            "direct",
+            "argument_only",
+            "content_only",
+            "argument_content",
+            "direct_colon",
+            "argument_only_colon",
+            "content_only_colon",
+            "argument_content_colon",
+        ]:
+            # TODO warning
+            return self.eval_rst(directive_node, indent, indented, blank_finish)
+
+        directive_node["type"] = conversion
+        if conversion.endswith("_colon"):
+            directive_node["delimiter"] = ":"
+
+        try:
+            (
+                arg_block,
+                options_list,
+                content,
+                content_offset,
+            ) = self.parse_directive_block(indented, line_offset, directive_class)
+        except states.MarkupError as error:
+            self.reporter.warning(
+                f'Error in "{type_name}" directive parse:\n{" ".join(error.args)}',
+                nodes.literal_block(block_text, block_text),
+                line=lineno,
+            )
+            return self.eval_rst(directive_node, indent, indented, blank_finish)
+
+        directive_node["arg_block"] = arg_block
+        directive_node["options_list"] = options_list
+
+        if content and conversion == "direct":
+            content_node = ContentNode()
+            content_node += nodes.paragraph("", nodes.Text("\n".join(content)))
+            directive_node += content_node
+
+        if "argument" in conversion:
+            argument_node = ArgumentNode()
+            directive_node += argument_node
+            textnodes, messages = self.inline_text("\n".join(arg_block), lineno)
+            # TODO report messages?
+            argument_node.extend(textnodes)
+
+        if content and "content" in conversion:
+            content_node = ContentNode()
+            directive_node += content_node
+            self.nested_parse(content, content_offset, content_node)
+
+        return [directive_node], blank_finish
+
+    @staticmethod
+    def eval_rst(directive_node, indent, indented, blank_finish):
+        directive_node["type"] = "eval_rst"
+        directive_node["indent"] = indent
+        directive_node["indented"] = indented
+        return [directive_node], blank_finish
+
+    def parse_directive_match(self, match):
+        lineno = self.state_machine.abs_line_number()
         initial_line_offset = self.state_machine.line_offset
         (
             indented,
@@ -109,17 +211,91 @@ class ExplicitMixin:
             ]
         )
 
-        return [
-            DirectiveNode(
-                block_text,
-                name=type_name,
-                indent=indent,
-                indented=indented,
-            )
-        ], blank_finish
+        blank_finish = blank_finish or self.state_machine.is_next_line_blank()
 
-    def run_directive(self, *arg, **kwargs):
-        raise NotImplementedError
+        return block_text, indented, indent, lineno, line_offset, blank_finish
+
+    def parse_directive_block(self, indented, line_offset, directive):
+
+        if indented and not indented[0].strip():
+            indented.trim_start()
+            line_offset += 1
+
+        while indented and not indented[-1].strip():
+            indented.trim_end()
+
+        if indented and (
+            directive.required_arguments
+            or directive.optional_arguments
+            or directive.option_spec
+        ):
+            for i, line in enumerate(indented):  # noqa: B007
+                if not line.strip():
+                    break
+            else:
+                i += 1
+
+            arg_block = indented[:i]
+            content = indented[i + 1 :]
+            content_offset = line_offset + i + 1
+        else:
+            content = indented
+            content_offset = line_offset
+            arg_block = []
+
+        if directive.option_spec:
+            option_list, arg_block = self.parse_directive_arg_block(arg_block)
+        else:
+            option_list = []
+
+        if arg_block and not (
+            directive.required_arguments or directive.optional_arguments
+        ):
+            content = arg_block + indented[i:]
+            content_offset = line_offset
+            arg_block = []
+
+        while content and not content[0].strip():
+            content.trim_start()
+            content_offset += 1
+
+        # TODO warning?
+        # if content and not directive.has_content:
+        #     raise MarkupError("no content permitted")
+
+        return (arg_block, option_list, content, content_offset)
+
+    def parse_directive_arg_block(self, arg_block):
+        """Split arg block into arg and options list."""
+
+        for i, line in enumerate(arg_block):
+            if re.match(Body.patterns["field_marker"], line):
+                opt_block = arg_block[i:]
+                arg_block = arg_block[:i]
+                break
+        else:
+            opt_block = []
+
+        if not opt_block:
+            return [], arg_block
+
+        field_list = nodes.field_list()
+        newline_offset, blank_finish = self.nested_list_parse(
+            opt_block,
+            0,
+            field_list,
+            initial_state="ExtensionOptions",
+            blank_finish=True,
+        )
+        if newline_offset != len(opt_block):  # incomplete parse of block
+            raise states.MarkupError("invalid option block")
+
+        try:
+            option_list = extract_options(field_list)
+        except (BadOptionError, BadOptionDataError) as error:
+            raise states.MarkupError(str(error))
+
+        return option_list, arg_block
 
     def substitution_def(self, match):
         pattern = self.explicit.patterns.substitution
@@ -182,7 +358,12 @@ class Body(SectionMixin, ExplicitMixin, states.Body):
 
 
 class Explicit(ExplicitMixin, states.Explicit):
-    pass
+    def __init__(self, state_machine, debug=False):
+        super().__init__(state_machine, debug=debug)
+        self.nested_sm_kwargs = {
+            "state_classes": get_state_classes(),
+            "initial_state": "Body",
+        }
 
 
 class Line(SectionMixin, states.Line):
