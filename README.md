@@ -189,7 +189,6 @@ The only syntax where some checks are required is matching anonymous references 
 - custom functions for directive parsing
 - quote_block
 - substitution definitions
-- definition lists
 - line block
 - field list
 

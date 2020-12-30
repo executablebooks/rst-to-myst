@@ -111,7 +111,13 @@ class MystRenderer(nodes.GenericNodeVisitor):
         if node.parent and node.parent.children[0] != node:
             self.add_indent()
         elif not isinstance(
-            node.parent, (nodes.footnote, nodes.citation, nodes.list_item)
+            node.parent,
+            (
+                nodes.footnote,
+                nodes.citation,
+                nodes.list_item,
+                nodes.definition,
+            ),
         ):
             self.add_indent()
 
@@ -358,6 +364,32 @@ class MystRenderer(nodes.GenericNodeVisitor):
         self._rendered = self._rendered.rstrip()
         self.add_newline()
         self.decr_indent(len(node["prefix"]))
+
+    # for definition lists we just need the term and definition nodes
+
+    def visit_definition_list(self, node):
+        pass
+
+    def visit_definition_list_item(self, node):
+        pass
+
+    def depart_definition_list(self, node):
+        pass
+
+    def depart_definition_list_item(self, node):
+        pass
+
+    def visit_term(self, node):
+        self.add_lines([self.inline_render(node.children)])
+        self.add_newline(2)
+        raise nodes.SkipNode
+
+    def visit_definition(self, node):
+        self.add_lines([": "])
+        self.incr_indent(2)
+
+    def depart_definition(self, node):
+        self.decr_indent(2)
 
     def visit_table(self, node):
         # convert tables to Markdown if possible, e.g. single header row, etc
