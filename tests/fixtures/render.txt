@@ -82,6 +82,23 @@ header 2b
 
 .
 
+paragraphs:
+.
+para 1
+
+para 2
+line 2
+
+para 3
+.
+para 1
+
+para 2
+line 2
+
+para 3
+.
+
 comments:
 .
 .. This is a comment.
@@ -266,6 +283,32 @@ Block quotes are just:
 > 2. enumerated list
 
 para
+.
+
+front-matter:
+.
+:Authors:
+    Tony J. (Tibs) Ibbs,
+    David Goodger
+
+    (and sundry other good-natured folks)
+
+:Version: 1.0 of 2001/08/08
+:Dedication: To my father.
+:orphan:
+.
+---
+Authors: |-
+  Tony J. (Tibs) Ibbs,
+  David Goodger
+
+  (and sundry other good-natured folks)
+Dedication: To my father.
+Version: 1.0 of 2001/08/08
+orphan: true
+
+---
+
 .
 
 tables-simple:

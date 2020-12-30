@@ -17,7 +17,7 @@ from importlib_resources import files
 from . import data as package_data
 from .inliner import InlinerMyst
 from .namespace import compile_namespace
-from .nodes import DirectiveNode
+from .nodes import DirectiveNode, FrontMatterNode
 from .states import get_state_classes
 
 
@@ -95,6 +95,19 @@ class DirectiveNesting(Transform):
             )
 
 
+class FrontMatter(Transform):
+    def apply(self):
+        if not self.document.settings.front_matter:
+            return
+        index = self.document.first_child_not_matching_class(nodes.PreBibliographic)
+        if index is None:
+            return
+        candidate = self.document[index]
+        if isinstance(candidate, nodes.field_list):
+            front_matter = FrontMatterNode("", *candidate.children)
+            self.document[index] = front_matter
+
+
 def to_ast(
     text: str,
     uri: str = "source",
@@ -106,6 +119,7 @@ def to_ast(
     extensions=(),
     default_domain="py",
     conversions=None,
+    front_matter=True,
 ) -> Tuple[nodes.document, StringIO]:
     settings = OptionParser(components=(RSTParser,)).get_default_values()
     warning_stream = StringIO() if warning_stream is None else warning_stream
@@ -135,12 +149,16 @@ def to_ast(
         directive_data.update(conversions)
     document.settings.directive_data = directive_data
 
+    # whether to treat initial field list as front matter
+    document.settings.front_matter = front_matter
+
     parser = RSTParser()
     parser.parse(text, document)
 
     # these three transforms are required for converting targets correctly
     for transform_cls in [
         PropagateTargets,  # Propagate empty internal targets to the next element. (260)
+        FrontMatter,  # convert initial field list (DocInfo=340)
         AnonymousHyperlinks,  # Link anonymous references to targets. (440)
         IndirectHyperlinks,  # "refuri" migrated back to all indirect targets (460)
         Footnotes,  # Assign numbers to autonumbered footnotes (620)

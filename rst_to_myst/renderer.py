@@ -1,12 +1,13 @@
 import copy
 from io import StringIO
 from textwrap import indent
-from typing import IO, Optional, Tuple
+from typing import IO, Any, Dict, Optional, Tuple
 
 from docutils import nodes
 
 from .nodes import ArgumentNode
 from .parser import to_ast
+from .utils import yaml_dump
 
 
 class MystRenderer(nodes.GenericNodeVisitor):
@@ -15,6 +16,7 @@ class MystRenderer(nodes.GenericNodeVisitor):
     ):
         self.document = document
         self._rendered: str = ""
+        self._front_matter: Dict[str, Any] = {}
         self._indent: str = ""
         self._warning_stream: IO = warning_stream or StringIO()
         self.raise_on_error = raise_on_error
@@ -22,18 +24,28 @@ class MystRenderer(nodes.GenericNodeVisitor):
         self.cite_prefix = cite_prefix
         self.extensions_required = set()
 
-    def inline_render(self, children):
-        inline_renderer = MystRenderer(self.document, self._warning_stream)
-        inline_renderer._uri_refnames = self._uri_refnames
-        para = nodes.paragraph()
-        para.extend(children)
-        para.walkabout(inline_renderer)
-        if inline_renderer._uri_refnames is not None:
-            self._uri_refnames = inline_renderer._uri_refnames
-        return " ".join(inline_renderer.rendered.splitlines())
+    def nested_render(self, children, singleline=True, container_cls=nodes.paragraph):
+        nested_renderer = MystRenderer(
+            self.document,
+            warning_stream=self._warning_stream,
+            raise_on_error=self.raise_on_error,
+            cite_prefix=self.cite_prefix,
+        )
+        nested_renderer._uri_refnames = self._uri_refnames
+        container = container_cls()
+        container.extend(children)
+        container.walkabout(nested_renderer)
+        if self._uri_refnames is None:
+            self._uri_refnames = nested_renderer._uri_refnames
+        if singleline:
+            return " ".join(nested_renderer.rendered.splitlines())
+        return nested_renderer.rendered
 
     @property
     def rendered(self) -> str:
+        if self._front_matter:
+            matter = yaml_dump(self._front_matter)
+            return f"---\n{matter}\n---\n\n{self._rendered}"
         return self._rendered
 
     def warning(self, message: str):
@@ -97,12 +109,32 @@ class MystRenderer(nodes.GenericNodeVisitor):
     def depart_document(self, node):
         pass
 
+    def visit_Element(self, node):
+        pass
+
+    def depart_Element(self, node):
+        pass
+
     def visit_system_message(self, node):
         # ignore
         raise nodes.SkipNode
 
     def visit_problematic(self, node):
         # ignore
+        raise nodes.SkipNode
+
+    def visit_FrontMatterNode(self, node):
+        for field in node:
+            if not len(field) == 2:
+                continue
+            key = field[0][0].astext()
+            if not field[1].children:
+                value = True
+            else:
+                value = self.nested_render(
+                    field[1].children, singleline=False, container_cls=nodes.Element
+                ).rstrip()
+            self._front_matter[key] = value
         raise nodes.SkipNode
 
     def visit_section(self, node):
@@ -330,7 +362,7 @@ class MystRenderer(nodes.GenericNodeVisitor):
         argument = " ".join(node["arg_block"])
         if node.children and isinstance(node.children[0], ArgumentNode):
             # perform a separate render of the argument nodes
-            argument = self.inline_render(node.children[0].children)
+            argument = self.nested_render(node.children[0].children)
 
         self.add_lines(
             [
@@ -393,7 +425,7 @@ class MystRenderer(nodes.GenericNodeVisitor):
         pass
 
     def visit_term(self, node):
-        self.add_lines([self.inline_render(node.children)])
+        self.add_lines([self.nested_render(node.children)])
         self.add_newline(2)
         raise nodes.SkipNode
 
@@ -468,7 +500,7 @@ class MystRenderer(nodes.GenericNodeVisitor):
                     col.children[0], nodes.paragraph
                 ):
                     return None
-                rows[i][j] = self.inline_render(col.children[0].children).strip()
+                rows[i][j] = self.nested_render(col.children[0].children).strip()
                 widths[j] = max(widths[j], len(rows[i][j]))
 
         # align columns
@@ -479,7 +511,7 @@ class MystRenderer(nodes.GenericNodeVisitor):
         return rows
 
     # TODO https://docutils.sourceforge.io/docs/user/rst/quickref.htm
-    # substitution definitions, line block, field list
+    # substitution definitions, line block, field list, option list
 
 
 def render(

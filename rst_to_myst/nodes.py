@@ -10,8 +10,12 @@ class DirectiveNode(nodes.Element):
 
 
 class ArgumentNode(nodes.Element):
-    pass
+    """The parsed argument of a directive."""
 
 
 class ContentNode(nodes.Element):
-    pass
+    """The parsed content of a directive."""
+
+
+class FrontMatterNode(nodes.Element):
+    """Contains the first field list in the document."""

@@ -5,6 +5,7 @@ import click
 import yaml
 
 from . import compile_namespace, convert, to_ast
+from .utils import yaml_dump
 
 
 @click.group(context_settings={"help_option_names": ["-h", "--help"]})
@@ -147,7 +148,7 @@ def directives_show(name, sphinx, extensions, language):
         data = namespace.get_directive_data(name)
     except KeyError as error:
         raise click.ClickException(str(error))
-    click.echo(yaml.safe_dump(data))
+    click.echo(yaml_dump(data))
 
 
 @main.group("roles")
@@ -178,7 +179,7 @@ def roles_show(name, sphinx, extensions, language):
         data = namespace.get_role_data(name)
     except KeyError as error:
         raise click.ClickException(str(error))
-    click.echo(yaml.safe_dump(data))
+    click.echo(yaml_dump(data))
 
 
 if __name__ == "__main__":

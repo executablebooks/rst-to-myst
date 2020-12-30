@@ -69,10 +69,10 @@ options:
   name: unchanged
 required_arguments: 1
 
-$ rst2myst roles show
-description: 'Generic interpreted text role, where the interpreted text is simply
-
-  wrapped with the provided node class.'
+$ rst2myst roles show abbreviation
+description: |-
+  Generic interpreted text role, where the interpreted text is simply
+  wrapped with the provided node class.
 module: docutils.parsers.rst.roles
 name: abbreviation
 ```
