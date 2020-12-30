@@ -2,7 +2,7 @@ import re
 
 from docutils import nodes
 from docutils.nodes import fully_normalize_name as normalize_name
-from docutils.parsers.rst import states
+from docutils.parsers.rst import states, tableparser
 from docutils.utils import (
     BadOptionDataError,
     BadOptionError,
@@ -346,6 +346,26 @@ class ExplicitMixin:
         )
 
         return [substitution_node], blank_finish
+
+    def table(self, isolate_function, parser_class):
+        """Parse a table."""
+        block, messages, blank_finish = isolate_function()
+        if block:
+            try:
+                parser = parser_class()
+                tabledata = parser.parse(block)
+                tableline = self.state_machine.abs_line_number() - len(block) + 1
+                table = self.build_table(tabledata, tableline)  # type: nodes.table
+                table.rawsource = "\n".join(block)  # added for MyST
+                nodelist = [table] + messages
+            except tableparser.TableMarkupError as err:
+                nodelist = (
+                    self.malformed_table(block, " ".join(err.args), offset=err.offset)
+                    + messages
+                )
+        else:
+            nodelist = messages
+        return nodelist, blank_finish
 
 
 class Body(SectionMixin, ExplicitMixin, states.Body):

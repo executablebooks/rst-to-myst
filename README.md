@@ -180,6 +180,7 @@ The only syntax where some checks are required is matching anonymous references 
 - only one kind of footnote (i.e. no symbol prefixes)
 - citation are turned into footnotes, with label prepended by `cite_prefix`
 - inline targets are not convertible (and so ignored)
+- If tables are not compatible with Markdown (single header row, no merged cells), then they will be wrapped in an `eval_rst`
 
 ## TODO
 
@@ -188,7 +189,6 @@ The only syntax where some checks are required is matching anonymous references 
 - custom functions for directive parsing
 - quote_block
 - substitution definitions
-- tables
 - definition lists
 - line block
 - literal block

@@ -296,15 +296,6 @@ a
 .. [Ref] Book or article reference, URL or whatever.
 
 :fieldname a: Field content
-
-=====  =====  =======
-A      B      A and B
-=====  =====  =======
-False  False  False
-True   False  False
-False  True   False
-True   True   True
-=====  =====  =======
 .
 <document source="source">
     <target refid="a-link">
@@ -372,62 +363,143 @@ True   True   True
                     <field_body>
                         <paragraph>
                             Field content
-            <table>
-                <tgroup cols="3">
-                    <colspec colwidth="5">
-                    <colspec colwidth="5">
-                    <colspec colwidth="7">
-                    <thead>
-                        <row>
-                            <entry>
-                                <paragraph>
-                                    A
-                            <entry>
-                                <paragraph>
-                                    B
-                            <entry>
-                                <paragraph>
-                                    A and B
-                    <tbody>
-                        <row>
-                            <entry>
-                                <paragraph>
-                                    False
-                            <entry>
-                                <paragraph>
-                                    False
-                            <entry>
-                                <paragraph>
-                                    False
-                        <row>
-                            <entry>
-                                <paragraph>
-                                    True
-                            <entry>
-                                <paragraph>
-                                    False
-                            <entry>
-                                <paragraph>
-                                    False
-                        <row>
-                            <entry>
-                                <paragraph>
-                                    False
-                            <entry>
-                                <paragraph>
-                                    True
-                            <entry>
-                                <paragraph>
-                                    False
-                        <row>
-                            <entry>
-                                <paragraph>
-                                    True
-                            <entry>
-                                <paragraph>
-                                    True
-                            <entry>
-                                <paragraph>
-                                    True
+.
 
+tables-simple:
+.
+=====  =====  =======
+     AB1      C1
+------------  -------
+A2     B2     C2
+=====  =====  =======
+False  False  False
+True   False  False
+False  True   False
+True   True   True
+=====  =====  =======
+.
+<document source="source">
+    <table>
+        <tgroup cols="3">
+            <colspec colwidth="5">
+            <colspec colwidth="5">
+            <colspec colwidth="7">
+            <thead>
+                <row>
+                    <entry morecols="1">
+                    <entry>
+                <row>
+                    <entry>
+                        <paragraph>
+                            A2
+                    <entry>
+                        <paragraph>
+                            B2
+                    <entry>
+                        <paragraph>
+                            C2
+            <tbody>
+                <row>
+                    <entry>
+                        <paragraph>
+                            False
+                    <entry>
+                        <paragraph>
+                            False
+                    <entry>
+                        <paragraph>
+                            False
+                <row>
+                    <entry>
+                        <paragraph>
+                            True
+                    <entry>
+                        <paragraph>
+                            False
+                    <entry>
+                        <paragraph>
+                            False
+                <row>
+                    <entry>
+                        <paragraph>
+                            False
+                    <entry>
+                        <paragraph>
+                            True
+                    <entry>
+                        <paragraph>
+                            False
+                <row>
+                    <entry>
+                        <paragraph>
+                            True
+                    <entry>
+                        <paragraph>
+                            True
+                    <entry>
+                        <paragraph>
+                            True
+
+.
+
+tables-grid:
+.
++------------------------+------------+----------+----------+
+| Header row, column 1   | Header 2   | Header 3 | Header 4 |
+| (header rows optional) |            |          |          |
++========================+============+==========+==========+
+| body row 1, column 1   | col 1,2    | col 1,3  | col 1,4  |
++------------------------+------------+----------+----------+
+| body row 2             | col 2,2    | col 2,3  | col 2,4  |
++------------------------+------------+----------+----------+
+.
+<document source="source">
+    <table>
+        <tgroup cols="4">
+            <colspec colwidth="24">
+            <colspec colwidth="12">
+            <colspec colwidth="10">
+            <colspec colwidth="10">
+            <thead>
+                <row>
+                    <entry>
+                        <paragraph>
+                            Header row, column 1
+                            (header rows optional)
+                    <entry>
+                        <paragraph>
+                            Header 2
+                    <entry>
+                        <paragraph>
+                            Header 3
+                    <entry>
+                        <paragraph>
+                            Header 4
+            <tbody>
+                <row>
+                    <entry>
+                        <paragraph>
+                            body row 1, column 1
+                    <entry>
+                        <paragraph>
+                            col 1,2
+                    <entry>
+                        <paragraph>
+                            col 1,3
+                    <entry>
+                        <paragraph>
+                            col 1,4
+                <row>
+                    <entry>
+                        <paragraph>
+                            body row 2
+                    <entry>
+                        <paragraph>
+                            col 2,2
+                    <entry>
+                        <paragraph>
+                            col 2,3
+                    <entry>
+                        <paragraph>
+                            col 2,4
 .

@@ -85,8 +85,13 @@ class ResolveListItems(Transform):
 class DirectiveNesting(Transform):
     def apply(self):
         for node in self.document.traverse(DirectiveNode):  # type: DirectiveNode
-            node["delimiter"] *= 3 + sum(
-                1 for _ in node.traverse(DirectiveNode, include_self=False)
+            # TODO this will overcount if multiple directives at same nesting depth
+            node["delimiter"] *= (
+                3
+                + sum(1 for _ in node.traverse(DirectiveNode, include_self=False))
+                # add an extra delimiter if the directive contains a table,
+                # because we wrap some in eval_rst directive
+                + (1 if sum(1 for _ in node.traverse(nodes.table)) else 0)
             )
 
 
