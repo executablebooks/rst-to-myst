@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import yaml
+
 
 def read_fixture_file(path):
     text = Path(path).read_text(encoding="utf-8")
@@ -23,15 +25,19 @@ def read_fixture_file(path):
     return tests
 
 
-def list_directives_docutils():
-    # see also https://docutils.sourceforge.io/docs/ref/rst/directives.html
-    from docutils.parsers.rst.directives import _directive_registry
-
-    return [
-        f"docutils.parsers.rst.directives.{mod}.{klass}"
-        for mod, klass in _directive_registry.values()
-    ]
+def represent_str(dumper, data):
+    # borrowed from http://stackoverflow.com/a/33300001
+    if len(data.splitlines()) > 1:
+        return dumper.represent_scalar("tag:yaml.org,2002:str", data, style="|")
+    return dumper.represent_scalar("tag:yaml.org,2002:str", data)
 
 
-if __name__ == "__main__":
-    print("\n".join(sorted(f"{t}: eval_rst" for t in list_directives_docutils())))
+class YamlDumper(yaml.SafeDumper):
+    pass
+
+
+YamlDumper.add_representer(str, represent_str)
+
+
+def yaml_dump(data):
+    return yaml.dump(data, Dumper=YamlDumper)

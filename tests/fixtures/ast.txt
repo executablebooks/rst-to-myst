@@ -248,6 +248,47 @@ transition:
     <transition>
 .
 
+front-matter:
+.
+:Authors:
+    Tony J. (Tibs) Ibbs,
+    David Goodger
+
+    (and sundry other good-natured folks)
+
+:Version: 1.0 of 2001/08/08
+:Dedication: To my father.
+:orphan:
+.
+<document source="source">
+    <FrontMatterNode>
+        <field>
+            <field_name>
+                Authors
+            <field_body>
+                <paragraph>
+                    Tony J. (Tibs) Ibbs,
+                    David Goodger
+                <paragraph>
+                    (and sundry other good-natured folks)
+        <field>
+            <field_name>
+                Version
+            <field_body>
+                <paragraph>
+                    1.0 of 2001/08/08
+        <field>
+            <field_name>
+                Dedication
+            <field_body>
+                <paragraph>
+                    To my father.
+        <field>
+            <field_name>
+                orphan
+            <field_body>
+.
+
 full:
 .
 .. _a-link:
