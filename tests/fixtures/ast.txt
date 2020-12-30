@@ -296,6 +296,23 @@ a
 .. [Ref] Book or article reference, URL or whatever.
 
 :fieldname a: Field content
+
+Block quotes are just:
+
+    Indented
+
+    paragraphs
+
+        and they
+        may nest.
+
+        -- attribution
+
+    - with
+    - bullet list
+
+    1. with
+    2. enumerated list
 .
 <document source="source">
     <target refid="a-link">
@@ -363,6 +380,33 @@ a
                     <field_body>
                         <paragraph>
                             Field content
+            <paragraph>
+                Block quotes are just:
+            <block_quote>
+                <paragraph>
+                    Indented
+                <paragraph>
+                    paragraphs
+                <block_quote>
+                    <paragraph>
+                        and they
+                        may nest.
+                    <attribution>
+                        attribution
+                <bullet_list bullet="-">
+                    <list_item prefix="- " style="bullet">
+                        <paragraph>
+                            with
+                    <list_item prefix="- " style="bullet">
+                        <paragraph>
+                            bullet list
+                <enumerated_list enumtype="arabic" prefix="" suffix=".">
+                    <list_item prefix="1. " style="enumerated">
+                        <paragraph>
+                            with
+                    <list_item prefix="2. " style="enumerated">
+                        <paragraph>
+                            enumerated list
 .
 
 tables-simple:
