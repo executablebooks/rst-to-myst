@@ -15,7 +15,7 @@ class MystRenderer(nodes.GenericNodeVisitor):
     ):
         self.document = document
         self._rendered: str = ""
-        self._indent: int = 0
+        self._indent: str = ""
         self._warning_stream: IO = warning_stream or StringIO()
         self.raise_on_error = raise_on_error
         self._uri_refnames = None
@@ -39,31 +39,42 @@ class MystRenderer(nodes.GenericNodeVisitor):
     def warning(self, message: str):
         self._warning_stream.write(f"RENDER WARNING: {message}\n")
 
-    def incr_indent(self, i: int):
-        self._indent += i
+    def incr_indent(self, i: Optional[int] = None, string: Optional[str] = None):
+        assert sum([i is None, string is None]) == 1
+        if i is not None:
+            self._indent += " " * i
+        else:
+            self._indent += string
 
     def decr_indent(self, i: int):
-        self._indent -= i
-        assert self._indent >= 0, "indent decreased to <0"
+        if i > len(self._indent):
+            raise AssertionError("indent decreased to <0")
+        self._indent = self._indent[:-i]
 
     def add_indent(self):
         if self._indent:
-            self._rendered += " " * self._indent
+            self._rendered += self._indent
 
     def add_inline(self, text: str):
         if self._indent:
-            text = indent(text, " " * self._indent)[self._indent :]
+            strip = self._indent.strip()
+            text = indent(text, self._indent, lambda l: strip + l)[len(self._indent) :]
         self._rendered += text
 
     def add_newline(self, i=1):
-        self._rendered += "\n" * i
+        if i > 1 and self._indent.strip():
+            self._rendered += ("\n" + self._indent) * (i - 1)
+            self._rendered += "\n"
+        else:
+            self._rendered += "\n" * i
 
     def add_lines(self, lines, newline_before=False, newline_after=False):
         if newline_before:
             self._rendered += "\n"
         text = "\n".join(lines)
         if self._indent:
-            text = indent(text, " " * self._indent)
+            strip = self._indent.strip()
+            text = indent(text, self._indent, lambda l: strip + l)
         self._rendered += text
         if newline_after:
             self._rendered += "\n"
@@ -116,6 +127,7 @@ class MystRenderer(nodes.GenericNodeVisitor):
                 nodes.footnote,
                 nodes.citation,
                 nodes.list_item,
+                nodes.block_quote,
                 nodes.definition,
             ),
         ):
@@ -361,7 +373,8 @@ class MystRenderer(nodes.GenericNodeVisitor):
 
     def depart_list_item(self, node):
         # remove new line between items
-        self._rendered = self._rendered.rstrip()
+        # indent may contain > if in block quotes
+        self._rendered = self._rendered.rstrip(" \n\t" + self._indent)
         self.add_newline()
         self.decr_indent(len(node["prefix"]))
 
@@ -390,6 +403,20 @@ class MystRenderer(nodes.GenericNodeVisitor):
 
     def depart_definition(self, node):
         self.decr_indent(2)
+
+    def visit_block_quote(self, node):
+        self.add_lines(["> "])
+        self.incr_indent(string="> ")
+
+    def depart_block_quote(self, node):
+        self.decr_indent(2)
+
+    def visit_attribution(self, node):
+        # Markdown block quotes do not have an attribution syntax,
+        # so we add a best approximation
+        self.add_lines([f'<p class="attribution">—{node.astext()}</p>'])
+        self.add_newline(2)
+        raise nodes.SkipNode
 
     def visit_table(self, node):
         # convert tables to Markdown if possible, e.g. single header row, etc
@@ -452,8 +479,7 @@ class MystRenderer(nodes.GenericNodeVisitor):
         return rows
 
     # TODO https://docutils.sourceforge.io/docs/user/rst/quickref.htm
-    # quote_block, substitution definitions,
-    # deflist, line block, literal block, field list,
+    # substitution definitions, line block, field list
 
 
 def render(

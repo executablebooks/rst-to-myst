@@ -180,14 +180,14 @@ The only syntax where some checks are required is matching anonymous references 
 - only one kind of footnote (i.e. no symbol prefixes)
 - citation are turned into footnotes, with label prepended by `cite_prefix`
 - inline targets are not convertible (and so ignored)
-- If tables are not compatible with Markdown (single header row, no merged cells), then they will be wrapped in an `eval_rst`
+- If tables are not compatible with Markdown (single header row, no merged cells, etc), then they will be wrapped in an `eval_rst`
+- Markdown blockquotes do not have an attribution syntax, so it is converted instead to `<p class="attribution">—text</p>` (the standard HTML render)
 
 ## TODO
 
 (see <https://docutils.sourceforge.io/docs/user/rst/quickref.htm>)
 
 - custom functions for directive parsing
-- quote_block
 - substitution definitions
 - line block
 - field list

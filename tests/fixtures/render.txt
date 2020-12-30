@@ -227,6 +227,47 @@ para
 
 .
 
+block-quotes:
+.
+Block quotes are just:
+
+    Indented
+
+    paragraphs
+
+        and they
+        may nest.
+
+        -- attribution
+
+    - with
+    - bullet list
+
+    1. with
+    2. enumerated list
+
+para
+.
+Block quotes are just:
+
+> Indented
+> 
+> paragraphs
+> 
+> > and they
+> > may nest.
+> > 
+> > <p class="attribution">—attribution</p>
+> > 
+> - with
+> - bullet list
+
+> 1. with
+> 2. enumerated list
+
+para
+.
+
 tables-simple:
 .
 =====  =====  =======
