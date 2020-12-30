@@ -5,7 +5,7 @@ from typing import IO, Any, Dict, Optional, Tuple
 
 from docutils import nodes
 
-from .nodes import ArgumentNode
+from .nodes import ArgumentNode, DirectiveNode
 from .parser import to_ast
 from .utils import yaml_dump
 
@@ -38,8 +38,8 @@ class MystRenderer(nodes.GenericNodeVisitor):
         if self._uri_refnames is None:
             self._uri_refnames = nested_renderer._uri_refnames
         if singleline:
-            return " ".join(nested_renderer.rendered.splitlines())
-        return nested_renderer.rendered
+            return " ".join(nested_renderer._rendered.splitlines())
+        return nested_renderer._rendered
 
     @property
     def rendered(self) -> str:
@@ -303,6 +303,30 @@ class MystRenderer(nodes.GenericNodeVisitor):
     def depart_substitution_reference(self, node):
         pass
 
+    def visit_substitution_definition(self, node):
+        self.extensions_required.add("substitution")
+        if "names" not in node or not node["names"]:
+            raise nodes.SkipNode
+        key = node["names"][0]
+        # substitution should always be a single directive
+        if (
+            node.children
+            and isinstance(node.children[0], DirectiveNode)
+            and node.children[0]["name"] == "replace"  # TODO translations
+            and node.children[0]["type"] == "content_only"
+        ):
+            # common special case
+            value = self.nested_render(
+                node.children[0].children, singleline=False, container_cls=nodes.Element
+            ).rstrip()
+        # TODO the "date" directive is the other special case
+        else:
+            value = self.nested_render(
+                node.children, singleline=False, container_cls=nodes.Element
+            ).rstrip()
+        self._front_matter.setdefault("substitutions", {})[key] = value
+        raise nodes.SkipNode
+
     def visit_footnote_reference(self, node):
         if "refname" in node:
             # normal reference
@@ -364,6 +388,9 @@ class MystRenderer(nodes.GenericNodeVisitor):
             # perform a separate render of the argument nodes
             argument = self.nested_render(node.children[0].children)
 
+        if ":" in node["delimiter"]:
+            self.extensions_required.add("colon_fence")
+
         self.add_lines(
             [
                 f"{node['delimiter']}{{{name}}} {argument}".rstrip(),
@@ -413,6 +440,7 @@ class MystRenderer(nodes.GenericNodeVisitor):
     # for definition lists we just need the term and definition nodes
 
     def visit_definition_list(self, node):
+        self.extensions_required.add("deflist")
         pass
 
     def visit_definition_list_item(self, node):
@@ -511,7 +539,7 @@ class MystRenderer(nodes.GenericNodeVisitor):
         return rows
 
     # TODO https://docutils.sourceforge.io/docs/user/rst/quickref.htm
-    # substitution definitions, line block, field list, option list
+    # line block, field list, option list
 
 
 def render(

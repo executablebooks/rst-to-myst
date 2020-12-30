@@ -188,7 +188,6 @@ The only syntax where some checks are required is matching anonymous references 
 (see <https://docutils.sourceforge.io/docs/user/rst/quickref.htm>)
 
 - custom functions for directive parsing
-- substitution definitions
 - line block
 - field list
 
