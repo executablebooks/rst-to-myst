@@ -191,7 +191,6 @@ The only syntax where some checks are required is matching anonymous references 
 - substitution definitions
 - definition lists
 - line block
-- literal block
 - field list
 
 ## Development

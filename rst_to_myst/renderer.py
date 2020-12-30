@@ -165,6 +165,11 @@ class MystRenderer(nodes.GenericNodeVisitor):
         self.add_lines(["-->"], True)
         self.add_newline(2)
 
+    def visit_literal_block(self, node):
+        self.add_lines(["```"] + node.astext().splitlines() + ["```"])
+        self.add_newline(2)
+        raise nodes.SkipNode
+
     def visit_target(self, node):
         if "inline" in node and node["inline"]:
             # TODO inline targets
