@@ -109,29 +109,36 @@ directives:
   Content
 
 .. note::
+    :class: something
+    :name: else
 
-    .. tip::
+    .. admonition:: Some :role:`a`
 
-        Content
+        Content :role:`a`
 .
-```{eval-rst}
-.. image:: images/ball1.gif
+```{image} images/ball1.gif
+
 ```
 
-```{eval-rst}
-.. figure:: images/ball1.gif
-  :option: value
+:::{figure} images/ball1.gif
+:option: value
 
-  Content
-```
+Content
 
-```{eval-rst}
-.. note:: 
+:::
 
-    .. tip::
+::::{note}
+:class: something
+:name: else
 
-        Content
-```
+:::{admonition} Some {role}`a`
+
+Content {role}`a`
+
+:::
+
+::::
+
 .
 
 lists:

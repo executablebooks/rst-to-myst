@@ -18,12 +18,13 @@ description-file = "README.md"
 keywords = "restructuredtext,markdown,myst"
 
 requires-python=">=3.6"
-requires=["docutils==0.15", "click~=7.1"]
+requires=["docutils==0.15", "importlib_resources~=3.1", "pyyaml", "click~=7.1"]
 
 [tool.flit.entrypoints."console_scripts"]
 rst2myst = "rst_to_myst.cli:main"
 
 [tool.flit.metadata.requires-extra]
+sphinx = ["sphinx~=3.2"]
 test = [
     "pytest~=6.0",
     "coverage",
@@ -31,7 +32,7 @@ test = [
 ]
 
 [tool.flit.sdist]
-include = ["LICENSE", "README.md"]
+include = ["LICENSE", "README.md", "rst_to_myst/data/directives.yml"]
 exclude = [".github/", "tests/"]
 
 [tool.isort]

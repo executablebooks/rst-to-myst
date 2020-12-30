@@ -23,6 +23,7 @@ jobs:
   tests:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         python-version: [3.6, 3.7, 3.8, 3.9]
         os: [ubuntu-latest, windows-latest]
@@ -40,7 +41,7 @@ jobs:
       # so that coverage will be recorded up for the module
       run: |
         pip install flit
-        flit install --deps=production --extras=test --pth-file
+        flit install --deps=production --extras=test,sphinx --pth-file
 
     - name: Run pytest
       run: |

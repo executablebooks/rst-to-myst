@@ -4,6 +4,7 @@ from typing import IO, Optional, Tuple
 
 from docutils import nodes
 
+from .nodes import ArgumentNode
 from .parser import to_ast
 
 
@@ -96,7 +97,7 @@ class MystRenderer(nodes.GenericNodeVisitor):
 
     def visit_paragraph(self, node):
         # don't indent if the first element in another block
-        if node.parent.children[0] != node:
+        if node.parent and node.parent.children[0] != node:
             self.add_indent()
         elif not isinstance(
             node.parent, (nodes.footnote, nodes.citation, nodes.list_item)
@@ -281,17 +282,44 @@ class MystRenderer(nodes.GenericNodeVisitor):
         # The default is simply to wrap in eval-rst
         # TODO decide which/how directives can be converted/expanded
         name = node["name"]
-        content = node["indented"]
-        indent_len = node["indent"]
+        if node["type"] == "eval_rst":
+            content = node["indented"]
+            indent_len = node["indent"]
+            self.add_lines(
+                ["```{eval-rst}", f".. {name}:: " + (content[0] if content else "")]
+                + indent("\n".join(content[1:]), " " * indent_len).splitlines()
+                + ["```"],
+            )
+            self.add_newline(2)
+            raise nodes.SkipNode
+
+        argument = " ".join(node["arg_block"])
+        if node.children and isinstance(node.children[0], ArgumentNode):
+            # perform a separate render of the argument nodes
+            _renderer = MystRenderer(self.document, self._warning_stream)
+            nodes.paragraph("", *node.children[0].children).walkabout(_renderer)
+            argument = " ".join(_renderer.rendered.splitlines())
+
         self.add_lines(
-            ["```{eval-rst}", f".. {name}:: " + (content[0] if content else "")]
-            + indent("\n".join(content[1:]), " " * indent_len).splitlines()
-            + ["```"],
+            [
+                f"{node['delimiter']}{{{name}}} {argument}".rstrip(),
+            ]
+            + [f":{key}: {val}" for key, val in node["options_list"]]
+            + ["", ""]
         )
-        self.add_newline(2)
+
+    def visit_ArgumentNode(self, node):
+        raise nodes.SkipNode
+
+    def visit_ContentNode(self, node):
+        pass
+
+    def depart_ContentNode(self, node):
+        pass
 
     def depart_DirectiveNode(self, node):
-        pass
+        self.add_lines([node["delimiter"]])
+        self.add_newline(2)
 
     # we handle setting list item attributes in a transform
 
@@ -338,8 +366,21 @@ def convert(
     warning_stream: Optional[IO] = None,
     raise_on_error: bool = False,
     cite_prefix: str = "cite_",
+    language_code="en",
+    use_sphinx=True,
+    extensions=(),
+    default_domain="py",
+    conversions=None,
 ) -> Tuple[str, IO]:
-    document, warning_stream = to_ast(text, warning_stream=warning_stream)
+    document, warning_stream = to_ast(
+        text,
+        warning_stream=warning_stream,
+        language_code=language_code,
+        use_sphinx=use_sphinx,
+        extensions=extensions,
+        default_domain=default_domain,
+        conversions=conversions,
+    )
     text, warning_stream = render(
         document, warning_stream, cite_prefix=cite_prefix, raise_on_error=raise_on_error
     )

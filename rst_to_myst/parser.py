@@ -1,6 +1,7 @@
 from io import StringIO
 from typing import Tuple
 
+import yaml
 from docutils import nodes
 from docutils.frontend import OptionParser
 from docutils.parsers.rst import Parser
@@ -11,8 +12,12 @@ from docutils.transforms.references import (
     PropagateTargets,
 )
 from docutils.utils import new_document, roman
+from importlib_resources import files
 
+from . import data as package_data
 from .inliner import InlinerMyst
+from .namespace import compile_namespace
+from .nodes import DirectiveNode
 from .states import get_state_classes
 
 
@@ -77,8 +82,25 @@ class ResolveListItems(Transform):
                     number += 1
 
 
+class DirectiveNesting(Transform):
+    def apply(self):
+        for node in self.document.traverse(DirectiveNode):  # type: DirectiveNode
+            node["delimiter"] *= 3 + sum(
+                1 for _ in node.traverse(DirectiveNode, include_self=False)
+            )
+
+
 def to_ast(
-    text: str, uri: str = "source", report_level=2, halt_level=4, warning_stream=None
+    text: str,
+    uri: str = "source",
+    report_level=2,
+    halt_level=4,
+    warning_stream=None,
+    language_code="en",
+    use_sphinx=True,
+    extensions=(),
+    default_domain="py",
+    conversions=None,
 ) -> Tuple[nodes.document, StringIO]:
     settings = OptionParser(components=(RSTParser,)).get_default_values()
     warning_stream = StringIO() if warning_stream is None else warning_stream
@@ -87,8 +109,26 @@ def to_ast(
     settings.halt_level = halt_level  # 4=severe
     # The level at or above which `SystemMessage` exceptions
     # will be raised, halting execution.
+    settings.language_code = language_code
 
     document = new_document(uri, settings=settings)
+
+    # compile lookup for directives/roles
+    namespace = compile_namespace(
+        language_code=language_code,
+        use_sphinx=use_sphinx,
+        extensions=extensions,
+        default_domain=default_domain,
+    )
+    document.settings.namespace = namespace
+
+    # get conversion lookup for directives
+    directive_data = yaml.safe_load(
+        files(package_data).joinpath("directives.yml").read_text("utf8")
+    )
+    if conversions:
+        directive_data.update(conversions)
+    document.settings.directive_data = directive_data
 
     parser = RSTParser()
     parser.parse(text, document)
@@ -99,8 +139,10 @@ def to_ast(
         AnonymousHyperlinks,  # Link anonymous references to targets. (440)
         IndirectHyperlinks,  # "refuri" migrated back to all indirect targets (460)
         Footnotes,  # Assign numbers to autonumbered footnotes (620)
+        # bespoke transforms
         StripFootnoteLabel,
         ResolveListItems,
+        DirectiveNesting,
     ]:
         transform = transform_cls(document)
         transform.apply()

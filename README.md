@@ -4,7 +4,8 @@
 [![codecov.io][cov-badge]][cov-link]
 [![PyPI version][pypi-badge]][pypi-link]
 
-Convert [ReStructuredText](https://docutils.sourceforge.io/) to [MyST Markdown](https://myst-parser.readthedocs.io/).
+Convert [ReStructuredText](https://docutils.sourceforge.io/) to [MyST Markdown](https://myst-parser.readthedocs.io/),
+and also explore available roles/directives.
 
 ## Install
 
@@ -12,24 +13,71 @@ Convert [ReStructuredText](https://docutils.sourceforge.io/) to [MyST Markdown](
 pip install rst-to-myst
 ```
 
-## Usage
-
-CLI:
+or with sphinx:
 
 ```bash
-echo "some rst" | rst2myst
-rst2myst -f path/to/file.rst
+pip install rst-to-myst[sphinx]
 ```
 
-Warnings are written to `stderr` and converted text to `stdout`.
+## Basic Usage
 
-For all options see:
+### Command-Line Interface (CLI)
+
+For all commands see:
 
 ```bash
 rst2myst --help
 ```
 
-API:
+Parse *via* stdin:
+
+```console
+$ echo ":role:`content`" | rst2myst parse
+{role}`content`
+```
+
+Parse *via* file:
+
+```console
+$ rst2myst parse -f path/to/file.rst
+...
+```
+
+Warnings are written to `stderr` and converted text to `stdout`.
+
+List available directives/roles:
+
+```console
+$ rst2myst directives list
+acks admonition ...
+
+$ rst2myst roles list
+abbr abbreviation ...
+```
+
+Show details of a specific directive/role:
+
+```console
+$ rst2myst directives show admonition
+class: docutils.parsers.rst.directives.admonitions.Admonition
+description: ''
+has_content: true
+name: admonition
+optional_arguments: 0
+options:
+  class: class_option
+  name: unchanged
+required_arguments: 1
+
+$ rst2myst roles show
+description: 'Generic interpreted text role, where the interpreted text is simply
+
+  wrapped with the provided node class.'
+module: docutils.parsers.rst.roles
+name: abbreviation
+```
+
+### Python Interface (API)
 
 ```python
 from rst_to_myst import convert
@@ -41,6 +89,85 @@ Some RST
 To **convert**
 """)
 ```
+
+## Advanced Usage
+
+You can select a language to translate directive/role names:
+
+```console
+$ rst2myst parse -l fr -f path/to/file.rst
+...
+```
+
+You can select whether sphinx directives/roles are loaded:
+
+```console
+$ rst2myst parse --no-sphinx -f path/to/file.rst
+...
+```
+
+You can load directives/roles from extensions:
+
+```console
+$ rst2myst parse -e sphinx.ext.autodoc -e sphinx_panels -f path/to/file.rst
+...
+```
+
+Directives are converted according to [rst_to_myst/data/directives.yml](rst_to_myst/data/directives.yml), which can also be updated with an external YAML file, using the `-c/--conversions` option.
+This is a mapping of directive import paths to a conversion type:
+
+- "eval_rst" (the default): no conversion, wrap in MyST eval_rst directive
+  ````
+  ```{eval_rst}
+  .. name:: argument `link`_
+     :option: value
+
+     content `link`_
+  ```
+  ````
+- "direct": convert directly to MyST directive, keeping original argument/content
+  ````
+  ```{name} argument `link`_
+  :option: value
+
+  content `link`_
+  ```
+  ````
+- "argument_only":  convert to MyST directive and convert the argument to Markdown
+  ````
+  ```{name} argument [link](link)
+  :option: value
+
+  content `link`_
+  ```
+  ````
+- "content_only":  convert to MyST directive and convert the content to Markdown
+  ````
+  ```{name} argument `link`_
+  :option: value
+
+  content [link](link)
+  ```
+  ````
+- "argument_content":  convert to MyST directive and convert the content to Markdown
+  ````
+  ```{name} argument [link](link)
+  :option: value
+
+  content [link](link)
+  ```
+  ````
+
+If a conversion type is prepended by "_colon", use `:::` delimiters instad of ```` ``` ````,
+e.g. "argument_content_colon"
+
+````
+:::{name} argument [link](link)
+:option: value
+
+content [link](link)
+:::
+````
 
 ## Conversion Notes
 
@@ -58,7 +185,7 @@ The only syntax where some checks are required is matching anonymous references 
 
 (see <https://docutils.sourceforge.io/docs/user/rst/quickref.htm>)
 
-- nested conversion of directives (currently all wrapped in `eval-rst`)
+- custom functions for directive parsing
 - quote_block
 - substitution definitions
 - tables
