@@ -1,3 +1,4 @@
+import copy
 from io import StringIO
 from textwrap import indent
 from typing import IO, Optional, Tuple
@@ -20,6 +21,16 @@ class MystRenderer(nodes.GenericNodeVisitor):
         self._uri_refnames = None
         self.cite_prefix = cite_prefix
         self.extensions_required = set()
+
+    def inline_render(self, children):
+        inline_renderer = MystRenderer(self.document, self._warning_stream)
+        inline_renderer._uri_refnames = self._uri_refnames
+        para = nodes.paragraph()
+        para.extend(children)
+        para.walkabout(inline_renderer)
+        if inline_renderer._uri_refnames is not None:
+            self._uri_refnames = inline_renderer._uri_refnames
+        return " ".join(inline_renderer.rendered.splitlines())
 
     @property
     def rendered(self) -> str:
@@ -296,9 +307,7 @@ class MystRenderer(nodes.GenericNodeVisitor):
         argument = " ".join(node["arg_block"])
         if node.children and isinstance(node.children[0], ArgumentNode):
             # perform a separate render of the argument nodes
-            _renderer = MystRenderer(self.document, self._warning_stream)
-            nodes.paragraph("", *node.children[0].children).walkabout(_renderer)
-            argument = " ".join(_renderer.rendered.splitlines())
+            argument = self.inline_render(node.children[0].children)
 
         self.add_lines(
             [
@@ -345,9 +354,69 @@ class MystRenderer(nodes.GenericNodeVisitor):
         self.add_newline()
         self.decr_indent(len(node["prefix"]))
 
+    def visit_table(self, node):
+        # convert tables to Markdown if possible, e.g. single header row, etc
+        cells = self.assess_table(node)
+        if cells:
+            self.add_lines(
+                [
+                    "| " + " | ".join(cells[0]) + " |",
+                    "| " + " | ".join("-" * len(c) for c in cells[0]) + " |",
+                ]
+                + ["| " + " | ".join(row) + " |" for row in cells[1:]]
+            )
+
+        else:
+            self.add_lines(["```{eval_rst}"] + node.rawsource.splitlines() + ["```"])
+        self.add_newline(2)
+        raise nodes.SkipNode
+
+    def assess_table(self, node):
+        if len(node.children) != 1 or not isinstance(node.children[0], nodes.tgroup):
+            return None
+        tgroup = node.children[0]
+        if "cols" not in tgroup:
+            return None
+        ncolumns = tgroup["cols"]
+        if (
+            not len(tgroup.children) > 1
+            or not isinstance(tgroup.children[-1], nodes.tbody)
+            or not isinstance(tgroup.children[-2], nodes.thead)
+        ):
+            return None
+        thead = tgroup.children[-2]
+        tbody = tgroup.children[-1]
+        if len(thead.children) != 1 or len(thead.children[0]) != ncolumns:
+            return None
+        rows = [copy.copy(thead.children[0].children)]
+        for row in tbody.children:
+            if len(row.children) != ncolumns:
+                return None
+            rows.append(copy.copy(row.children))
+
+        # render cells
+        widths = [0 for _ in rows[0]]
+        for i, row in enumerate(rows):
+            for j, col in enumerate(row):
+                if not isinstance(col, nodes.entry):
+                    return None
+                if len(col.children) != 1 or not isinstance(
+                    col.children[0], nodes.paragraph
+                ):
+                    return None
+                rows[i][j] = self.inline_render(col.children[0].children).strip()
+                widths[j] = max(widths[j], len(rows[i][j]))
+
+        # align columns
+        for i, _ in enumerate(rows):
+            for j, _ in enumerate(row):
+                rows[i][j] = rows[i][j].ljust(widths[j])
+
+        return rows
+
     # TODO https://docutils.sourceforge.io/docs/user/rst/quickref.htm
     # quote_block, substitution definitions,
-    # tables, deflist, line block, literal block, field list,
+    # deflist, line block, literal block, field list,
 
 
 def render(
