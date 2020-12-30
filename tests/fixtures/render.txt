@@ -191,6 +191,42 @@ More text
 para
 .
 
+definition-list:
+.
+what `a`_
+  Definition lists associate a term with
+  a definition `a`_.
+
+how
+  The term is a one-line phrase, and the
+  definition is one or more paragraphs or
+  body elements, indented relative to the
+  term.
+  
+  - Blank lines are not allowed
+    between term and definition.
+
+para
+.
+what [a](a) 
+
+: Definition lists associate a term with
+  a definition [a](a).
+
+how 
+
+: The term is a one-line phrase, and the
+  definition is one or more paragraphs or
+  body elements, indented relative to the
+  term.
+
+  - Blank lines are not allowed
+    between term and definition.
+
+para
+
+.
+
 tables-simple:
 .
 =====  =====  =======
