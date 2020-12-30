@@ -40,7 +40,7 @@ docutils.parsers.rst.directives.misc.Date: eval_rst
 docutils.parsers.rst.directives.misc.DefaultRole: eval_rst
 docutils.parsers.rst.directives.misc.Include: direct
 docutils.parsers.rst.directives.misc.Raw: direct
-docutils.parsers.rst.directives.misc.Replace: eval_rst
+docutils.parsers.rst.directives.misc.Replace: content_only
 docutils.parsers.rst.directives.misc.Role: eval_rst
 docutils.parsers.rst.directives.misc.TestDirective: eval_rst
 docutils.parsers.rst.directives.misc.Title: direct

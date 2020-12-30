@@ -374,7 +374,12 @@ Block quotes are just:
                 <substitution_reference refname="x">
                     x
             <substitution_definition names="name">
-                <DirectiveNode delimiter="```" indent="0" indented="['replacement *text*']" name="replace" type="eval_rst">
+                <DirectiveNode arg_block="" delimiter="```" name="replace" options_list="" type="content_only">
+                    <ContentNode>
+                        <paragraph>
+                            replacement 
+                            <emphasis>
+                                text
             <substitution_definition names="caution">
                 <DirectiveNode arg_block="['warning.png']" delimiter="```" name="image" options_list="('alt',\ 'Warning!')" type="direct">
             <definition_list>

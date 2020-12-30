@@ -311,6 +311,27 @@ orphan: true
 
 .
 
+substitution-definitions:
+.
+.. |name| replace:: replacement `a`_
+
+.. |caution| image:: warning.png
+             :alt: Warning!
+.
+---
+substitutions:
+  caution: |-
+    ```{image} warning.png
+    :alt: Warning!
+
+    ```
+  name: replacement [a](a)
+
+---
+
+
+.
+
 tables-simple:
 .
 =====  =====  =======
