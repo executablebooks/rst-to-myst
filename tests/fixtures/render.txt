@@ -58,6 +58,23 @@ anonymous target paragraph
 [^cite_cit2002]: *a* citation footnote
 .
 
+indents:
+.
+- a
+  b
+  *c*
+  **d**
+  `e`_
+  :f:`g`
+.
+- a
+  b
+  *c*
+  **d**
+  [e](e)
+  {f}`g`
+.
+
 titles:
 .
 header 1
