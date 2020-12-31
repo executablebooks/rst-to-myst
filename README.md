@@ -7,6 +7,8 @@
 Convert [ReStructuredText](https://docutils.sourceforge.io/) to [MyST Markdown](https://myst-parser.readthedocs.io/),
 and also explore available roles/directives.
 
+See [tests/fixtures/render.txt](tests/fixtures/render.txt) for examples of inputs -> outputs.
+
 ## Install
 
 ```bash
@@ -185,11 +187,13 @@ The only syntax where some checks are required is matching anonymous references 
 
 ## TODO
 
-(see <https://docutils.sourceforge.io/docs/user/rst/quickref.htm>)
+The conversion covers almost all syntaxes (see <https://docutils.sourceforge.io/docs/user/rst/quickref.htm>) except:
 
-- custom functions for directive parsing
-- line block
-- field list
+- line blocks
+- field lists (except at top of document, which are converted to front matter)
+- option lists
+
+Also custom functions for directive parsing would be desirable.
 
 ## Development
 
