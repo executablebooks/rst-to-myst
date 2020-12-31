@@ -104,6 +104,15 @@ y `uri <a.org>`_ z
             new paragraph
 .
 
+role-backslash:
+.
+:math:`\sigma`
+.
+<document source="source">
+    <paragraph>
+        <RoleNode role="math" text="\sigma">
+.
+
 titles:
 .
 header 1

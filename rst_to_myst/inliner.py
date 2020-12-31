@@ -842,7 +842,11 @@ class InlinerMyst(Inliner):
         then used to create the requisite nodes and messages.
 
         """
-        return [RoleNode(rawsource, role=role, text=text)], []
+        return [
+            RoleNode(
+                rawsource, role=role, text=unescape(text, restore_backslashes=True)
+            )
+        ], []
 
     def phrase_ref(
         self, before: str, after: str, rawsource: str, escaped: str, text: str
