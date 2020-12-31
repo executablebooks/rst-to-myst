@@ -70,7 +70,10 @@ class MystRenderer(nodes.GenericNodeVisitor):
     def add_inline(self, text: str):
         if self._indent:
             strip = self._indent.strip()
-            text = indent(text, self._indent, lambda l: strip + l)[len(self._indent) :]
+            text = indent(text, self._indent, lambda l: strip + l)
+            if (not self._rendered) or self._rendered[-1] != "\n":
+                # if the text does not start a newline, then strip the first indent
+                text = text[len(self._indent) :]
         self._rendered += text
 
     def add_newline(self, i=1):
