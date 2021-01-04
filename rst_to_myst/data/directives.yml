@@ -210,3 +210,6 @@ sphinx.domains.std.EnvVar: eval_rst
 sphinx.domains.std.Glossary: eval_rst
 # std:productionlist
 sphinx.domains.std.ProductionList: eval_rst
+
+# third-party directives
+sphinxcontrib.bibtex.directives.BibliographyDirective: direct
