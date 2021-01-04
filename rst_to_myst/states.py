@@ -139,6 +139,7 @@ class ExplicitMixin:
             "direct",
             "argument_only",
             "content_only",
+            "content_only_titles",
             "argument_content",
             "direct_colon",
             "argument_only_colon",
@@ -185,7 +186,12 @@ class ExplicitMixin:
         if content and "content" in conversion:
             content_node = ContentNode()
             directive_node += content_node
-            self.nested_parse(content, content_offset, content_node)
+            self.nested_parse(
+                content,
+                content_offset,
+                content_node,
+                match_titles="titles" in conversion,
+            )
 
         return [directive_node], blank_finish
 

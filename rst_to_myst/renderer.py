@@ -398,7 +398,10 @@ class MystRenderer(nodes.GenericNodeVisitor):
             [
                 f"{node['delimiter']}{{{name}}} {argument}".rstrip(),
             ]
-            + [f":{key}: {val}" for key, val in node["options_list"]]
+            + [
+                f":{key}: {'true' if val is None else val}"
+                for key, val in node["options_list"]
+            ]
             + ["", ""]
         )
 
