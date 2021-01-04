@@ -105,7 +105,7 @@ sphinx.directives.other.Acks: eval_rst
 # hlist
 sphinx.directives.other.HList: eval_rst
 # only
-sphinx.directives.other.Only: content_only
+sphinx.directives.other.Only: content_only_titles
 
 # c:member
 # c:var

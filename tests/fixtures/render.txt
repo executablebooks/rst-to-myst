@@ -398,3 +398,59 @@ para
 
 para
 .
+
+match_titles:
+.
+.. computational-economics documentation master file
+
+.. only:: html
+
+    ####
+    Home
+    ####
+
+.. only:: latex
+
+    ##########################
+    Datascience for Economists
+    ##########################
+
+.. toctree::
+    :maxdepth: 2
+    :titlesonly:
+
+    introduction/index
+    python_fundamentals/index
+    scientific/index
+    pandas/index
+    applications/index
+
+.
+<!---
+computational-economics documentation master file
+-->
+
+```{only} html
+
+# Home
+
+```
+
+```{only} latex
+
+# Datascience for Economists
+
+```
+
+```{toctree}
+:maxdepth: 2
+:titlesonly: true
+
+introduction/index
+python_fundamentals/index
+scientific/index
+pandas/index
+applications/index
+
+```
+.
