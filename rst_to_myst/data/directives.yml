@@ -207,6 +207,10 @@ sphinx.domains.std.Cmdoption: eval_rst
 # std:envvar
 sphinx.domains.std.EnvVar: eval_rst
 # std:glossary
-sphinx.domains.std.Glossary: eval_rst
+sphinx.domains.std.Glossary: content_only_colon
 # std:productionlist
 sphinx.domains.std.ProductionList: eval_rst
+
+# third-party directives
+sphinxcontrib.bibtex.directives.BibliographyDirective: direct
+sphinx_panels.dropdpwn.DropdownDirective: argument_content_colon
