@@ -11,7 +11,7 @@ from .utils import yaml_dump
 @click.group(context_settings={"help_option_names": ["-h", "--help"]})
 @click.version_option()
 def main():
-    """CLI for rst-to-myst"""
+    """CLI for converting ReStructuredText to MyST Markdown."""
 
 
 OPT_LANGUAGE = click.option(
@@ -71,11 +71,21 @@ OPT_SPHINX = click.option(
     "-s/-ns",
     is_flag=True,
     default=True,
+    show_default=True,
     callback=check_sphinx,
     help="Load sphinx.",
 )
+
+
+def split_extension(ctx, param, value):
+    return [ext.strip() for ext in value.split(",")] if value else []
+
+
 OPT_EXTENSIONS = click.option(
-    "--extensions", "-e", multiple=True, help="Load sphinx extensions."
+    "--extensions",
+    "-e",
+    callback=split_extension,
+    help="A comma-separated list of sphinx extensions to load.",
 )
 
 
@@ -140,7 +150,7 @@ def directives_list(sphinx, extensions):
 @OPT_EXTENSIONS
 @OPT_LANGUAGE
 def directives_show(name, sphinx, extensions, language):
-    """List available directives."""
+    """Show information about a single role."""
     namespace = compile_namespace(
         extensions=extensions, use_sphinx=sphinx, language_code=language
     )
@@ -160,7 +170,7 @@ def roles():
 @OPT_SPHINX
 @OPT_EXTENSIONS
 def roles_list(sphinx, extensions):
-    """List available directives."""
+    """List available roles."""
     namespace = compile_namespace(extensions=extensions, use_sphinx=sphinx)
     click.echo(" ".join(namespace.list_roles()))
 
@@ -171,7 +181,7 @@ def roles_list(sphinx, extensions):
 @OPT_EXTENSIONS
 @OPT_LANGUAGE
 def roles_show(name, sphinx, extensions, language):
-    """List available directives."""
+    """Show information about a single role."""
     namespace = compile_namespace(
         extensions=extensions, use_sphinx=sphinx, language_code=language
     )
