@@ -1,26 +1,44 @@
 """Convert to markdown-it tokens, which can then be rendered by mdformat."""
-from typing import Any, List
+from io import StringIO
+from typing import IO, Any, Dict, List, NamedTuple, Optional
 
 from docutils import nodes
 from markdown_it.token import Token
 
 
+class RenderOutput(NamedTuple):
+    tokens: List[Token]
+    env: Dict[str, Any]
+
+
 class MarkdownItRenderer(nodes.GenericNodeVisitor):
-    def __init__(self, document: nodes.document, raise_on_error=False):
+    def __init__(
+        self,
+        document: nodes.document,
+        *,
+        warning_stream: Optional[IO] = None,
+        raise_on_error=False,
+    ):
         self._document = document
         self._tokens: List[Token] = []
-        self._inline = None
+        self._env = {"references": {}, "duplicate_refs": []}
+        self._inline: Optional[Token] = None
+        self._warning_stream = warning_stream or StringIO()
         self.raise_on_error = raise_on_error
 
     @property
     def document(self) -> nodes.document:
         return self._document
 
-    def to_tokens(self) -> List[Token]:
+    def warning(self, message: str):
+        self._warning_stream.write(f"RENDER WARNING: {message}\n")
+
+    def to_tokens(self) -> RenderOutput:
         """Reset tokens and convert full document."""
         self._tokens = []
+        self._env = {"references": {}, "duplicate_refs": []}
         self._document.walkabout(self)
-        return self._tokens[:]
+        return RenderOutput(self._tokens[:], self._env)
 
     def add_token(self, ttype: str, tag: str, nesting: int, **kwargs: Any) -> Token:
         """A markdown-it token to the stream, handling inline tokens and children."""
@@ -156,12 +174,85 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         self.add_token("blockquote_close", "blockquote", -1, markup=">")
 
     def visit_reference(self, node):
+        # we assume all reference names are plain text
+        # TODO check this is always the case
+        text = node.astext()
+
         if "standalone_uri" in node:
+            # autolink
             token = self.add_token("link_open", "a", 1, markup="autolink", info="auto")
             token.attrs["href"] = node["refuri"]
             self.add_token("text", "", 0, content=node["refuri"])
             self.add_token("link_close", "a", -1, markup="autolink", info="auto")
+        elif "refname" in node:
+            # reference a link definition `[refname]: url`, or a target `(refname)=`
+            # TODO ensure mdformat does not wrap in <>
+            token = self.add_token(
+                "link_open",
+                "a",
+                1,
+                attrs={"href": node["refname"]},
+                # TODO should only add label if target found
+                meta={"label": node["refname"]},
+            )
+            self.add_token("text", "", 0, content=text)
+            self.add_token("link_close", "a", -1)
+        elif "refuri" in node:
+            # external link
+            token = self.add_token("link_open", "a", 1, attrs={"href": node["refuri"]})
+            self.add_token("text", "", 0, content=text)
+            self.add_token("link_close", "a", -1)
+        elif "refid" in node:
+            # anonymous links, pointing to internal targets
+            # TODO ensure mdformat does not wrap in <>
+            token = self.add_token("link_open", "a", 1, attrs={"href": node["refid"]})
+            self.add_token("text", "", 0, content=text)
+            self.add_token("link_close", "a", -1)
+        else:
+            message = f"unknown reference type: {node.rawsource}"
+            self.warning(message)
+            if self.raise_on_error:
+                raise NotImplementedError(message)
+
+        raise nodes.SkipNode
+
+    def visit_target(self, node):
+        if "inline" in node and node["inline"]:
+            # TODO inline targets
+            message = f"inline targets not implemented: {node.rawsource}"
+            self.warning(message)
+            if self.raise_on_error:
+                raise NotImplementedError(message)
+            self.add_token("text", "", 0, content=str(node.rawsource))
             raise nodes.SkipNode
 
-    def depart_reference(self, node):
-        pass
+        if "refuri" in node:
+            for name in node["names"]:
+                # [{name}]: {node['refuri']}
+                # TODO warn about name starting ^
+                if name not in self._env["references"]:
+                    self._env["references"][name] = {
+                        "title": "",
+                        "href": node["refuri"],
+                        "map": [node.line, node.line],
+                    }
+                else:
+                    self._env["duplicate_refs"].append(
+                        {
+                            "label": name,
+                            "title": "",
+                            "href": node["refuri"],
+                            "map": [node.line, node.line],
+                        }
+                    )
+        elif "names" in node:
+            for _name in node["names"]:
+                # TODO
+                pass  # self.add_lines([f"({name})="])
+        if "refid" in node:
+            # should only be for anonymous
+            # TODO
+            pass  # self.add_lines([f"({node['refid']})="])
+
+        # TODO check for content?
+        raise nodes.SkipNode
