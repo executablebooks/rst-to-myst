@@ -139,3 +139,14 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         token = self.add_token("code_inline", "code", 0, markup="`")
         token.content = node.astext()
         raise nodes.SkipNode
+
+    def visit_literal_block(self, node):
+        token = self.add_token("code_block", "code", 0)
+        token.content = node.astext()
+        raise nodes.SkipNode
+
+    def visit_block_quote(self, node):
+        self.add_token("blockquote_open", "blockquote", 1, markup=">")
+
+    def depart_block_quote(self, node):
+        self.add_token("blockquote_close", "blockquote", -1, markup=">")

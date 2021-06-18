@@ -7,8 +7,7 @@ from rst_to_myst.parser import to_ast
 def test_basic():
     document, warning_stream = to_ast(
         """
-``a
-b``
+    - a
 """
     )
     token_renderer = MarkdownItRenderer(document)
