@@ -51,6 +51,8 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         if self.raise_on_error:
             raise NotImplementedError(message)
 
+    # Skipped components
+
     def visit_document(self, node):
         pass
 
@@ -70,6 +72,8 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
     def visit_problematic(self, node):
         # ignore
         raise nodes.SkipNode
+
+    # CommonMark components
 
     def visit_section(self, node):
         pass  # handled by title
@@ -150,3 +154,14 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
 
     def depart_block_quote(self, node):
         self.add_token("blockquote_close", "blockquote", -1, markup=">")
+
+    def visit_reference(self, node):
+        if "standalone_uri" in node:
+            token = self.add_token("link_open", "a", 1, markup="autolink", info="auto")
+            token.attrs["href"] = node["refuri"]
+            self.add_token("text", "", 0, content=node["refuri"])
+            self.add_token("link_close", "a", -1, markup="autolink", info="auto")
+            raise nodes.SkipNode
+
+    def depart_reference(self, node):
+        pass
