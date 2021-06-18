@@ -32,6 +32,8 @@ class RSTParser(Parser):
 
 
 class IndirectHyperlinks(Transform):
+    """Resolve indirect hyperlinks."""
+
     def apply(self):
         for target in self.document.indirect_targets:
             if not target.resolved:
@@ -41,7 +43,8 @@ class IndirectHyperlinks(Transform):
 
 
 class StripFootnoteLabel(Transform):
-    # footnotes and citations can start with a label note, which we do not need
+    """Footnotes and citations can start with a label note, which we do not need."""
+
     def apply(self):
         for node in self.document.traverse(
             lambda n: isinstance(n, (nodes.footnote, nodes.citation))
@@ -60,6 +63,8 @@ ENUM_CONVERTERS = {
 
 
 class ResolveListItems(Transform):
+    """For bullet/enumerated lists, propagate attributes to their child list items."""
+
     def apply(self):
         for node in self.document.traverse(nodes.bullet_list):
             prefix = node["bullet"] + " "
@@ -83,6 +88,8 @@ class ResolveListItems(Transform):
 
 
 class DirectiveNesting(Transform):
+    """For each DirectiveNode, compute its nesting level inside other directives."""
+
     def apply(self):
         for node in self.document.traverse(DirectiveNode):  # type: DirectiveNode
             # TODO this will overcount if multiple directives at same nesting depth
@@ -96,6 +103,8 @@ class DirectiveNesting(Transform):
 
 
 class FrontMatter(Transform):
+    """Extract an initial field list into a `FrontMatterNode`."""
+
     def apply(self):
         if not self.document.settings.front_matter:
             return
