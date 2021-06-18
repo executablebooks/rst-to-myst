@@ -40,9 +40,11 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         self._document.walkabout(self)
         return RenderOutput(self._tokens[:], self._env)
 
-    def add_token(self, ttype: str, tag: str, nesting: int, **kwargs: Any) -> Token:
+    def add_token(
+        self, ttype: str, tag: str, nesting: int, *, content: str = "", **kwargs: Any
+    ) -> Token:
         """A markdown-it token to the stream, handling inline tokens and children."""
-        token = Token(ttype, tag, nesting, **kwargs)
+        token = Token(ttype, tag, nesting, content=content, **kwargs)
         # decide whether we should be adding as an inline child
         if ttype in {"paragraph_open", "heading_open", "th_open", "td_open"}:
             self._tokens.append(token)
@@ -114,11 +116,8 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         self.add_token("paragraph_close", "p", -1)
 
     def visit_Text(self, node):
-        token = self.add_token("text", "", 0)
-        token.content = node.astext()
-
-    def depart_Text(self, node):
-        pass
+        self.add_token("text", "", 0, content=node.astext())
+        raise nodes.SkipNode
 
     def visit_emphasis(self, node):
         self.add_token("em_open", "em", 1, markup="*")
@@ -131,6 +130,10 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
 
     def depart_strong(self, node):
         self.add_token("strong_close", "strong", -1, markup="**")
+
+    def visit_transition(self, node):
+        self.add_token("hr", "hr", 0, markup="---")
+        raise nodes.SkipNode
 
     def visit_bullet_list(self, node):
         self.add_token("bullet_list_open", "ul", 1, markup=node["bullet"])
@@ -158,13 +161,11 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         self.add_token("list_item_close", "li", -1)
 
     def visit_literal(self, node):
-        token = self.add_token("code_inline", "code", 0, markup="`")
-        token.content = node.astext()
+        self.add_token("code_inline", "code", 0, markup="`", content=node.astext())
         raise nodes.SkipNode
 
     def visit_literal_block(self, node):
-        token = self.add_token("code_block", "code", 0)
-        token.content = node.astext()
+        self.add_token("code_block", "code", 0, content=node.astext())
         raise nodes.SkipNode
 
     def visit_block_quote(self, node):
@@ -228,8 +229,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
 
         if "refuri" in node:
             for name in node["names"]:
-                # [{name}]: {node['refuri']}
-                # TODO warn about name starting ^
+                # TODO warn about name starting ^ (clashes with footnotes)
                 if name not in self._env["references"]:
                     self._env["references"][name] = {
                         "title": "",
@@ -246,13 +246,40 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
                         }
                     )
         elif "names" in node:
-            for _name in node["names"]:
-                # TODO
-                pass  # self.add_lines([f"({name})="])
+            for name in node["names"]:
+                self.add_token(
+                    "myst_target", "", 0, attrs={"class": "myst-target"}, content=name
+                )
         if "refid" in node:
-            # should only be for anonymous
-            # TODO
-            pass  # self.add_lines([f"({node['refid']})="])
+            self.add_token(
+                "myst_target",
+                "",
+                0,
+                attrs={"class": "myst-target"},
+                content=node["refid"],
+            )
 
         # TODO check for content?
+        raise nodes.SkipNode
+
+    # GFM Extended CommonMark (i.e. tables)
+
+    # TODO tables
+
+    # MyST Markdown specific
+
+    def visit_RoleNode(self, node):
+        self.add_token(
+            "myst_role", "", 0, meta={"name": node["role"]}, content=node["text"]
+        )
+        raise nodes.SkipNode
+
+    def visit_comment(self, node):
+        self.add_token(
+            "myst_line_comment",
+            "hr",
+            0,
+            attrs={"class": "myst-line-comment"},
+            content=" " + node.astext(),
+        )
         raise nodes.SkipNode

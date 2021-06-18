@@ -24,6 +24,7 @@ requires=[
     "pyyaml",
     "markdown-it-py~=1.0",
     "mdformat~=0.7.6",
+    "mdformat-myst~=0.1.0",
     "click~=7.1"
 ]
 
