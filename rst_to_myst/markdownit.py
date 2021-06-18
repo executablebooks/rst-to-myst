@@ -23,6 +23,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         return self._tokens[:]
 
     def add_token(self, ttype: str, tag: str, nesting: int, **kwargs: Any) -> Token:
+        """A markdown-it token to the stream, handling inline tokens and children."""
         token = Token(ttype, tag, nesting, **kwargs)
         # decide whether we should be adding as an inline child
         if ttype in {"paragraph_open", "heading_open", "th_open", "td_open"}:
@@ -133,3 +134,8 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
 
     def depart_list_item(self, node):
         self.add_token("list_item_close", "li", -1)
+
+    def visit_literal(self, node):
+        token = self.add_token("code_inline", "code", 0, markup="`")
+        token.content = node.astext()
+        raise nodes.SkipNode
