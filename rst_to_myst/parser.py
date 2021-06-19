@@ -12,7 +12,11 @@ from docutils.transforms.references import (
     PropagateTargets,
 )
 from docutils.utils import new_document, roman
-from importlib_resources import files
+
+try:
+    from importlib.resources import files
+except ImportError:
+    from importlib_resources import files
 
 from . import data as package_data
 from .inliner import InlinerMyst
