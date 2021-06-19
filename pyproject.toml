@@ -17,7 +17,7 @@ classifiers = [
 description-file = "README.md"
 keywords = "restructuredtext,markdown,myst"
 
-requires-python=">=3.6"
+requires-python=">=3.7"
 requires=[
     "docutils>=0.15,<0.18",
     "importlib_resources~=3.1;python_version<'3.9'",
