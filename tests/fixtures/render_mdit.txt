@@ -1,0 +1,227 @@
+text:
+.
+some text
+.
+some text
+.
+
+emphasis:
+.
+*emphasis*
+.
+*emphasis*
+.
+
+strong:
+.
+**strong**
+.
+**strong**
+.
+
+literal:
+.
+``abc``
+.
+`abc`
+.
+
+literal block:
+.
+::
+
+   literal text
+
+normal text
+.
+```
+literal text
+```
+
+normal text
+.
+
+block quotes
+.
+a
+
+    b
+
+c
+.
+a
+
+> b
+
+c
+.
+
+transition:
+.
+----
+.
+______________________________________________________________________
+.
+
+headings:
+.
+heading 1
+=========
+
+heading 2-1
+-----------
+
+heading 3
+*********
+
+heading 2-2
+-----------
+.
+# heading 1
+
+## heading 2-1
+
+### heading 3
+
+## heading 2-2
+.
+
+bullet list:
+.
+- a
+- b
+- c
+
+* d
+
+  * e
+  * f
+
+* g
+.
+- a
+- b
+- c
+
+* d
+
+  - e
+  - f
+
+* g
+.
+
+enumerated list:
+.
+1. a
+2. b
+3. c
+
+#. d
+#. e
+.
+1. a
+1. b
+1. c
+1. d
+1. e
+.
+
+comment:
+.
+.. This is a comment.
+
+..
+   This whole indented block
+   is a comment.
+
+   Still in the comment.
+
+.
+% This is a comment.
+
+% This whole indented block
+% is a comment.
+%
+% Still in the comment.
+.
+
+autolink:
+.
+http://a.net/
+.
+<http://a.net/>
+.
+
+external link:
+.
+`Link text <https://domain.invalid/>`_
+.
+[Link text](https://domain.invalid/)
+.
+
+external link definition:
+.
+This is a paragraph that contains `a link`_.
+
+.. _a link: https://domain.invalid/
+.
+This is a paragraph that contains [a link].
+
+[a link]: https://domain.invalid/
+.
+
+target:
+.
+.. _a:
+
+ab
+==
+.
+(a)=
+
+# ab
+.
+
+footnote:
+.
+[1]_ [#]_ [*]_
+
+.. [1] normal footnote
+   next line
+.. [#] auto-number footnote.
+.. [*] auto-symbol footnote.
+.
+[^id4] [^id5] [^id6]
+
+[^id4]: normal footnote
+next line
+
+[^id5]: auto-number footnote.
+
+[^id6]: auto-symbol footnote.
+.
+
+citation:
+.
+[a]_
+
+.. [a] citation footnote
+   next line
+
+   new paragraph
+.
+[^cite_a]
+
+[^cite_a]: citation footnote
+next line
+
+    new paragraph
+.
+
+role:
+.
+`a` :b:`c`
+.
+{}`a` {b}`c`
+.

@@ -1,5 +1,6 @@
 """Convert to markdown-it tokens, which can then be rendered by mdformat."""
 from io import StringIO
+from textwrap import indent
 from typing import IO, Any, Dict, List, NamedTuple, Optional
 
 from docutils import nodes
@@ -17,7 +18,8 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         document: nodes.document,
         *,
         warning_stream: Optional[IO] = None,
-        raise_on_error=False,
+        raise_on_error: bool = False,
+        cite_prefix: str = "cite_",
     ):
         self._document = document
         self._tokens: List[Token] = []
@@ -25,6 +27,10 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         self._inline: Optional[Token] = None
         self._warning_stream = warning_stream or StringIO()
         self.raise_on_error = raise_on_error
+        # prefix added to citation labels
+        self.cite_prefix = cite_prefix
+        # if in a list, we make paragraphs hidden, to produce tight lists
+        self.in_tight_list = False
 
     @property
     def document(self) -> nodes.document:
@@ -37,6 +43,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         """Reset tokens and convert full document."""
         self._tokens = []
         self._env = {"references": {}, "duplicate_refs": []}
+        self.in_tight_list = False
         self._document.walkabout(self)
         return RenderOutput(self._tokens[:], self._env)
 
@@ -110,7 +117,8 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         token.markup = "#" * node["level"]
 
     def visit_paragraph(self, node):
-        self.add_token("paragraph_open", "p", 1)
+        # paragraphs in tight lists are hidden
+        self.add_token("paragraph_open", "p", 1, hidden=self.in_tight_list)
 
     def depart_paragraph(self, node):
         self.add_token("paragraph_close", "p", -1)
@@ -137,17 +145,21 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
 
     def visit_bullet_list(self, node):
         self.add_token("bullet_list_open", "ul", 1, markup=node["bullet"])
+        self.in_tight_list = True
 
     def depart_bullet_list(self, node):
         self.add_token("bullet_list_close", "ul", -1, markup=node["bullet"])
+        self.in_tight_list = False
 
     def visit_enumerated_list(self, node):
         token = self.add_token("ordered_list_open", "ol", 1, markup=".")
         if "start" in node:
             token.attrs["start"] = node["start"]
+        self.in_tight_list = True
 
     def depart_enumerated_list(self, node):
         self.add_token("ordered_list_close", "ol", -1, markup=".")
+        self.in_tight_list = False
 
     def visit_list_item(self, node):
         token = self.add_token("list_item_open", "li", 1)
@@ -165,7 +177,10 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         raise nodes.SkipNode
 
     def visit_literal_block(self, node):
-        self.add_token("code_block", "code", 0, content=node.astext())
+        text = node.astext()
+        if not text.endswith("\n"):
+            text += "\n"
+        self.add_token("code_block", "code", 0, content=text)
         raise nodes.SkipNode
 
     def visit_block_quote(self, node):
@@ -269,6 +284,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
     # MyST Markdown specific
 
     def visit_RoleNode(self, node):
+        # TODO default role (or literal)
         self.add_token(
             "myst_role", "", 0, meta={"name": node["role"]}, content=node["text"]
         )
@@ -280,6 +296,55 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
             "hr",
             0,
             attrs={"class": "myst-line-comment"},
-            content=" " + node.astext(),
+            content=indent(node.astext(), " "),
         )
+        raise nodes.SkipNode
+
+    # TODO check if handling of is/subId required for footnotes
+
+    def visit_footnote(self, node, refname=None):
+        refname = refname or node["ids"][0]  # assume there is only one id
+        self.add_token("footnote_block_open", "", 1)
+        self.add_token("footnote_open", "", 1, meta={"label": refname, "id": 0})
+
+    def depart_footnote(self, node):
+        self.add_token("footnote_close", "", -1)
+        self.add_token("footnote_block_close", "", -1)
+
+    def visit_citation(self, node):
+        # treated same as for visit_footnote, but with specific prefix
+        # TODO fails if duplicate refname, since names is empty
+        refname = node["names"][0]  # assume there is only one name
+        refname = f"{self.cite_prefix}{refname}"
+        return self.visit_footnote(node, refname=refname)
+
+    def depart_citation(self, node):
+        # treated same as for depart_footnote
+        return self.depart_footnote(node)
+
+    def visit_footnote_reference(self, node):
+        if "refname" in node:
+            refname = node["refname"]
+        elif "refid" in node:
+            refname = node["refid"]
+        else:
+            message = f"unknown footnote reference type: {node.rawsource}"
+            self.warning(message)
+            if self.raise_on_error:
+                raise NotImplementedError(message)
+
+        self.add_token(
+            "footnote_ref", "", 0, meta={"label": refname, "id": 0, "subId": 0}
+        )
+
+        raise nodes.SkipNode
+
+    def visit_citation_reference(self, node):
+        refname = node["refname"] if "refname" in node else node["refid"]
+        # for compatibility we treat citations the same as footnotes, with a prefix
+        refname = f"{self.cite_prefix}{refname}"
+        self.add_token(
+            "footnote_ref", "", 0, meta={"label": refname, "id": 0, "subId": 0}
+        )
+        # the node also contains the refname as text, but we don't need that
         raise nodes.SkipNode

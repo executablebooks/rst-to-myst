@@ -22,6 +22,11 @@ ab
 :role:`content`
 
 ----
+
+[1]_ [b]_
+
+.. [1] normal footnote
+.. [b] citation definition
 """
     )
     token_renderer = MarkdownItRenderer(document, warning_stream=warning_stream)
