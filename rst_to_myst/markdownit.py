@@ -1,10 +1,12 @@
 """Convert to markdown-it tokens, which can then be rendered by mdformat."""
 from io import StringIO
 from textwrap import indent
-from typing import IO, Any, Dict, List, NamedTuple, Optional
+from typing import IO, Any, Dict, List, NamedTuple, Optional, Union
 
 from docutils import nodes
 from markdown_it.token import Token
+
+from .utils import yaml_dump
 
 
 class RenderOutput(NamedTuple):
@@ -13,6 +15,8 @@ class RenderOutput(NamedTuple):
 
 
 class MarkdownItRenderer(nodes.GenericNodeVisitor):
+    """Render docutils AST to Markdown-It token stream."""
+
     def __init__(
         self,
         document: nodes.document,
@@ -23,9 +27,6 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         default_role: Optional[str] = None,
     ):
         self._document = document
-        self._tokens: List[Token] = []
-        self._env = {"references": {}, "duplicate_refs": []}
-        self._inline: Optional[Token] = None
         self._warning_stream = warning_stream or StringIO()
         self.raise_on_error = raise_on_error
         # prefix added to citation labels
@@ -33,8 +34,15 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         # if no default role, convert to literal
         self.default_role = default_role
 
+        self.reset_state()
+
+    def reset_state(self):
         # record current state, that can affect children tokens
+        self._tokens: List[Token] = []
+        self._env = {"references": {}, "duplicate_refs": []}
+        self._inline: Optional[Token] = None
         self.parent_tokens: Dict[str, int] = {}
+        self._front_matter: Dict[str, Union[str, bool, int, float, dict, list]] = {}
 
     @property
     def document(self) -> nodes.document:
@@ -45,10 +53,19 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
 
     def to_tokens(self) -> RenderOutput:
         """Reset tokens and convert full document."""
-        self._tokens = []
-        self._env = {"references": {}, "duplicate_refs": []}
-        self.parent_tokens = {}
+        self.reset_state()
         self._document.walkabout(self)
+        if self._front_matter:
+            self._tokens.insert(
+                0,
+                Token(
+                    "front_matter",
+                    "",
+                    0,
+                    content=yaml_dump(self._front_matter),
+                    markup="---",
+                ),
+            )
         return RenderOutput(self._tokens[:], self._env)
 
     def add_token(
@@ -433,6 +450,19 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
             "footnote_ref", "", 0, meta={"label": refname, "id": 0, "subId": 0}
         )
         # the node also contains the refname as text, but we don't need that
+        raise nodes.SkipNode
+
+    def visit_FrontMatterNode(self, node):
+        for field in node:
+            if not len(field) == 2:
+                continue
+            key = field[0][0].astext()
+            if not field[1].children:
+                value = True
+            else:
+                # TODO nested render
+                value = field[1].astext()
+            self._front_matter[key] = value
         raise nodes.SkipNode
 
     # MyST Markdown specific

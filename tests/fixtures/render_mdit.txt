@@ -237,7 +237,7 @@ next line
     new paragraph
 .
 
-role:
+roles:
 .
 `a` :b:`c`
 .
@@ -291,4 +291,28 @@ X  Y
 C  D
 == ==
 ```
+.
+
+front-matter:
+.
+:Authors:
+    Tony J. (Tibs) Ibbs,
+    David Goodger
+
+    (and sundry other good-natured folks)
+
+:Version: 1.0 of 2001/08/08
+:Dedication: To my father.
+:orphan:
+.
+---
+Authors: |-
+  Tony J. (Tibs) Ibbs,
+  David Goodger
+
+  (and sundry other good-natured folks)
+Dedication: To my father.
+Version: 1.0 of 2001/08/08
+orphan: true
+---
 .
