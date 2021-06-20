@@ -20,6 +20,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         warning_stream: Optional[IO] = None,
         raise_on_error: bool = False,
         cite_prefix: str = "cite_",
+        default_role: Optional[str] = None,
     ):
         self._document = document
         self._tokens: List[Token] = []
@@ -29,6 +30,8 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         self.raise_on_error = raise_on_error
         # prefix added to citation labels
         self.cite_prefix = cite_prefix
+        # if no default role, convert to literal
+        self.default_role = default_role
 
         # record current state, that can affect children tokens
         self.parent_tokens: Dict[str, int] = {}
@@ -383,25 +386,6 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         tag = "th" if self.parent_tokens.get("thead") else "td"
         self.add_token(f"{tag}_close", tag, -1)
 
-    # MyST Markdown specific
-
-    def visit_RoleNode(self, node):
-        # TODO default role (or literal)
-        self.add_token(
-            "myst_role", "", 0, meta={"name": node["role"]}, content=node["text"]
-        )
-        raise nodes.SkipNode
-
-    def visit_comment(self, node):
-        self.add_token(
-            "myst_line_comment",
-            "hr",
-            0,
-            attrs={"class": "myst-line-comment"},
-            content=indent(node.astext(), " "),
-        )
-        raise nodes.SkipNode
-
     # TODO check if handling of is/subId required for footnotes
 
     def visit_footnote(self, node, refname=None):
@@ -449,4 +433,26 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
             "footnote_ref", "", 0, meta={"label": refname, "id": 0, "subId": 0}
         )
         # the node also contains the refname as text, but we don't need that
+        raise nodes.SkipNode
+
+    # MyST Markdown specific
+
+    def visit_RoleNode(self, node):
+        role = node["role"] or self.default_role
+        if role:
+            self.add_token(
+                "myst_role", "", 0, meta={"name": role}, content=node["text"]
+            )
+        else:
+            self.add_token("code_inline", "code", 0, markup="`", content=node["text"])
+        raise nodes.SkipNode
+
+    def visit_comment(self, node):
+        self.add_token(
+            "myst_line_comment",
+            "hr",
+            0,
+            attrs={"class": "myst-line-comment"},
+            content=indent(node.astext(), " "),
+        )
         raise nodes.SkipNode
