@@ -56,7 +56,11 @@ def test_render_mdit(line, title, rst, expected):
     output = token_renderer.to_tokens()
     md_renderer = MDRenderer()
     # TODO option for consecutive numbering consecutive_numbering
-    options = {"parser_extension": [PARSER_EXTENSIONS["myst"]]}
+    options = {
+        "parser_extension": [
+            PARSER_EXTENSIONS[name] for name in ["myst", "tables", "frontmatter"]
+        ]
+    }
     text = md_renderer.render(output.tokens, options, output.env)
     try:
         assert warning_stream.getvalue() == ""

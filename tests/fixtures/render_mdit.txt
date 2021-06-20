@@ -47,11 +47,31 @@ a
 
     b
 
+    -- attribution
+
+        nested
+
+    - with
+    - bullet list
+
+    1. with
+    2. enumerated list
+
 c
 .
 a
 
 > b
+>
+> <p class="attribution">—attribution</p>
+
+> > nested
+>
+> - with
+> - bullet list
+>
+> 1. with
+> 1. enumerated list
 
 c
 .
@@ -104,10 +124,8 @@ bullet list:
 - c
 
 * d
-
   - e
   - f
-
 * g
 .
 
@@ -224,4 +242,53 @@ role:
 `a` :b:`c`
 .
 {}`a` {b}`c`
+.
+
+table, simple:
+.
+== ==
+A  B
+== ==
+C  D
+== ==
+.
+| A   | B   |
+| --- | --- |
+| C   | D   |
+.
+
+table, nested syntax:
+.
+===== =============
+*A*   http://a.net/
+===== =============
+``C`` [1]_
+===== =============
+
+.. [1] footnote
+.
+| *A* | <http://a.net/> |
+| --- | --------------- |
+| `C` | [^id2]          |
+
+[^id2]: footnote
+.
+
+table, multi-head:
+.
+== ==
+A  B
+X  Y
+== ==
+C  D
+== ==
+.
+```{eval_rst}
+== ==
+A  B
+X  Y
+== ==
+C  D
+== ==
+```
 .

@@ -29,8 +29,9 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         self.raise_on_error = raise_on_error
         # prefix added to citation labels
         self.cite_prefix = cite_prefix
-        # if in a list, we make paragraphs hidden, to produce tight lists
-        self.in_tight_list = False
+
+        # record current state, that can affect children tokens
+        self.parent_tokens: Dict[str, int] = {}
 
     @property
     def document(self) -> nodes.document:
@@ -43,7 +44,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         """Reset tokens and convert full document."""
         self._tokens = []
         self._env = {"references": {}, "duplicate_refs": []}
-        self.in_tight_list = False
+        self.parent_tokens = {}
         self._document.walkabout(self)
         return RenderOutput(self._tokens[:], self._env)
 
@@ -52,6 +53,15 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
     ) -> Token:
         """A markdown-it token to the stream, handling inline tokens and children."""
         token = Token(ttype, tag, nesting, content=content, **kwargs)
+        # record entries and exits
+        if ttype.endswith("_open"):
+            self.parent_tokens.setdefault(ttype[:-5], 0)
+            self.parent_tokens[ttype[:-5]] += 1
+        if ttype.endswith("_close"):
+            self.parent_tokens.setdefault(ttype[:-6], 0)
+            self.parent_tokens[ttype[:-6]] -= 1
+            if self.parent_tokens[ttype[:-6]] <= 0:
+                self.parent_tokens.pop(ttype[:-6])
         # decide whether we should be adding as an inline child
         if ttype in {"paragraph_open", "heading_open", "th_open", "td_open"}:
             self._tokens.append(token)
@@ -117,10 +127,18 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         token.markup = "#" * node["level"]
 
     def visit_paragraph(self, node):
-        # paragraphs in tight lists are hidden
-        self.add_token("paragraph_open", "p", 1, hidden=self.in_tight_list)
+        if self.parent_tokens.get("th") or self.parent_tokens.get("td"):
+            # table cells are treated as paragraphs already
+            return
+        token = self.add_token("paragraph_open", "p", 1)
+        if self.parent_tokens.get("list_item"):
+            # paragraphs in tight lists are hidden
+            token.hidden = True
 
     def depart_paragraph(self, node):
+        if self.parent_tokens.get("th") or self.parent_tokens.get("td"):
+            # table cells are treated as paragraphs already
+            return
         self.add_token("paragraph_close", "p", -1)
 
     def visit_Text(self, node):
@@ -145,21 +163,17 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
 
     def visit_bullet_list(self, node):
         self.add_token("bullet_list_open", "ul", 1, markup=node["bullet"])
-        self.in_tight_list = True
 
     def depart_bullet_list(self, node):
         self.add_token("bullet_list_close", "ul", -1, markup=node["bullet"])
-        self.in_tight_list = False
 
     def visit_enumerated_list(self, node):
         token = self.add_token("ordered_list_open", "ol", 1, markup=".")
         if "start" in node:
             token.attrs["start"] = node["start"]
-        self.in_tight_list = True
 
     def depart_enumerated_list(self, node):
         self.add_token("ordered_list_close", "ol", -1, markup=".")
-        self.in_tight_list = False
 
     def visit_list_item(self, node):
         token = self.add_token("list_item_open", "li", 1)
@@ -188,6 +202,13 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
 
     def depart_block_quote(self, node):
         self.add_token("blockquote_close", "blockquote", -1, markup=">")
+
+    def visit_attribution(self, node):
+        # Markdown block quotes do not have an attribution syntax,
+        # so we add a best approximation
+        token = self.add_token("html_inline", "", 0)
+        token.content = f'<p class="attribution">—{node.astext()}</p>'
+        raise nodes.SkipNode
 
     def visit_reference(self, node):
         # we assume all reference names are plain text
@@ -277,9 +298,90 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         # TODO check for content?
         raise nodes.SkipNode
 
-    # GFM Extended CommonMark (i.e. tables)
+    # Standard CommonMark extensions
 
-    # TODO tables
+    def parse_gfm_table(self, node) -> bool:
+        """Check whether an RST table can be converted to a GFM one.
+
+        RST tables can have e.g. cells spanning multiple columns/rows,
+        which the GitHub Flavoured Markdown (GFM) table variant does not support.
+        """
+        # must have one child tgroup
+        if len(node.children) != 1 or not isinstance(node.children[0], nodes.tgroup):
+            return False
+        # tgroup should contain the number of columns
+        tgroup = node.children[0]
+        if "cols" not in tgroup:
+            return False
+        ncolumns = tgroup["cols"]
+        # trgoup should contain children: (colspec)*, thead, tbody
+        if len(tgroup.children) < 2:
+            return False
+        if not isinstance(tgroup.children[-2], nodes.thead):
+            return False
+        if not isinstance(tgroup.children[-1], nodes.tbody):
+            return False
+        thead = tgroup.children[-2]
+        tbody = tgroup.children[-1]
+        # the header can only have one row with the full amount of columns
+        if len(thead.children) != 1 or len(thead.children[0]) != ncolumns:
+            return False
+        # each body row should have the full amount of columns
+        for row in tbody.children:
+            if len(row.children) != ncolumns:
+                return False
+        return True
+
+    def visit_table(self, node):
+
+        if not self.parse_gfm_table(node):
+            text = node.rawsource
+            if not text.endswith("\n"):
+                text += "\n"
+            self.add_token(
+                "fence", "code", 0, content=text, markup="```", info="{eval_rst}"
+            )
+            raise nodes.SkipNode
+
+        self.add_token("table_open", "table", 1)
+
+    def depart_table(self, node):
+        self.add_token("table_close", "table", -1)
+
+    def visit_tgroup(self, node):
+        pass
+
+    def depart_tgroup(self, node):
+        pass
+
+    def visit_colspec(self, node):
+        raise nodes.SkipNode
+
+    def visit_thead(self, node):
+        self.add_token("thead_open", "thead", 1)
+
+    def depart_thead(self, node):
+        self.add_token("thead_close", "thead", -1)
+
+    def visit_tbody(self, node):
+        self.add_token("tbody_open", "tbody", 1)
+
+    def depart_tbody(self, node):
+        self.add_token("tbody_close", "tbody", -1)
+
+    def visit_row(self, node):
+        self.add_token("tr_open", "tr", 1)
+
+    def depart_row(self, node):
+        self.add_token("tr_close", "tr", -1)
+
+    def visit_entry(self, node):
+        tag = "th" if self.parent_tokens.get("thead") else "td"
+        self.add_token(f"{tag}_open", tag, 1)
+
+    def depart_entry(self, node):
+        tag = "th" if self.parent_tokens.get("thead") else "td"
+        self.add_token(f"{tag}_close", tag, -1)
 
     # MyST Markdown specific
 
