@@ -83,11 +83,17 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
             if self.parent_tokens[ttype[:-6]] <= 0:
                 self.parent_tokens.pop(ttype[:-6])
         # decide whether we should be adding as an inline child
-        if ttype in {"paragraph_open", "heading_open", "th_open", "td_open"}:
+        if ttype in {"paragraph_open", "heading_open", "th_open", "td_open", "dt_open"}:
             self._tokens.append(token)
             self._inline = Token("inline", "", 0, children=[])
             self._tokens.append(self._inline)
-        elif ttype in {"paragraph_close", "heading_close", "th_close", "td_close"}:
+        elif ttype in {
+            "paragraph_close",
+            "heading_close",
+            "th_close",
+            "td_close",
+            "dt_close",
+        }:
             self._tokens.append(token)
             self._inline = None
         elif self._inline:
@@ -457,6 +463,30 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         )
         # the node also contains the refname as text, but we don't need that
         raise nodes.SkipNode
+
+    def visit_definition_list(self, node):
+        self.add_token("dl_open", "dl", 1)
+
+    def depart_definition_list(self, node):
+        self.add_token("dl_close", "dl", -1)
+
+    def visit_definition_list_item(self, node):
+        pass
+
+    def depart_definition_list_item(self, node):
+        pass
+
+    def visit_term(self, node):
+        self.add_token("dt_open", "dt", 1)
+
+    def depart_term(self, node):
+        self.add_token("dt_close", "dt", -1)
+
+    def visit_definition(self, node):
+        self.add_token("dd_open", "dd", 1)
+
+    def depart_definition(self, node):
+        self.add_token("dd_close", "dd", -1)
 
     def visit_FrontMatterNode(self, node):
         for field in node:

@@ -195,6 +195,20 @@ This is a paragraph that contains [a link].
 [a link]: https://domain.invalid/
 .
 
+internal link, no-definition
+.
+`a link`_ `text <a link>`_
+.
+[a link] [text](alink)
+.
+
+link definition only
+.
+.. _a link: https://domain.invalid/
+.
+[a link]: https://domain.invalid/
+.
+
 target:
 .
 .. _a:
@@ -342,4 +356,25 @@ substitutions:
   caution: ''
   name: replacement a
 ---
+.
+
+definition list
+.
+term (up to a line of text)
+   Definition of the term, which must be indented
+
+   and can even consist of multiple paragraphs
+
+next term
+   Description ``a`` `a`_.
+.
+term (up to a line of text)
+
+: Definition of the term, which must be indented
+
+  and can even consist of multiple paragraphs
+
+next term
+
+: Description `a` [a].
 .

@@ -25,13 +25,24 @@ def from_tokens(output: RenderOutput, *, consecutive_numbering: bool = True) -> 
     # TODO option for consecutive numbering consecutive_numbering, etc
     options = {
         "parser_extension": [
-            PARSER_EXTENSIONS[name] for name in ["myst", "tables", "frontmatter"]
+            PARSER_EXTENSIONS[name]
+            for name in ["myst", "tables", "frontmatter", "deflist"]
         ]
         + [AdditionalRenderers],
         "mdformat": {"number": consecutive_numbering},
     }
     # TODO redirect logging
-    return md_renderer.render(output.tokens, options, output.env)
+    # mdformat outputs only used reference definitions during 'finalize'
+    # instead we want to output all parsed reference definitions
+    text = md_renderer.render(output.tokens, options, output.env, finalize=False)
+    if output.env["references"]:
+        if text:
+            text += "\n\n"
+        output.env["used_refs"] = set(output.env["references"])
+        text += md_renderer._write_references(output.env)
+    if text:
+        text += "\n"
+    return text
 
 
 class ConvertedOutput(NamedTuple):
