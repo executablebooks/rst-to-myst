@@ -1,3 +1,4 @@
+"""docutils states."""
 import re
 
 from docutils import nodes
@@ -354,7 +355,7 @@ class ExplicitMixin:
         return [substitution_node], blank_finish
 
     def table(self, isolate_function, parser_class):
-        """Parse a table."""
+        """Parse a table, and record the raw text."""
         block, messages, blank_finish = isolate_function()
         if block:
             try:

@@ -71,7 +71,7 @@ a
 > - bullet list
 >
 > 1. with
-> 1. enumerated list
+> 2. enumerated list
 
 c
 .
@@ -137,12 +137,18 @@ enumerated list:
 
 #. d
 #. e
+
+11. f
+12. g
 .
 1. a
-1. b
-1. c
-1. d
-1. e
+2. b
+3. c
+4. d
+5. e
+
+11) f
+12) g
 .
 
 comment:
@@ -314,5 +320,26 @@ Authors: |-
 Dedication: To my father.
 Version: 1.0 of 2001/08/08
 orphan: true
+---
+.
+
+substitution reference:
+.
+|sub|
+.
+{{ sub }}
+.
+
+substitution definition:
+.
+.. |name| replace:: replacement `a`_
+
+.. |caution| image:: warning.png
+             :alt: Warning!
+.
+---
+substitutions:
+  caution: ''
+  name: replacement a
 ---
 .

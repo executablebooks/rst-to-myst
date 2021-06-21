@@ -4,7 +4,7 @@ from pathlib import Path
 import click
 import yaml
 
-from . import compile_namespace, convert, to_ast
+from . import compile_namespace, convert, to_docutils_ast
 from .utils import yaml_dump
 
 
@@ -98,7 +98,7 @@ OPT_EXTENSIONS = click.option(
 def ast(file: TextIOWrapper, language: str, sphinx: bool, extensions, conversions):
     """Convert ReStructuredText to an Abstract Syntax Tree."""
     text = file.read()
-    document, _ = to_ast(
+    document, _ = to_docutils_ast(
         text,
         warning_stream=click.get_text_stream("stderr"),
         language_code=language,

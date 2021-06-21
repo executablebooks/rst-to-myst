@@ -6,7 +6,7 @@ from rst_to_myst import cli
 def test_directives_list():
     runner = CliRunner()
     result = runner.invoke(cli.directives_list, [])
-    assert result.exit_code == 0
+    assert result.exit_code == 0, result.output
     assert "admonition" in result.output
 
 

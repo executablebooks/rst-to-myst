@@ -6,7 +6,7 @@ from typing import IO, Any, Dict, Optional, Tuple
 from docutils import nodes
 
 from .nodes import ArgumentNode, DirectiveNode
-from .parser import to_ast
+from .parser import to_docutils_ast
 from .utils import yaml_dump
 
 
@@ -570,7 +570,7 @@ def convert(
     default_domain="py",
     conversions=None,
 ) -> Tuple[str, IO]:
-    document, warning_stream = to_ast(
+    document, warning_stream = to_docutils_ast(
         text,
         warning_stream=warning_stream,
         language_code=language_code,

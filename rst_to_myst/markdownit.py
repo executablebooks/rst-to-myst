@@ -97,12 +97,18 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         return token
 
     def default_visit(self, node):
+        self.unknown_visit(node)
+
+    def default_departure(self, node):
+        self.unknown_departure(node)
+
+    def unknown_visit(self, node):
         message = f"no visit method for: {node.__class__}"
         self.warning(message)
         if self.raise_on_error:
             raise NotImplementedError(message)
 
-    def default_departure(self, node):
+    def unknown_departure(self, node):
         message = f"no depart method for: {node.__class__}"
         self.warning(message)
         if self.raise_on_error:
@@ -468,6 +474,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
     # MyST Markdown specific
 
     def visit_RoleNode(self, node):
+        # TODO nested parse of specific roles
         role = node["role"] or self.default_role
         if role:
             self.add_token(
@@ -478,6 +485,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         raise nodes.SkipNode
 
     def visit_comment(self, node):
+        # TODO alternately use <!-- -->
         self.add_token(
             "myst_line_comment",
             "hr",
@@ -486,3 +494,23 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
             content=indent(node.astext(), " "),
         )
         raise nodes.SkipNode
+
+    def visit_substitution_reference(self, node):
+        self.add_token("substitution_inline", "span", 0, content=node["refname"])
+        # the node also contains the refname as text, but we don't need that
+        raise nodes.SkipNode
+
+    def visit_substitution_definition(self, node):
+        if "names" not in node or not node["names"]:
+            raise nodes.SkipNode
+        key = node["names"][0]
+        # substitution should always be a single directive
+        # special cases: replace, date
+        # TODO nested parse
+        value = node.astext()
+        self._front_matter.setdefault("substitutions", {})[key] = value
+        raise nodes.SkipNode
+
+    # TODO deflist, directive
+    # TODO https://docutils.sourceforge.io/docs/user/rst/quickref.htm
+    # line block, field list, option list

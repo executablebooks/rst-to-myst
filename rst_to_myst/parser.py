@@ -25,7 +25,12 @@ from .nodes import DirectiveNode, FrontMatterNode
 from .states import get_state_classes
 
 
-class RSTParser(Parser):
+class LosslessRSTParser(Parser):
+    """Modified RST Parser, allowing for the retrieval of the original source text.
+
+    Principally, roles and directives are not run.
+    """
+
     def __init__(self):
         self.initial_state = "Body"
         self.state_classes = get_state_classes()
@@ -121,7 +126,7 @@ class FrontMatter(Transform):
             self.document[index] = front_matter
 
 
-def to_ast(
+def to_docutils_ast(
     text: str,
     uri: str = "source",
     report_level=2,
@@ -134,7 +139,7 @@ def to_ast(
     conversions=None,
     front_matter=True,
 ) -> Tuple[nodes.document, StringIO]:
-    settings = OptionParser(components=(RSTParser,)).get_default_values()
+    settings = OptionParser(components=(LosslessRSTParser,)).get_default_values()
     warning_stream = StringIO() if warning_stream is None else warning_stream
     settings.warning_stream = warning_stream
     settings.report_level = report_level  # 2=warning
@@ -165,7 +170,7 @@ def to_ast(
     # whether to treat initial field list as front matter
     document.settings.front_matter = front_matter
 
-    parser = RSTParser()
+    parser = LosslessRSTParser()
     parser.parse(text, document)
 
     # these three transforms are required for converting targets correctly

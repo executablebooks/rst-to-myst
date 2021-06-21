@@ -833,6 +833,8 @@ class Inliner:
 
 
 class InlinerMyst(Inliner):
+    """Inliner that does not run roles."""
+
     def interpreted(
         self, rawsource: str, text: str, role: str, lineno: int
     ) -> Tuple[List[nodes.Node], List[nodes.system_message]]:
