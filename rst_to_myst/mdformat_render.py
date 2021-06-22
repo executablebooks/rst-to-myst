@@ -1,21 +1,89 @@
+from textwrap import indent
 from typing import IO, Any, Dict, Iterable, List, NamedTuple, Optional
 
 from markdown_it.token import Token
 from mdformat.plugins import PARSER_EXTENSIONS
 from mdformat.renderer import MDRenderer, RenderContext, RenderTreeNode
+from mdformat.renderer._util import longest_consecutive_sequence
 
 from .markdownit import MarkdownItRenderer, RenderOutput
 from .parser import to_docutils_ast
+from .utils import yaml_dump
+
+
+def _front_matter_tokens_render(node: RenderTreeNode, context: RenderContext) -> str:
+    dct = {}
+    for child in node.children:
+        path = child.meta["key_path"]
+        value = (
+            "\n\n".join(subchild.render(context) for subchild in child.children)
+            if child.children
+            else True
+        )
+        subdct = dct
+        for key in path[:-1]:
+            subdct.setdefault(key, {})
+            subdct = subdct[key]
+        subdct[path[-1]] = value
+    text = yaml_dump(dct).rstrip()
+    return f"---\n{text}\n---"
 
 
 def _sub_renderer(node: RenderTreeNode, context: RenderContext) -> str:
     return f"{{{{ {node.content} }}}}"
 
 
+def _directive_render(node: RenderTreeNode, context: RenderContext) -> str:
+
+    # special directives that should only be used within substitutions
+    if node.meta["module"].endswith("misc.Replace") and node.children:
+        return "\n\n".join(child.render(context) for child in node.children[-1])
+    if node.meta["module"].endswith("misc.Date"):
+        return "{sub-ref}`today`"
+
+    name = node.meta["name"]
+    info_str = code_block = ""
+
+    if node.children and node.children[0].type == "directive_arg":
+        info_str = "".join(child.render(context) for child in node.children[0])
+        info_str = " " + " ".join(info_str.splitlines()).strip()
+
+    if node.meta["options_list"]:
+        yaml_str = yaml_dump(
+            {
+                key: (True if val is None else (int(val) if val.isnumeric() else val))
+                for key, val in node.meta["options_list"]
+            }
+        )
+        code_block = indent(yaml_str, ":", lambda s: True).strip()
+
+    if node.children and node.children[-1].type == "directive_content":
+        if code_block:
+            code_block += "\n\n"
+        code_block += "\n\n".join(child.render(context) for child in node.children[-1])
+
+    # Info strings of backtick code fences can not contain backticks or tildes.
+    # If that is the case, we make a tilde code fence instead.
+    if node.markup and ":" in node.markup:
+        fence_char = ":"
+    elif "`" in info_str or "~" in info_str:
+        fence_char = "~"
+    else:
+        fence_char = "`"
+
+    # The code block must not include as long or longer sequence of `fence_char`s
+    # as the fence string itself
+    fence_len = max(3, longest_consecutive_sequence(code_block, fence_char) + 1)
+    fence_str = fence_char * fence_len
+    return f"{fence_str}{{{name}}}{info_str}\n{code_block}\n{fence_str}"
+
+
 class AdditionalRenderers:
     RENDERERS = {
+        "front_matter_tokens": _front_matter_tokens_render,
         "substitution_block": _sub_renderer,
         "substitution_inline": _sub_renderer,
+        "directive": _directive_render,
     }
 
 
@@ -68,6 +136,7 @@ def rst_to_myst(
     raise_on_error: bool = False,
     cite_prefix: str = "cite_",
     consecutive_numbering: bool = True,
+    colon_fences: bool = True,
 ) -> ConvertedOutput:
     """Convert RST text to MyST Markdown text.
 
@@ -86,6 +155,7 @@ def rst_to_myst(
     :param cite_prefix: Prefix to add to citation references
     :param raise_on_error: Raise exception on parsing errors (or only warn)
     :param consecutive_numbering: Apply consecutive numbering to ordered lists
+    :param colon_fences: Use colon fences for directives with parsed content
 
     """
     document, warning_stream = to_docutils_ast(
@@ -103,6 +173,7 @@ def rst_to_myst(
         cite_prefix=cite_prefix,
         raise_on_error=raise_on_error,
         default_role=default_role,
+        colon_fences=colon_fences,
     )
     output = token_renderer.to_tokens()
     output_text = from_tokens(output, consecutive_numbering=consecutive_numbering)

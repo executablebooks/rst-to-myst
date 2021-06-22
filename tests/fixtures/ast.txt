@@ -185,6 +185,10 @@ directive-eval-rst:
 
    content
 
+   .. sdf::
+
+      other
+
 .. hij:: argument
     :opt: value1
     :opt2: value2
@@ -197,12 +201,29 @@ directive-eval-rst:
 
 .
 <document source="source">
-    <DirectiveNode delimiter="```" indent="0" indented="['argument', '']" name="name" type="eval_rst">
-    <DirectiveNode delimiter="```" indent="2" indented="['', ':opt: value', '']" name="xyz" type="eval_rst">
-    <DirectiveNode delimiter="```" indent="3" indented="['', '', 'content', '']" name="lmp" type="eval_rst">
-    <DirectiveNode delimiter="```" indent="4" indented="['argument', ':opt: value1', ':opt2: value2', '']" name="hij" type="eval_rst">
-    <DirectiveNode delimiter="```" indent="4" indented="['argument', ':opt: value1', ':opt2: value2', '', 'content', '']" name="hij" type="eval_rst">
-
+    <EvalRstNode indent="0" name="name">
+        .. name:: argument
+    <EvalRstNode indent="2" name="xyz">
+        .. xyz::
+          :opt: value
+    <EvalRstNode indent="3" name="lmp">
+        .. lmp::
+        
+           content
+        
+           .. sdf::
+        
+              other
+    <EvalRstNode indent="4" name="hij">
+        .. hij:: argument
+            :opt: value1
+            :opt2: value2
+    <EvalRstNode indent="4" name="hij">
+        .. hij:: argument
+            :opt: value1
+            :opt2: value2
+        
+            content
 
 .
 
@@ -224,9 +245,13 @@ directive-admonition:
     .. tip::
 
         Content
+
+    .. unknown:: arg_block
+
+        content
 .
 <document source="source">
-    <DirectiveNode arg_block="['Abc *d*']" delimiter="::::" name="admonition" options_list="('class',\ 'xyz') ('name',\ 'df')" type="argument_content_colon">
+    <DirectiveNode conversion="parse_all" module="docutils.parsers.rst.directives.admonitions.Admonition" name="admonition" options_list="('class',\ 'xyz') ('name',\ 'df')">
         <ArgumentNode>
             Abc 
             <emphasis>
@@ -236,16 +261,20 @@ directive-admonition:
                 A 
                 <emphasis>
                     b
-            <DirectiveNode arg_block="[]" delimiter=":::" name="note" options_list="" type="content_only_colon">
+            <DirectiveNode conversion="parse_content" module="docutils.parsers.rst.directives.admonitions.Note" name="note" options_list="">
                 <ContentNode>
                     <paragraph>
                         lmn
-    <DirectiveNode arg_block="[]" delimiter="::::" name="note" options_list="" type="content_only_colon">
+    <DirectiveNode conversion="parse_content" module="docutils.parsers.rst.directives.admonitions.Note" name="note" options_list="">
         <ContentNode>
-            <DirectiveNode arg_block="[]" delimiter=":::" name="tip" options_list="" type="content_only_colon">
+            <DirectiveNode conversion="parse_content" module="docutils.parsers.rst.directives.admonitions.Tip" name="tip" options_list="">
                 <ContentNode>
                     <paragraph>
                         Content
+            <EvalRstNode indent="4" name="unknown">
+                .. unknown:: arg_block
+                
+                    content
 
 .
 
@@ -377,20 +406,27 @@ Block quotes are just:
                 sub-title
             <paragraph>
                 <RoleNode role="abc" text="xyz">
-            <DirectiveNode delimiter="```" indent="4" indented="['x', ':a: b', '', 'abc', '']" name="abc" type="eval_rst">
-            <DirectiveNode delimiter="```" indent="0" indented="['lkjhlkj', '']" name="xyz" type="eval_rst">
+            <EvalRstNode indent="4" name="abc">
+                .. abc:: x
+                    :a: b
+                
+                    abc
+            <EvalRstNode indent="0" name="xyz">
+                .. xyz:: lkjhlkj
             <paragraph>
                 <substitution_reference refname="x">
                     x
             <substitution_definition names="name">
-                <DirectiveNode arg_block="" delimiter="```" name="replace" options_list="" type="content_only">
+                <DirectiveNode conversion="parse_content" module="docutils.parsers.rst.directives.misc.Replace" name="replace" options_list="">
                     <ContentNode>
                         <paragraph>
                             replacement 
                             <emphasis>
                                 text
             <substitution_definition names="caution">
-                <DirectiveNode arg_block="['warning.png']" delimiter="```" name="image" options_list="('alt',\ 'Warning!')" type="direct">
+                <DirectiveNode conversion="direct" module="docutils.parsers.rst.directives.images.Image" name="image" options_list="('alt',\ 'Warning!')">
+                    <ArgumentNode>
+                        warning.png
             <definition_list>
                 <definition_list_item>
                     <term>
@@ -462,6 +498,7 @@ Block quotes are just:
                     <list_item prefix="2. " style="enumerated">
                         <paragraph>
                             enumerated list
+
 .
 
 tables-simple:

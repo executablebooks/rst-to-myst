@@ -4,7 +4,7 @@ from pathlib import Path
 import click
 import yaml
 
-from . import compile_namespace, convert, to_docutils_ast
+from . import compile_namespace, rst_to_myst, to_docutils_ast
 from .utils import yaml_dump
 
 
@@ -119,15 +119,16 @@ def ast(file: TextIOWrapper, language: str, sphinx: bool, extensions, conversion
 def parse(file: TextIOWrapper, language: str, sphinx: bool, extensions, conversions):
     """Convert ReStructuredText to MyST Markdown."""
     text = file.read()
-    output, _ = convert(
+    # TODO expose more options
+    output = rst_to_myst(
         text,
-        click.get_text_stream("stderr"),
+        warning_stream=click.get_text_stream("stderr"),
         language_code=language,
         use_sphinx=sphinx,
         extensions=extensions,
         conversions=conversions,
     )
-    click.echo(output)
+    click.echo(output.text)
 
 
 @main.group("directives")

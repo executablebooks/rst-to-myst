@@ -1,4 +1,10 @@
+from typing import Any, List, Tuple
+
 from docutils import nodes
+
+
+class EvalRstNode(nodes.Element):
+    """Should contain a single ``Text`` node with the contents to wrap."""
 
 
 class RoleNode(nodes.Element):
@@ -6,7 +12,26 @@ class RoleNode(nodes.Element):
 
 
 class DirectiveNode(nodes.Element):
-    pass
+    """This node will have an optional ``ArgumentNode`` and/or ``ContentNode`` child."""
+
+    def __init__(
+        self,
+        rawsource,
+        *,
+        name: str,
+        module: str,
+        conversion: str,
+        options_list: List[Tuple[str, Any]],
+        **kwargs
+    ) -> None:
+        super().__init__(
+            rawsource,
+            name=name,
+            module=module,
+            conversion=conversion,
+            options_list=options_list,
+            **kwargs
+        )
 
 
 class ArgumentNode(nodes.Element):

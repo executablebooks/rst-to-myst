@@ -1,0 +1,421 @@
+inline:
+.
+a *some emphasis* **some bold** b
+c :role:`content` d
+e ``literal`` f
+g reference_ h
+i `a phrase`_ j
+k `text <ref_>`_ l
+m anonymous__ n
+o (inline target not supported) p
+q |sub| r
+s [1]_ [#]_ [*]_ t
+u [CIT2002]_ v
+w http://a.net/ x
+y `uri <a.org>`_ z
+
+.. _reference: http://www.example.com
+
+.. __:
+
+anonymous target paragraph
+
+.. [#] auto-number footnote.
+.. [*] auto-symbol footnote.
+    next line
+
+    new paragraph
+.. [CIT2002] *a* citation footnote
+
+.
+a *some emphasis* **some bold** b
+c {role}`content` d
+e `literal` f
+g [reference] h
+i [a phrase] j
+k [text][ref] l
+m [anonymous](id5) n
+o (inline target not supported) p
+q {{ sub }} r
+s [^1] [^id6] [^id7] t
+u [^cite_cit2002] v
+w <http://a.net/> x
+y [uri](a.org) z
+
+(id5)=
+
+anonymous target paragraph
+
+[^id6]: auto-number footnote.
+
+[^id7]: auto-symbol footnote.
+next line
+
+    new paragraph
+
+[^cite_cit2002]: *a* citation footnote
+
+[reference]: http://www.example.com
+.
+
+indents:
+.
+- a
+  b
+  *c*
+  **d**
+  `e`_
+  :f:`g`
+.
+- a
+  b
+  *c*
+  **d**
+  [e]
+  {f}`g`
+.
+
+titles:
+.
+header 1
+========
+
+header 2a
+---------
+
+header 3
+........
+
+header 2b
+---------
+.
+# header 1
+
+## header 2a
+
+### header 3
+
+## header 2b
+
+.
+
+paragraphs:
+.
+para 1
+
+para 2
+line 2
+
+para 3
+.
+para 1
+
+para 2
+line 2
+
+para 3
+.
+
+comments:
+.
+.. This is a comment.
+.
+% This is a comment.
+.
+
+transition:
+.
+----
+.
+______________________________________________________________________
+.
+
+directives:
+.
+.. image:: images/ball1.gif
+
+.. figure:: images/ball1.gif
+  :option: value
+
+  Content
+
+.. note::
+    :class: something
+    :name: else
+
+    .. admonition:: Some :role:`a`
+
+        Content :role:`a`
+.
+```{image} images/ball1.gif
+
+```
+
+:::{figure} images/ball1.gif
+:option: value
+
+Content
+:::
+
+::::{note}
+:class: something
+:name: else
+
+:::{admonition} Some {role}`a`
+Content {role}`a`
+:::
+::::
+.
+
+lists:
+.
+paragraph
+
+- bullet *list*
+- tight
+
+paragraph
+
+- bullet ``list``
+- loose and nested
+
+  * x
+
+1. enumerated *list*
+2. tight
+
+paragraph
+
+5. enumerated *list*
+6. tight and specific start number
+
+paragraph
+
+1. enumerated *list*
+2. loose
+   multiple
+
+   paragraphs
+
+paragraph
+.
+paragraph
+
+- bullet *list*
+- tight
+
+paragraph
+
+- bullet `list`
+
+- loose and nested
+
+  - x
+
+1. enumerated *list*
+2. tight
+
+paragraph
+
+5. enumerated *list*
+6. tight and specific start number
+
+paragraph
+
+1. enumerated *list*
+
+2. loose
+   multiple
+
+   paragraphs
+
+paragraph
+.
+
+literal-block:
+.
+::
+
+  Some text
+  More text
+
+para
+.
+```
+Some text
+More text
+```
+
+para
+.
+
+definition-list:
+.
+what `a`_
+  Definition lists associate a term with
+  a definition `a`_.
+
+how
+  The term is a one-line phrase, and the
+  definition is one or more paragraphs or
+  body elements, indented relative to the
+  term.
+  
+  - Blank lines are not allowed
+    between term and definition.
+
+para
+.
+what [a]
+
+: Definition lists associate a term with
+  a definition [a].
+
+how
+
+: The term is a one-line phrase, and the
+  definition is one or more paragraphs or
+  body elements, indented relative to the
+  term.
+
+  - Blank lines are not allowed
+    between term and definition.
+
+para
+
+.
+
+block-quotes:
+.
+Block quotes are just:
+
+    Indented
+
+    paragraphs
+
+        and they
+        may nest.
+
+        -- attribution
+
+    - with
+    - bullet list
+
+    1. with
+    2. enumerated list
+
+para
+.
+Block quotes are just:
+
+> Indented
+>
+> paragraphs
+>
+> > and they
+> > may nest.
+> >
+> > <p class="attribution">—attribution</p>
+>
+> - with
+> - bullet list
+>
+> 1. with
+> 2. enumerated list
+
+para
+.
+
+match_titles:
+.
+.. computational-economics documentation master file
+
+.. only:: html
+
+    ####
+    Home
+    ####
+
+.. only:: latex
+
+    ##########################
+    Datascience for Economists
+    ##########################
+
+.. toctree::
+    :maxdepth: 2
+    :titlesonly:
+
+    introduction/index
+    python_fundamentals/index
+    scientific/index
+    pandas/index
+    applications/index
+
+.
+% computational-economics documentation master file
+
+:::{only} html
+# Home
+:::
+
+:::{only} latex
+# Datascience for Economists
+:::
+
+```{toctree}
+:maxdepth: 2
+:titlesonly: true
+
+introduction/index
+python_fundamentals/index
+scientific/index
+pandas/index
+applications/index
+```
+.
+
+list-indented
+.
+This is a numbered list!
+
+#. Step 1
+#. Step 2
+#. Step 3
+#. Step 4
+
+This is a numbered list with indentation!
+
+    #. Step 1
+    #. Step 2
+    #. Step 3
+    #. Step 4
+
+This is a regular list with indentation!
+
+    * Step 1
+    * Step 2
+    * Step 3
+    * Step 4
+.
+This is a numbered list!
+
+1. Step 1
+2. Step 2
+3. Step 3
+4. Step 4
+
+This is a numbered list with indentation!
+
+> 1. Step 1
+> 2. Step 2
+> 3. Step 3
+> 4. Step 4
+
+This is a regular list with indentation!
+
+> - Step 1
+> - Step 2
+> - Step 3
+> - Step 4
+.

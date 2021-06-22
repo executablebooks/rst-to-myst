@@ -1,278 +1,55 @@
-inline:
+text:
 .
-a *some emphasis* **some bold** b
-c :role:`content` d
-e ``literal`` f
-g reference_ h
-i `a phrase`_ j
-k `text <ref_>`_ l
-m anonymous__ n
-o (inline target not supported) p
-q |sub| r
-s [1]_ [#]_ [*]_ t
-u [CIT2002]_ v
-w http://a.net/ x
-y `uri <a.org>`_ z
-
-.. _reference: http://www.example.com
-
-.. __:
-
-anonymous target paragraph
-
-.. [#] auto-number footnote.
-.. [*] auto-symbol footnote.
-    next line
-
-    new paragraph
-.. [CIT2002] *a* citation footnote
-
+some text
 .
-a *some emphasis* **some bold** b
-c {role}`content` d
-e `literal` f
-g [reference][reference] h
-i [a phrase](a phrase) j
-k [text](ref) l
-m [anonymous](id5) n
-o (inline target not supported) p
-q {{ sub }} r
-s [^1] [^id6] [^id7] t
-u [^cite_cit2002] v
-w <http://a.net/> x
-y [uri](<a.org>) z
-
-[reference]: http://www.example.com
-
-(id5)=
-
-anonymous target paragraph
-
-[^id6]: auto-number footnote.
-
-[^id7]: auto-symbol footnote.
-  next line
-
-  new paragraph
-
-[^cite_cit2002]: *a* citation footnote
+some text
 .
 
-indents:
+emphasis:
 .
-- a
-  b
-  *c*
-  **d**
-  `e`_
-  :f:`g`
+*emphasis*
 .
-- a
-  b
-  *c*
-  **d**
-  [e](e)
-  {f}`g`
+*emphasis*
 .
 
-titles:
+strong:
 .
-header 1
-========
-
-header 2a
----------
-
-header 3
-........
-
-header 2b
----------
+**strong**
 .
-# header 1
-
-## header 2a
-
-### header 3
-
-## header 2b
-
+**strong**
 .
 
-paragraphs:
+literal:
 .
-para 1
-
-para 2
-line 2
-
-para 3
+``abc``
 .
-para 1
-
-para 2
-line 2
-
-para 3
+`abc`
 .
 
-comments:
-.
-.. This is a comment.
-.
-<!---
-This is a comment.
--->
-.
-
-transition:
-.
-----
-.
----
-
-.
-
-directives:
-.
-.. image:: images/ball1.gif
-
-.. figure:: images/ball1.gif
-  :option: value
-
-  Content
-
-.. note::
-    :class: something
-    :name: else
-
-    .. admonition:: Some :role:`a`
-
-        Content :role:`a`
-.
-```{image} images/ball1.gif
-
-```
-
-:::{figure} images/ball1.gif
-:option: value
-
-Content
-
-:::
-
-::::{note}
-:class: something
-:name: else
-
-:::{admonition} Some {role}`a`
-
-Content {role}`a`
-
-:::
-
-::::
-
-.
-
-lists:
-.
-a
-
-- b
-- *c*
-
-  * x
-
-1. d
-2. e
-   f
-
-   g
-
-   5. x
-.
-a
-
-- b
-- *c*
-
-  * x
-
-1. d
-2. e
-   f
-
-   g
-
-   5. x
-.
-
-literal-block:
+literal block:
 .
 ::
 
-  Some text
-  More text
+   literal text
 
-para
+normal text
 .
 ```
-Some text
-More text
+literal text
 ```
 
-para
+normal text
 .
 
-definition-list:
+block quotes
 .
-what `a`_
-  Definition lists associate a term with
-  a definition `a`_.
+a
 
-how
-  The term is a one-line phrase, and the
-  definition is one or more paragraphs or
-  body elements, indented relative to the
-  term.
-  
-  - Blank lines are not allowed
-    between term and definition.
+    b
 
-para
-.
-what [a](a) 
+    -- attribution
 
-: Definition lists associate a term with
-  a definition [a](a).
-
-how 
-
-: The term is a one-line phrase, and the
-  definition is one or more paragraphs or
-  body elements, indented relative to the
-  term.
-
-  - Blank lines are not allowed
-    between term and definition.
-
-para
-
-.
-
-block-quotes:
-.
-Block quotes are just:
-
-    Indented
-
-    paragraphs
-
-        and they
-        may nest.
-
-        -- attribution
+        nested
 
     - with
     - bullet list
@@ -280,26 +57,283 @@ Block quotes are just:
     1. with
     2. enumerated list
 
-para
+c
 .
-Block quotes are just:
+a
 
-> Indented
-> 
-> paragraphs
-> 
-> > and they
-> > may nest.
-> > 
-> > <p class="attribution">—attribution</p>
-> > 
+> b
+>
+> <p class="attribution">—attribution</p>
+
+> > nested
+>
 > - with
 > - bullet list
-
+>
 > 1. with
 > 2. enumerated list
 
+c
+.
+
+transition:
+.
+----
+.
+______________________________________________________________________
+.
+
+headings:
+.
+heading 1
+=========
+
+heading 2-1
+-----------
+
+heading 3
+*********
+
+heading 2-2
+-----------
+.
+# heading 1
+
+## heading 2-1
+
+### heading 3
+
+## heading 2-2
+.
+
+bullet-list:
+.
+- a
+- b
+- c
+
+* d
+
+  * e
+  * f
+
+* g
+.
+- a
+- b
+- c
+
+* d
+
+  - e
+  - f
+
+* g
+.
+
+enumerated list:
+.
+1. a
+2. b
+3. c
+
+#. d
+#. e
+
+11. f
+12. g
+.
+1. a
+2. b
+3. c
+4. d
+5. e
+
+11) f
+12) g
+.
+
+comment:
+.
+.. This is a comment.
+
+..
+   This whole indented block
+   is a comment.
+
+   Still in the comment.
+
+.
+% This is a comment.
+
+% This whole indented block
+% is a comment.
+%
+% Still in the comment.
+.
+
+autolink:
+.
+http://a.net/
+.
+<http://a.net/>
+.
+
+external link:
+.
+`Link text <https://domain.invalid/>`_
+.
+[Link text](https://domain.invalid/)
+.
+
+external link definition:
+.
+This is a paragraph that contains `a link`_.
+
+.. _a link: https://domain.invalid/
+.
+This is a paragraph that contains [a link].
+
+[a link]: https://domain.invalid/
+.
+
+internal link, no-definition
+.
+`a link`_ `text <a link>`_
+.
+[a link] [text](alink)
+.
+
+link definition only
+.
+.. _a link: https://domain.invalid/
+.
+[a link]: https://domain.invalid/
+.
+
+target:
+.
+.. _a:
+
+ab
+==
+.
+(a)=
+
+# ab
+.
+
+footnote:
+.
+[1]_ [#]_ [*]_
+
+.. [1] normal footnote
+   next line
+.. [#] auto-number footnote.
+.. [*] auto-symbol footnote.
+.
+[^id4] [^id5] [^id6]
+
+[^id4]: normal footnote
+next line
+
+[^id5]: auto-number footnote.
+
+[^id6]: auto-symbol footnote.
+.
+
+citation:
+.
+[a]_
+
+.. [a] citation footnote
+   next line
+
+   new paragraph
+.
+[^cite_a]
+
+[^cite_a]: citation footnote
+next line
+
+    new paragraph
+.
+
+roles:
+.
+`a` :b:`c`
+.
+`a` {b}`c`
+.
+
+table, simple:
+.
+== ==
+A  B
+== ==
+C  D
+== ==
+.
+| A   | B   |
+| --- | --- |
+| C   | D   |
+.
+
+table, nested syntax:
+.
+===== =============
+*A*   http://a.net/
+===== =============
+``C`` [1]_
+===== =============
+
+.. [1] footnote
+.
+| *A* | <http://a.net/> |
+| --- | --------------- |
+| `C` | [^id2]          |
+
+[^id2]: footnote
+.
+
+tables-grid:
+.
++------------------------+------------+----------+----------+
+| Header row, column 1   | Header 2   | Header 3 | Header 4 |
+| (header rows optional) |            |          |          |
++========================+============+==========+==========+
+| body row 1, column 1   | column 2   | column 3 | column 4 |
++------------------------+------------+----------+----------+
+| body row 2             | ...        | ...      |          |
++------------------------+------------+----------+----------+
+
 para
+.
+| Header row, column 1 (header rows optional) | Header 2 | Header 3 | Header 4 |
+| ------------------------------------------- | -------- | -------- | -------- |
+| body row 1, column 1                        | column 2 | column 3 | column 4 |
+| body row 2                                  | ...      | ...      |          |
+
+para
+.
+
+table, multi-head:
+.
+== ==
+A  B
+X  Y
+== ==
+C  D
+== ==
+.
+```{eval_rst}
+== ==
+A  B
+X  Y
+== ==
+C  D
+== ==
+```
 .
 
 front-matter:
@@ -323,134 +357,172 @@ Authors: |-
 Dedication: To my father.
 Version: 1.0 of 2001/08/08
 orphan: true
-
 ---
-
 .
 
-substitution-definitions:
+substitution-reference:
 .
+|sub|
+.
+{{ sub }}
+.
+
+substitution-definition:
+.
+:orphan:
+
 .. |name| replace:: replacement `a`_
 
 .. |caution| image:: warning.png
              :alt: Warning!
 .
 ---
+orphan: true
 substitutions:
   caution: |-
     ```{image} warning.png
     :alt: Warning!
-
     ```
-  name: replacement [a](a)
-
+  name: replacement [a]
 ---
-
-
 .
 
-tables-simple:
+definition list
 .
-=====  =====  =======
-`a`_   B      A and B
-=====  =====  =======
-False  False  False
-True   False  False
-False  True   False
-True   True   `a`_
-=====  =====  =======
+term (up to a line of text)
+   Definition of the term, which must be indented
 
-para
+   and can even consist of multiple paragraphs
+
+next term
+   Description ``a`` `a`_.
 .
-| [a](a) | B     | A and B |
-| ------ | ----- | ------- |
-| False  | False | False   |
-| True   | False | False   |
-| False  | True  | False   |
-| True   | True  | [a](a)  |
+term (up to a line of text)
 
-para
+: Definition of the term, which must be indented
+
+  and can even consist of multiple paragraphs
+
+next term
+
+: Description `a` [a].
 .
 
-tables-grid:
-.
-+------------------------+------------+----------+----------+
-| Header row, column 1   | Header 2   | Header 3 | Header 4 |
-| (header rows optional) |            |          |          |
-+========================+============+==========+==========+
-| body row 1, column 1   | column 2   | column 3 | column 4 |
-+------------------------+------------+----------+----------+
-| body row 2             | ...        | ...      |          |
-+------------------------+------------+----------+----------+
 
-para
+directive-eval-rst
 .
-```{eval_rst}
-+------------------------+------------+----------+----------+
-| Header row, column 1   | Header 2   | Header 3 | Header 4 |
-| (header rows optional) |            |          |          |
-+========================+============+==========+==========+
-| body row 1, column 1   | column 2   | column 3 | column 4 |
-+------------------------+------------+----------+----------+
-| body row 2             | ...        | ...      |          |
-+------------------------+------------+----------+----------+
+.. unknown:: argument
+
+.. xyz::
+  :opt: value
+
+.. lmp::
+
+   content
+
+   .. sdf::
+
+      other
+
+.. hij:: argument
+    :opt: value1
+    :opt2: value2
+
+.. hij:: argument
+    :opt: value1
+    :opt2: value2
+
+    ````content````
+
+.
+```{eval-rst}
+.. unknown:: argument
 ```
 
-para
-.
-
-match_titles:
-.
-.. computational-economics documentation master file
-
-.. only:: html
-
-    ####
-    Home
-    ####
-
-.. only:: latex
-
-    ##########################
-    Datascience for Economists
-    ##########################
-
-.. toctree::
-    :maxdepth: 2
-    :titlesonly:
-
-    introduction/index
-    python_fundamentals/index
-    scientific/index
-    pandas/index
-    applications/index
-
-.
-<!---
-computational-economics documentation master file
--->
-
-```{only} html
-
-# Home
-
+```{eval-rst}
+.. xyz::
+  :opt: value
 ```
 
-```{only} latex
+```{eval-rst}
+.. lmp::
 
-# Datascience for Economists
+   content
 
+   .. sdf::
+
+      other
 ```
 
-```{toctree}
-:maxdepth: 2
-:titlesonly: true
-
-introduction/index
-python_fundamentals/index
-scientific/index
-pandas/index
-applications/index
-
+```{eval-rst}
+.. hij:: argument
+    :opt: value1
+    :opt2: value2
 ```
+
+`````{eval-rst}
+.. hij:: argument
+    :opt: value1
+    :opt2: value2
+
+    ````content````
+`````
+.
+
+directive-admonition:
+.
+initial paragraph
+
+.. admonition:: Abc *d* `a`_
+   :class: xyz
+   :name: df
+
+   A *b* http://a.net/
+
+   next paragraph
+
+.. note::
+
+    .. tip::
+
+        Content
+
+        .. note::
+
+            Content 2
+
+    .. unknown:: arg_block
+
+        content
+
+final paragraph
+.
+initial paragraph
+
+:::{admonition} Abc *d* [a]
+:class: xyz
+:name: df
+
+A *b* <http://a.net/>
+
+next paragraph
+:::
+
+:::::{note}
+::::{tip}
+Content
+
+:::{note}
+Content 2
+:::
+::::
+
+```{eval-rst}
+.. unknown:: arg_block
+
+    content
+```
+:::::
+
+final paragraph
 .

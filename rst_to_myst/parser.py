@@ -21,7 +21,7 @@ except ImportError:
 from . import data as package_data
 from .inliner import InlinerMyst
 from .namespace import compile_namespace
-from .nodes import DirectiveNode, FrontMatterNode
+from .nodes import FrontMatterNode
 from .states import get_state_classes
 
 
@@ -72,7 +72,14 @@ ENUM_CONVERTERS = {
 
 
 class ResolveListItems(Transform):
-    """For bullet/enumerated lists, propagate attributes to their child list items."""
+    """For bullet/enumerated lists, propagate attributes to their child list items.
+
+    Also decide if they are loose/tight::
+
+        A list is loose if any of its list items are separated by blank lines,
+        or if any of its list items directly contain two block-level elements
+        with a blank line between them. Otherwise a list is tight.
+    """
 
     def apply(self):
         for node in self.document.traverse(nodes.bullet_list):
@@ -81,6 +88,7 @@ class ResolveListItems(Transform):
                 if isinstance(child, nodes.list_item):
                     child["style"] = "bullet"
                     child["prefix"] = prefix
+
         for node in self.document.traverse(nodes.enumerated_list):
             number = 1
             if "start" in node:
@@ -94,21 +102,6 @@ class ResolveListItems(Transform):
                     child["style"] = "enumerated"
                     child["prefix"] = f"{number}. "
                     number += 1
-
-
-class DirectiveNesting(Transform):
-    """For each DirectiveNode, compute its nesting level inside other directives."""
-
-    def apply(self):
-        for node in self.document.traverse(DirectiveNode):  # type: DirectiveNode
-            # TODO this will overcount if multiple directives at same nesting depth
-            node["delimiter"] *= (
-                3
-                + sum(1 for _ in node.traverse(DirectiveNode, include_self=False))
-                # add an extra delimiter if the directive contains a table,
-                # because we wrap some in eval_rst directive
-                + (1 if sum(1 for _ in node.traverse(nodes.table)) else 0)
-            )
 
 
 class FrontMatter(Transform):
@@ -183,7 +176,6 @@ def to_docutils_ast(
         # bespoke transforms
         StripFootnoteLabel,
         ResolveListItems,
-        DirectiveNesting,
     ]:
         transform = transform_cls(document)
         transform.apply()

@@ -1,12 +1,10 @@
 """Convert to markdown-it tokens, which can then be rendered by mdformat."""
 from io import StringIO
 from textwrap import indent
-from typing import IO, Any, Dict, List, NamedTuple, Optional, Union
+from typing import IO, Any, Dict, List, NamedTuple, Optional, Tuple
 
 from docutils import nodes
 from markdown_it.token import Token
-
-from .utils import yaml_dump
 
 
 class RenderOutput(NamedTuple):
@@ -25,6 +23,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         raise_on_error: bool = False,
         cite_prefix: str = "cite_",
         default_role: Optional[str] = None,
+        colon_fences: bool = True,
     ):
         self._document = document
         self._warning_stream = warning_stream or StringIO()
@@ -33,6 +32,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         self.cite_prefix = cite_prefix
         # if no default role, convert to literal
         self.default_role = default_role
+        self.colon_fences = colon_fences
 
         self.reset_state()
 
@@ -42,7 +42,9 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         self._env = {"references": {}, "duplicate_refs": []}
         self._inline: Optional[Token] = None
         self.parent_tokens: Dict[str, int] = {}
-        self._front_matter: Dict[str, Union[str, bool, int, float, dict, list]] = {}
+        # [(key path, tokens), ...]
+        self._front_matter_tokens: List[Tuple[List[str], List[Token]]] = []
+        self._tight_list = True
 
     @property
     def document(self) -> nodes.document:
@@ -55,18 +57,31 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         """Reset tokens and convert full document."""
         self.reset_state()
         self._document.walkabout(self)
-        if self._front_matter:
-            self._tokens.insert(
-                0,
-                Token(
-                    "front_matter",
-                    "",
-                    0,
-                    content=yaml_dump(self._front_matter),
-                    markup="---",
-                ),
-            )
+
+        # add front-matter that should be nested parsed
+        if self._front_matter_tokens:
+            self.add_token("front_matter_tokens_open", "", 1)
+            for key_path, tokens in self._front_matter_tokens:
+                self.add_token(
+                    "front_matter_key_open", "", 1, meta={"key_path": key_path}
+                )
+                self._tokens.extend(tokens)
+                self.add_token("front_matter_key_close", "", -1)
+            self.add_token("front_matter_tokens_close", "", -1)
+
         return RenderOutput(self._tokens[:], self._env)
+
+    def nested_parse(self, nodes: List[nodes.Element]) -> List[Token]:
+        new_inst = MarkdownItRenderer(
+            document=self._document,
+            warning_stream=self._warning_stream,
+            cite_prefix=self.cite_prefix,
+            default_role=self.default_role,
+            colon_fences=self.colon_fences,
+        )
+        for node in nodes:
+            node.walkabout(new_inst)
+        return new_inst._tokens
 
     def add_token(
         self, ttype: str, tag: str, nesting: int, *, content: str = "", **kwargs: Any
@@ -163,7 +178,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
             # table cells are treated as paragraphs already
             return
         token = self.add_token("paragraph_open", "p", 1)
-        if self.parent_tokens.get("list_item"):
+        if self.parent_tokens.get("list_item") and self._tight_list:
             # paragraphs in tight lists are hidden
             token.hidden = True
 
@@ -214,6 +229,9 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
                 token.markup = node["prefix"].strip()
             elif node["style"] == "enumerated":
                 token.markup = "."
+        # a list is loose if any of its list items directly contain
+        # two block-level elements, otherwise tight. In this case paragraphs are hidden
+        self._tight_list = len(node.children) < 2
 
     def depart_list_item(self, node):
         self.add_token("list_item_close", "li", -1)
@@ -261,20 +279,26 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
                 "a",
                 1,
                 attrs={"href": node["refname"]},
-                # TODO should only add label if target found
+                # TODO should only add label if target found?
                 meta={"label": node["refname"]},
             )
             self.add_token("text", "", 0, content=text)
             self.add_token("link_close", "a", -1)
         elif "refuri" in node:
             # external link
+            # TODO ensure prefixed with http://?
             token = self.add_token("link_open", "a", 1, attrs={"href": node["refuri"]})
             self.add_token("text", "", 0, content=text)
             self.add_token("link_close", "a", -1)
         elif "refid" in node:
             # anonymous links, pointing to internal targets
             # TODO ensure mdformat does not wrap in <>
-            token = self.add_token("link_open", "a", 1, attrs={"href": node["refid"]})
+            token = self.add_token(
+                "link_open",
+                "a",
+                1,
+                attrs={"href": node["refid"]},
+            )
             self.add_token("text", "", 0, content=text)
             self.add_token("link_close", "a", -1)
         else:
@@ -413,6 +437,12 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
 
     def depart_entry(self, node):
         tag = "th" if self.parent_tokens.get("thead") else "td"
+        # Markdown cells can not include newlines
+        # TODO improve or upstream this "fix"
+        # maybe replace with html_inline <br> tokens (text will be escaped)
+        if self._inline:
+            for child in self._inline.children:
+                child.content = child.content.replace("\n", " ")
         self.add_token(f"{tag}_close", tag, -1)
 
     # TODO check if handling of is/subId required for footnotes
@@ -493,12 +523,9 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
             if not len(field) == 2:
                 continue
             key = field[0][0].astext()
-            if not field[1].children:
-                value = True
-            else:
-                # TODO nested render
-                value = field[1].astext()
-            self._front_matter[key] = value
+            tokens = self.nested_parse(field[1].children)
+            self._front_matter_tokens.append(([key], tokens))
+
         raise nodes.SkipNode
 
     # MyST Markdown specific
@@ -534,13 +561,52 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         if "names" not in node or not node["names"]:
             raise nodes.SkipNode
         key = node["names"][0]
-        # substitution should always be a single directive
-        # special cases: replace, date
-        # TODO nested parse
-        value = node.astext()
-        self._front_matter.setdefault("substitutions", {})[key] = value
+        # substitution definition should always be a single directive node
+        tokens = self.nested_parse(node.children)
+        self._front_matter_tokens.append((["substitutions", key], tokens))
         raise nodes.SkipNode
 
-    # TODO deflist, directive
+    def visit_EvalRstNode(self, node):
+        text = node.astext()
+        if not text.endswith("\n"):
+            text += "\n"
+        self.add_token("fence", "code", 0, content=text, info="{eval-rst}")
+        raise nodes.SkipNode
+
+    def visit_DirectiveNode(self, node):
+        markup = "`"
+        if self.colon_fences and node["conversion"] in (
+            "parse_content",
+            "parse_content_titles",
+            "parse_all",
+        ):
+            markup = ":"
+        self.add_token(
+            "directive_open",
+            "",
+            1,
+            meta={
+                key: node[key]
+                for key in ["name", "module", "conversion", "options_list"]
+            },
+            markup=markup,
+        )
+
+    def depart_DirectiveNode(self, node):
+        self.add_token("directive_close", "", -1)
+
+    def visit_ArgumentNode(self, node):
+        # TODO might be a better construct to have this as children of inline
+        self.add_token("directive_arg_open", "", 1)
+
+    def depart_ArgumentNode(self, node):
+        self.add_token("directive_arg_close", "", -1)
+
+    def visit_ContentNode(self, node):
+        self.add_token("directive_content_open", "", 1)
+
+    def depart_ContentNode(self, node):
+        self.add_token("directive_content_close", "", -1)
+
     # TODO https://docutils.sourceforge.io/docs/user/rst/quickref.htm
     # line block, field list, option list
