@@ -625,7 +625,7 @@ indentation.  For example::
     - This is the first paragraph in the second item in the list.
 
       This is the second paragraph in the second item in the list.
-      The blank line above this paragraph is required.  The left edge
+      The blank line above this paragraph is required. The left edge
       of this paragraph lines up with the paragraph above, both
       indented relative to the bullet.
 
