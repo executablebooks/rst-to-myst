@@ -13,7 +13,7 @@ TEXTS_PATH = Path(__file__).parent.joinpath("texts")
     ids=[path.name[:-4] for path in TEXTS_PATH.glob("*.rst")],
 )
 def test_texts(path: Path, file_regression):
-    text = path.read_text()
+    text = path.read_text("utf8")
     output = rst_to_myst(text)
     warnings = output.warning_stream.getvalue().splitlines()
     # ignore known inline target warnings
