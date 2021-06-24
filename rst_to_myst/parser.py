@@ -46,7 +46,7 @@ class IndirectHyperlinks(Transform):
     def apply(self):
         for target in self.document.indirect_targets:
             if not target.resolved:
-                self.resolve_indirect_target(target)
+                self.resolve_indirect_target(target)  # TODO implement this resolve?
             # Do not resolve the actual references, since this replaces the "refname"
             # self.resolve_indirect_references(target)
 
@@ -105,7 +105,10 @@ class ResolveListItems(Transform):
 
 
 class FrontMatter(Transform):
-    """Extract an initial field list into a `FrontMatterNode`."""
+    """Extract an initial field list into a `FrontMatterNode`.
+
+    Similar to ``docutils.transforms.frontmatter.DocInfo``.
+    """
 
     def apply(self):
         if not self.document.settings.front_matter:
@@ -114,9 +117,14 @@ class FrontMatter(Transform):
         if index is None:
             return
         candidate = self.document[index]
+        if isinstance(candidate, nodes.section):
+            index = candidate.first_child_not_matching_class(nodes.PreBibliographic)
+            if index is None:
+                return
+            candidate = candidate[index]
         if isinstance(candidate, nodes.field_list):
             front_matter = FrontMatterNode("", *candidate.children)
-            self.document[index] = front_matter
+            candidate.replace_self(front_matter)
 
 
 def to_docutils_ast(
@@ -171,7 +179,7 @@ def to_docutils_ast(
         PropagateTargets,  # Propagate empty internal targets to the next element. (260)
         FrontMatter,  # convert initial field list (DocInfo=340)
         AnonymousHyperlinks,  # Link anonymous references to targets. (440)
-        IndirectHyperlinks,  # "refuri" migrated back to all indirect targets (460)
+        # IndirectHyperlinks,  # "refuri" migrated back to all indirect targets (460)
         Footnotes,  # Assign numbers to autonumbered footnotes (620)
         # bespoke transforms
         StripFootnoteLabel,

@@ -1,9 +1,10 @@
+import logging
 from textwrap import indent
 from typing import IO, Any, Dict, Iterable, List, NamedTuple, Optional
 
 from markdown_it.token import Token
 from mdformat.plugins import PARSER_EXTENSIONS
-from mdformat.renderer import MDRenderer, RenderContext, RenderTreeNode
+from mdformat.renderer import LOGGER, MDRenderer, RenderContext, RenderTreeNode
 from mdformat.renderer._util import longest_consecutive_sequence
 
 from .markdownit import MarkdownItRenderer, RenderOutput
@@ -12,6 +13,7 @@ from .utils import yaml_dump
 
 
 def _front_matter_tokens_render(node: RenderTreeNode, context: RenderContext) -> str:
+    """Special render for front-matter whose values also need to be rendered."""
     dct = {}
     for child in node.children:
         path = child.meta["key_path"]
@@ -30,23 +32,27 @@ def _front_matter_tokens_render(node: RenderTreeNode, context: RenderContext) ->
 
 
 def _sub_renderer(node: RenderTreeNode, context: RenderContext) -> str:
+    """Render a substitution."""
     return f"{{{{ {node.content} }}}}"
 
 
 def _directive_render(node: RenderTreeNode, context: RenderContext) -> str:
-
+    """Directive render, for handling directives that may contain child elements."""
     # special directives that should only be used within substitutions
     if node.meta["module"].endswith("misc.Replace") and node.children:
         return "\n\n".join(child.render(context) for child in node.children[-1])
     if node.meta["module"].endswith("misc.Date"):
         return "{sub-ref}`today`"
+    # TODO handle unicode directive
 
     name = node.meta["name"]
-    info_str = code_block = ""
+    info_str = option_block = code_block = ""
 
     if node.children and node.children[0].type == "directive_arg":
         info_str = "".join(child.render(context) for child in node.children[0])
-        info_str = " " + " ".join(info_str.splitlines()).strip()
+        info_str = " ".join(info_str.splitlines()).strip()
+        if info_str:
+            info_str = " " + info_str
 
     if node.meta["options_list"]:
         yaml_str = yaml_dump(
@@ -55,12 +61,21 @@ def _directive_render(node: RenderTreeNode, context: RenderContext) -> str:
                 for key, val in node.meta["options_list"]
             }
         )
-        code_block = indent(yaml_str, ":", lambda s: True).strip()
+        option_block = indent(yaml_str, ":", lambda s: True).strip()
 
     if node.children and node.children[-1].type == "directive_content":
-        if code_block:
-            code_block += "\n\n"
-        code_block += "\n\n".join(child.render(context) for child in node.children[-1])
+        content = "\n\n".join(child.render(context) for child in node.children[-1])
+        if not option_block and content.startswith(":"):
+            # add a new-line, so content is not treated as an option
+            content = "\n" + content
+        elif option_block and content:
+            # new lines between options and content
+            option_block += "\n\n"
+        code_block = content
+
+    if option_block or code_block:
+        # new line before closing fence
+        code_block += "\n"
 
     # Info strings of backtick code fences can not contain backticks or tildes.
     # If that is the case, we make a tilde code fence instead.
@@ -75,7 +90,7 @@ def _directive_render(node: RenderTreeNode, context: RenderContext) -> str:
     # as the fence string itself
     fence_len = max(3, longest_consecutive_sequence(code_block, fence_char) + 1)
     fence_str = fence_char * fence_len
-    return f"{fence_str}{{{name}}}{info_str}\n{code_block}\n{fence_str}"
+    return f"{fence_str}{{{name}}}{info_str}\n{option_block}{code_block}{fence_str}"
 
 
 class AdditionalRenderers:
@@ -87,7 +102,12 @@ class AdditionalRenderers:
     }
 
 
-def from_tokens(output: RenderOutput, *, consecutive_numbering: bool = True) -> str:
+def from_tokens(
+    output: RenderOutput,
+    *,
+    consecutive_numbering: bool = True,
+    warning_stream: Optional[IO] = None,
+) -> str:
     """Convert markdown-it tokens to text."""
     md_renderer = MDRenderer()
     # TODO option for consecutive numbering consecutive_numbering, etc
@@ -99,15 +119,25 @@ def from_tokens(output: RenderOutput, *, consecutive_numbering: bool = True) -> 
         + [AdditionalRenderers],
         "mdformat": {"number": consecutive_numbering},
     }
-    # TODO redirect logging
-    # mdformat outputs only used reference definitions during 'finalize'
-    # instead we want to output all parsed reference definitions
-    text = md_renderer.render(output.tokens, options, output.env, finalize=False)
-    if output.env["references"]:
-        if text:
-            text += "\n\n"
-        output.env["used_refs"] = set(output.env["references"])
-        text += md_renderer._write_references(output.env)
+
+    # temporarily redirect mdformat logging
+    warning_handler = None
+    if warning_stream:
+        warning_handler = logging.StreamHandler(warning_stream)
+        warning_handler.setLevel(logging.WARNING)
+        LOGGER.addHandler(warning_handler)
+    try:
+        # mdformat outputs only used reference definitions during 'finalize'
+        # instead we want to output all parsed reference definitions
+        text = md_renderer.render(output.tokens, options, output.env, finalize=False)
+        if output.env["references"]:
+            if text:
+                text += "\n\n"
+            output.env["used_refs"] = set(output.env["references"])
+            text += md_renderer._write_references(output.env)
+    finally:
+        if warning_handler:
+            LOGGER.removeHandler(warning_handler)
     if text:
         text += "\n"
     return text
@@ -176,5 +206,9 @@ def rst_to_myst(
         colon_fences=colon_fences,
     )
     output = token_renderer.to_tokens()
-    output_text = from_tokens(output, consecutive_numbering=consecutive_numbering)
+    output_text = from_tokens(
+        output,
+        consecutive_numbering=consecutive_numbering,
+        warning_stream=warning_stream,
+    )
     return ConvertedOutput(output_text, output.tokens, output.env, warning_stream)

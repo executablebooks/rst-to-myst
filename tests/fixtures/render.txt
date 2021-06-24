@@ -235,7 +235,7 @@ footnote:
 [^id4] [^id5] [^id6]
 
 [^id4]: normal footnote
-next line
+    next line
 
 [^id5]: auto-number footnote.
 
@@ -254,7 +254,7 @@ citation:
 [^cite_a]
 
 [^cite_a]: citation footnote
-next line
+    next line
 
     new paragraph
 .
@@ -509,6 +509,7 @@ next paragraph
 :::
 
 :::::{note}
+
 ::::{tip}
 Content
 
@@ -525,4 +526,28 @@ Content 2
 :::::
 
 final paragraph
+.
+
+field-list
+.
+paragraph
+
+:name: value
+:other: multiline
+    value
+    more
+
+paragraph
+.
+paragraph
+
+```{eval-rst}
+
+:name: value
+:other: multiline
+    value
+    more
+```
+
+paragraph
 .

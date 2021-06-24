@@ -49,7 +49,7 @@ anonymous target paragraph
 [^id6]: auto-number footnote.
 
 [^id7]: auto-symbol footnote.
-next line
+    next line
 
     new paragraph
 
@@ -148,7 +148,6 @@ directives:
         Content :role:`a`
 .
 ```{image} images/ball1.gif
-
 ```
 
 :::{figure} images/ball1.gif
@@ -418,4 +417,26 @@ This is a regular list with indentation!
 > - Step 2
 > - Step 3
 > - Step 4
+.
+
+fields-after-title
+.
+=============================
+ reStructuredText Directives
+=============================
+:Author: David Goodger
+:Contact: docutils-develop@lists.sourceforge.net
+:Revision: $Revision$
+:Date: $Date$
+:Copyright: This document has been placed in the public domain.
+.
+---
+Author: David Goodger
+Contact: <mailto:docutils-develop@lists.sourceforge.net>
+Copyright: This document has been placed in the public domain.
+Date: \$Date\$
+Revision: \$Revision\$
+---
+
+# reStructuredText Directives
 .

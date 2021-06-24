@@ -199,6 +199,9 @@ class ExplicitMixin:
     ):
         """Return an EvalRstNode."""
         node = EvalRstNode(block_text, name=name, indent=indent)
+        if not block_text.startswith(".. "):
+            # substitution definition directives
+            block_text = ".. " + block_text
         node += nodes.Text(block_text)
         return [node], blank_finish
 
@@ -381,6 +384,34 @@ class Body(SectionMixin, ExplicitMixin, states.Body):
             "state_classes": get_state_classes(),
             "initial_state": "Body",
         }
+
+    def field_marker(self, match, context, next_state):
+        """Field list item.
+
+        Modified to store full text of field_list in ``rawsource``
+        """
+        field_list = nodes.field_list()
+        self.parent += field_list
+        field, blank_finish = self.field(match)
+        field_list += field
+        offset = self.state_machine.line_offset + 1  # next line
+        newline_offset, blank_finish = self.nested_list_parse(
+            self.state_machine.input_lines[offset:],
+            input_offset=self.state_machine.abs_line_offset() + 1,
+            node=field_list,
+            initial_state="FieldList",
+            blank_finish=blank_finish,
+        )
+        self.goto_line(newline_offset)
+        # TODO this slicing of input_lines seems to work, but I'm not exactly sure why
+        field_list.rawsource += "\n".join(
+            self.state_machine.input_lines[
+                offset - 1 : offset + (newline_offset - field.line)
+            ]
+        )
+        if not blank_finish:
+            self.parent += self.unindent_warning("Field list")
+        return [], next_state, []
 
 
 class Explicit(ExplicitMixin, states.Explicit):

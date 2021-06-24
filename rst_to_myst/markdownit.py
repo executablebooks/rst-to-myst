@@ -50,8 +50,11 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
     def document(self) -> nodes.document:
         return self._document
 
-    def warning(self, message: str):
-        self._warning_stream.write(f"RENDER WARNING: {message}\n")
+    def warning(self, message: str, line: Optional[int]):
+        if line is not None:
+            self._warning_stream.write(f"RENDER WARNING:{line}: {message}\n")
+        else:
+            self._warning_stream.write(f"RENDER WARNING: {message}\n")
 
     def to_tokens(self) -> RenderOutput:
         """Reset tokens and convert full document."""
@@ -60,14 +63,16 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
 
         # add front-matter that should be nested parsed
         if self._front_matter_tokens:
-            self.add_token("front_matter_tokens_open", "", 1)
+            fm_tokens = []
+            fm_tokens.append(Token("front_matter_tokens_open", "", 1))
             for key_path, tokens in self._front_matter_tokens:
-                self.add_token(
-                    "front_matter_key_open", "", 1, meta={"key_path": key_path}
+                fm_tokens.append(
+                    Token("front_matter_key_open", "", 1, meta={"key_path": key_path})
                 )
-                self._tokens.extend(tokens)
-                self.add_token("front_matter_key_close", "", -1)
-            self.add_token("front_matter_tokens_close", "", -1)
+                fm_tokens.extend(tokens)
+                fm_tokens.append(Token("front_matter_key_close", "", -1))
+            fm_tokens.append(Token("front_matter_tokens_close", "", -1))
+            self._tokens = fm_tokens + self._tokens
 
         return RenderOutput(self._tokens[:], self._env)
 
@@ -125,13 +130,13 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
 
     def unknown_visit(self, node):
         message = f"no visit method for: {node.__class__}"
-        self.warning(message)
+        self.warning(message, node.line)
         if self.raise_on_error:
             raise NotImplementedError(message)
 
     def unknown_departure(self, node):
         message = f"no depart method for: {node.__class__}"
-        self.warning(message)
+        self.warning(message, node.line)
         if self.raise_on_error:
             raise NotImplementedError(message)
 
@@ -303,7 +308,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
             self.add_token("link_close", "a", -1)
         else:
             message = f"unknown reference type: {node.rawsource}"
-            self.warning(message)
+            self.warning(message, node.line)
             if self.raise_on_error:
                 raise NotImplementedError(message)
 
@@ -313,10 +318,12 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         if "inline" in node and node["inline"]:
             # TODO inline targets
             message = f"inline targets not implemented: {node.rawsource}"
-            self.warning(message)
+            self.warning(message, node.line)
             if self.raise_on_error:
                 raise NotImplementedError(message)
-            self.add_token("text", "", 0, content=str(node.rawsource))
+            self.add_token(
+                "code_inline", "code", 0, markup="`", content=str(node.rawsource)
+            )
             raise nodes.SkipNode
 
         if "refuri" in node:
@@ -474,7 +481,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
             refname = node["refid"]
         else:
             message = f"unknown footnote reference type: {node.rawsource}"
-            self.warning(message)
+            self.warning(message, node.line)
             if self.raise_on_error:
                 raise NotImplementedError(message)
 
@@ -512,6 +519,11 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
     def depart_term(self, node):
         self.add_token("dt_close", "dt", -1)
 
+    def visit_classifier(self, node):
+        # classifiers can follow a term, e.g. `term : classifier`
+        # TODO record term classifiers?
+        raise nodes.SkipNode
+
     def visit_definition(self, node):
         self.add_token("dd_open", "dd", 1)
 
@@ -526,6 +538,12 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
             tokens = self.nested_parse(field[1].children)
             self._front_matter_tokens.append(([key], tokens))
 
+        raise nodes.SkipNode
+
+    def visit_field_list(self, node):
+        if node.rawsource:
+            text = "\n" + node.rawsource.strip() + "\n"
+            self.add_token("fence", "code", 0, content=text, info="{eval-rst}")
         raise nodes.SkipNode
 
     # MyST Markdown specific
@@ -609,4 +627,4 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         self.add_token("directive_content_close", "", -1)
 
     # TODO https://docutils.sourceforge.io/docs/user/rst/quickref.htm
-    # line block, field list, option list
+    # line block, option list
