@@ -558,3 +558,32 @@ dollarmath
 .
 $a^2 + b^2 = c^2$
 .
+
+code-block-no-args
+.
+.. code-block:: python
+
+   def some_function():
+       interesting = False
+       print 'This line is highlighted.'
+       print 'This one is not...'
+       print '...but this one is.'
+
+.. code-block:: yaml
+
+    a: 1
+    b: "a"
+.
+```python
+def some_function():
+    interesting = False
+    print 'This line is highlighted.'
+    print 'This one is not...'
+    print '...but this one is.'
+```
+
+```yaml
+a: 1
+b: "a"
+```
+.

@@ -270,7 +270,6 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
 
     def visit_reference(self, node):
         # we assume all reference names are plain text
-        # TODO check this is always the case
         text = node.astext()
 
         if "standalone_uri" in node:
@@ -607,16 +606,36 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
             "parse_all",
         ):
             markup = ":"
-        self.add_token(
-            "directive_open",
-            "",
-            1,
-            meta={
-                key: node[key]
-                for key in ["name", "module", "conversion", "options_list"]
-            },
-            markup=markup,
-        )
+        if (
+            (
+                node["name"] == "code-block"
+                or node["module"] == "sphinx.directives.patches.Code"
+            )
+            and not node["options_list"]
+            and len(node.children) == 2
+        ):
+            # special case, where we can use standard Markdown fences
+            argument, content = node.children
+            self.add_token(
+                "fence",
+                "code",
+                0,
+                content=content.astext() + "\n",
+                markup="```",
+                info=argument.astext().strip(),
+            )
+            raise nodes.SkipNode
+        else:
+            self.add_token(
+                "directive_open",
+                "",
+                1,
+                meta={
+                    key: node[key]
+                    for key in ["name", "module", "conversion", "options_list"]
+                },
+                markup=markup,
+            )
 
     def depart_DirectiveNode(self, node):
         self.add_token("directive_close", "", -1)
