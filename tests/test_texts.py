@@ -20,4 +20,4 @@ def test_texts(path: Path, file_regression):
     assert not [
         line for line in warnings if "inline targets not implemented" not in line
     ], warnings
-    file_regression.check(output.text, extension=".md")
+    file_regression.check(output.text, encoding="utf8", extension=".md")
