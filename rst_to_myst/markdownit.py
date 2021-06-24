@@ -24,6 +24,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         cite_prefix: str = "cite_",
         default_role: Optional[str] = None,
         colon_fences: bool = True,
+        dollarmath: bool = True,
     ):
         self._document = document
         self._warning_stream = warning_stream or StringIO()
@@ -33,6 +34,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         # if no default role, convert to literal
         self.default_role = default_role
         self.colon_fences = colon_fences
+        self.dollarmath = dollarmath
 
         self.reset_state()
 
@@ -83,6 +85,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
             cite_prefix=self.cite_prefix,
             default_role=self.default_role,
             colon_fences=self.colon_fences,
+            dollarmath=self.dollarmath,
         )
         for node in nodes:
             node.walkabout(new_inst)
@@ -552,9 +555,14 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         # TODO nested parse of specific roles
         role = node["role"] or self.default_role
         if role:
-            self.add_token(
-                "myst_role", "", 0, meta={"name": role}, content=node["text"]
-            )
+            if self.dollarmath and role == "math":
+                self.add_token(
+                    "math_inline", "math", 0, markup="$", content=node["text"].strip()
+                )
+            else:
+                self.add_token(
+                    "myst_role", "", 0, meta={"name": role}, content=node["text"]
+                )
         else:
             self.add_token("code_inline", "code", 0, markup="`", content=node["text"])
         raise nodes.SkipNode

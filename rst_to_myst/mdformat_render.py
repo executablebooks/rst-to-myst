@@ -167,6 +167,7 @@ def rst_to_myst(
     cite_prefix: str = "cite_",
     consecutive_numbering: bool = True,
     colon_fences: bool = True,
+    dollarmath: bool = True,
 ) -> ConvertedOutput:
     """Convert RST text to MyST Markdown text.
 
@@ -186,6 +187,7 @@ def rst_to_myst(
     :param raise_on_error: Raise exception on parsing errors (or only warn)
     :param consecutive_numbering: Apply consecutive numbering to ordered lists
     :param colon_fences: Use colon fences for directives with parsed content
+    :param dollarmath: Convert ``math`` roles to dollar delimited math
 
     """
     document, warning_stream = to_docutils_ast(
@@ -204,6 +206,7 @@ def rst_to_myst(
         raise_on_error=raise_on_error,
         default_role=default_role,
         colon_fences=colon_fences,
+        dollarmath=dollarmath,
     )
     output = token_renderer.to_tokens()
     output_text = from_tokens(
