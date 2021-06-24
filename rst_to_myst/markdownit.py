@@ -262,7 +262,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         # Markdown block quotes do not have an attribution syntax,
         # so we add a best approximation
         token = self.add_token("html_inline", "", 0)
-        token.content = f'<p class="attribution">—{node.astext()}</p>'
+        token.content = f'<p class="attribution">-{node.astext()}</p>'
         raise nodes.SkipNode
 
     def visit_reference(self, node):

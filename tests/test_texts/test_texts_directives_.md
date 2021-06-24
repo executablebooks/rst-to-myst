@@ -624,7 +624,7 @@ For inline math, use the ["math" role].
 > book, statute, etc., written or printed in red or otherwise
 > distinguished from the rest of the text. ...
 >
-> <p class="attribution">—Random House Webster's College Dictionary, 1991</p>
+> <p class="attribution">-Random House Webster's College Dictionary, 1991</p>
 
 The "rubric" directive inserts a "rubric" element into the document
 tree.  A rubric is like an informal heading that doesn't correspond to

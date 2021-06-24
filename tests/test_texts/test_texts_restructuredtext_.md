@@ -1298,7 +1298,7 @@ attributions.
 >
 > > Block quote 1.
 > >
-> > <p class="attribution">—Attribution 1</p>
+> > <p class="attribution">-Attribution 1</p>
 >
 > > Block quote 2.
 

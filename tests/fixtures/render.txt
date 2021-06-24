@@ -63,7 +63,7 @@ a
 
 > b
 >
-> <p class="attribution">—attribution</p>
+> <p class="attribution">-attribution</p>
 
 > > nested
 >
