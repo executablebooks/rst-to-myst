@@ -152,7 +152,7 @@ OPT_DEFAULT_ROLE = click.option(
 OPT_CITE_PREFIX = click.option(
     "--cite-prefix",
     "-cp",
-    default="cite_",
+    default="cite",
     show_default=True,
     help="Prefix to add to citation references",
 )
@@ -236,7 +236,7 @@ def tokens(
         conversions=conversions,
         default_domain=default_domain,
         default_role=default_role,
-        cite_prefix=cite_prefix,
+        cite_prefix=cite_prefix + "_",
         colon_fences=colon_fences,
         dollar_math=dollar_math,
     )
@@ -280,7 +280,7 @@ def stream(
         conversions=conversions,
         default_domain=default_domain,
         default_role=default_role,
-        cite_prefix=cite_prefix,
+        cite_prefix=cite_prefix + "_",
         consecutive_numbering=consecutive_numbering,
         colon_fences=colon_fences,
         dollar_math=dollar_math,
@@ -342,18 +342,18 @@ def convert(
                 conversions=conversions,
                 default_domain=default_domain,
                 default_role=default_role,
-                cite_prefix=cite_prefix,
+                cite_prefix=cite_prefix + "_",
                 consecutive_numbering=consecutive_numbering,
                 colon_fences=colon_fences,
                 dollar_math=dollar_math,
             )
-        except Exception:
-            click.secho("FAILED", fg="red")
+        except Exception as exc:
+            click.secho(f"FAILED:\n{exc}", fg="red")
             if stop_on_fail:
                 raise SystemExit(1)
             continue
 
-        click.secho(f"CONVERTED (extensions: {output.extensions!r})", fg="green")
+        click.secho(f"CONVERTED (extensions: {list(output.extensions)!r})", fg="green")
         myst_extensions.update(output.extensions)
         if dry_run:
             continue
@@ -361,7 +361,7 @@ def convert(
         if replace_files and output_path != path:
             path.unlink()
     click.echo("")
-    click.secho(f"FINISHED ALL! (extensions: {myst_extensions!r})", fg="green")
+    click.secho(f"FINISHED ALL! (extensions: {list(myst_extensions)!r})", fg="green")
 
 
 @main.group("directives")

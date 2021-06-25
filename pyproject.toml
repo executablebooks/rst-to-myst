@@ -40,6 +40,12 @@ test = [
     "pytest-cov",
     "pytest-regressions"
 ]
+docs = [
+    "myst-parser~=0.15.0",
+    "sphinx-book-theme",
+    "sphinx-click~=2.6",
+    "sphinx-panels",
+]
 
 [tool.flit.sdist]
 include = ["LICENSE", "README.md", "rst_to_myst/data/directives.yml"]
