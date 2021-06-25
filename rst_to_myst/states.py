@@ -1,8 +1,10 @@
+"""docutils states."""
 import re
+from typing import List, Optional
 
 from docutils import nodes
 from docutils.nodes import fully_normalize_name as normalize_name
-from docutils.parsers.rst import states, tableparser
+from docutils.parsers.rst import Directive, states, tableparser
 from docutils.utils import (
     BadOptionDataError,
     BadOptionError,
@@ -10,7 +12,7 @@ from docutils.utils import (
     extract_options,
 )
 
-from .nodes import ArgumentNode, ContentNode, DirectiveNode
+from .nodes import ArgumentNode, ContentNode, DirectiveNode, EvalRstNode
 
 # Alphanumerics with isolated internal [-._+:] chars (i.e. not 2 together):
 SIMPLENAME_RE = r"(?:(?!_)\w)+(?:[-._+:](?:(?!_)\w)+)*"
@@ -109,22 +111,18 @@ class ExplicitMixin:
             blank_finish,
         ) = self.parse_directive_match(match)
 
-        directive_node = DirectiveNode(
-            block_text,
-            name=type_name,
-            delimiter="`",
-        )
-
         # try to get directive class
         # directive_class, messages = directives.directive(
         #     type_name, self.memo.language, self.document
         # )
-        directive_class = self.document.settings.namespace.get_directive(type_name)
+        directive_class: Optional[
+            Directive
+        ] = self.document.settings.namespace.get_directive(type_name)
 
         # default to eval rst
         if directive_class is None:
             # TODO warning message?
-            return self.eval_rst(directive_node, indent, indented, blank_finish)
+            return self.eval_rst(type_name, block_text, indent, indented, blank_finish)
 
         # get directive path for lookup
         directive_path = f"{directive_class.__module__}.{directive_class.__name__}"
@@ -132,26 +130,20 @@ class ExplicitMixin:
         # lookup directive path
         conversion = self.document.settings.directive_data.get(directive_path, None)
 
-        if (not conversion) or conversion == "eval_rst":
-            return self.eval_rst(directive_node, indent, indented, blank_finish)
-
         if conversion not in [
             "direct",
-            "argument_only",
-            "content_only",
-            "content_only_titles",
-            "argument_content",
-            "direct_colon",
-            "argument_only_colon",
-            "content_only_colon",
-            "argument_content_colon",
+            "parse_argument",
+            "parse_content",
+            "parse_content_titles",
+            "parse_all",
         ]:
-            # TODO warning
-            return self.eval_rst(directive_node, indent, indented, blank_finish)
-
-        directive_node["type"] = conversion
-        if conversion.endswith("_colon"):
-            directive_node["delimiter"] = ":"
+            if conversion and conversion != "eval_rst":
+                self.reporter.warning(
+                    f'Unknown conversion type "{conversion}"',
+                    nodes.literal_block(block_text, block_text),
+                    line=lineno,
+                )
+            return self.eval_rst(type_name, block_text, indent, indented, blank_finish)
 
         try:
             (
@@ -166,41 +158,52 @@ class ExplicitMixin:
                 nodes.literal_block(block_text, block_text),
                 line=lineno,
             )
-            return self.eval_rst(directive_node, indent, indented, blank_finish)
+            return self.eval_rst(type_name, block_text, indent, indented, blank_finish)
 
-        directive_node["arg_block"] = arg_block
-        directive_node["options_list"] = options_list
+        directive_node = DirectiveNode(
+            block_text,
+            name=type_name,
+            module=directive_path,
+            conversion=conversion,
+            options_list=options_list,
+        )
 
-        if content and conversion == "direct":
-            content_node = ContentNode()
-            content_node += nodes.paragraph("", nodes.Text("\n".join(content)))
-            directive_node += content_node
-
-        if "argument" in conversion:
+        if directive_class.required_arguments or directive_class.optional_arguments:
             argument_node = ArgumentNode()
             directive_node += argument_node
-            textnodes, messages = self.inline_text("\n".join(arg_block), lineno)
-            # TODO report messages?
-            argument_node.extend(textnodes)
+            if conversion in ("parse_argument", "parse_all"):
+                textnodes, messages = self.inline_text(" ".join(arg_block), lineno)
+                # TODO report messages?
+                argument_node.extend(textnodes)
+            else:
+                argument_node += nodes.Text(" ".join(arg_block))
 
-        if content and "content" in conversion:
+        if directive_class.has_content:
             content_node = ContentNode()
             directive_node += content_node
-            self.nested_parse(
-                content,
-                content_offset,
-                content_node,
-                match_titles="titles" in conversion,
-            )
+            if conversion in ("parse_content", "parse_content_titles", "parse_all"):
+                self.nested_parse(
+                    content,
+                    content_offset,
+                    content_node,
+                    match_titles="titles" in conversion,
+                )
+            else:
+                content_node += nodes.Text("\n".join(content or []))
 
         return [directive_node], blank_finish
 
     @staticmethod
-    def eval_rst(directive_node, indent, indented, blank_finish):
-        directive_node["type"] = "eval_rst"
-        directive_node["indent"] = indent
-        directive_node["indented"] = indented
-        return [directive_node], blank_finish
+    def eval_rst(
+        name: str, block_text: str, indent: int, indented: List[str], blank_finish: bool
+    ):
+        """Return an EvalRstNode."""
+        node = EvalRstNode(block_text, name=name, indent=indent)
+        if not block_text.startswith(".. "):
+            # substitution definition directives
+            block_text = ".. " + block_text
+        node += nodes.Text(block_text)
+        return [node], blank_finish
 
     def parse_directive_match(self, match):
         lineno = self.state_machine.abs_line_number()
@@ -354,7 +357,7 @@ class ExplicitMixin:
         return [substitution_node], blank_finish
 
     def table(self, isolate_function, parser_class):
-        """Parse a table."""
+        """Parse a table, and record the raw text."""
         block, messages, blank_finish = isolate_function()
         if block:
             try:
@@ -381,6 +384,34 @@ class Body(SectionMixin, ExplicitMixin, states.Body):
             "state_classes": get_state_classes(),
             "initial_state": "Body",
         }
+
+    def field_marker(self, match, context, next_state):
+        """Field list item.
+
+        Modified to store full text of field_list in ``rawsource``
+        """
+        field_list = nodes.field_list()
+        self.parent += field_list
+        field, blank_finish = self.field(match)
+        field_list += field
+        offset = self.state_machine.line_offset + 1  # next line
+        newline_offset, blank_finish = self.nested_list_parse(
+            self.state_machine.input_lines[offset:],
+            input_offset=self.state_machine.abs_line_offset() + 1,
+            node=field_list,
+            initial_state="FieldList",
+            blank_finish=blank_finish,
+        )
+        self.goto_line(newline_offset)
+        # TODO this slicing of input_lines seems to work, but I'm not exactly sure why
+        field_list.rawsource += "\n".join(
+            self.state_machine.input_lines[
+                offset - 1 : offset + (newline_offset - field.line)
+            ]
+        )
+        if not blank_finish:
+            self.parent += self.unindent_warning("Field list")
+        return [], next_state, []
 
 
 class Explicit(ExplicitMixin, states.Explicit):

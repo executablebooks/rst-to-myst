@@ -1,53 +1,51 @@
 # value one of:
 # - "eval_rst": no conversion, wrap in MyST eval_rst directive
 # - "direct": convert directly to MyST directive, keeping original argument/content
-# - "argument_only":  convert to MyST directive and convert the argument to Markdown
-# - "content_only":  convert to MyST directive and convert the content to Markdown
-# - "argument_content":  convert to MyST directive and convert the content to Markdown
-
-# if prepended by "_colon", use ::: delimiters instad of ```
+# - "parse_argument":  convert to MyST directive and convert the argument to Markdown
+# - "parse_content":  convert to MyST directive and convert the content to Markdown
+# - "parse_all":  convert to MyST directive and convert the content to Markdown
 
 # admonitions (docutils)
-docutils.parsers.rst.directives.admonitions.Admonition: argument_content_colon
-docutils.parsers.rst.directives.admonitions.Attention: content_only_colon
-docutils.parsers.rst.directives.admonitions.Caution: content_only_colon
-docutils.parsers.rst.directives.admonitions.Danger: content_only_colon
-docutils.parsers.rst.directives.admonitions.Error: content_only_colon
-docutils.parsers.rst.directives.admonitions.Hint: content_only_colon
-docutils.parsers.rst.directives.admonitions.Important: content_only_colon
-docutils.parsers.rst.directives.admonitions.Note: content_only_colon
-docutils.parsers.rst.directives.admonitions.Tip: content_only_colon
-docutils.parsers.rst.directives.admonitions.Warning: content_only_colon
+docutils.parsers.rst.directives.admonitions.Admonition: parse_all
+docutils.parsers.rst.directives.admonitions.Attention: parse_content
+docutils.parsers.rst.directives.admonitions.Caution: parse_content
+docutils.parsers.rst.directives.admonitions.Danger: parse_content
+docutils.parsers.rst.directives.admonitions.Error: parse_content
+docutils.parsers.rst.directives.admonitions.Hint: parse_content
+docutils.parsers.rst.directives.admonitions.Important: parse_content
+docutils.parsers.rst.directives.admonitions.Note: parse_content
+docutils.parsers.rst.directives.admonitions.Tip: parse_content
+docutils.parsers.rst.directives.admonitions.Warning: parse_content
 
 # docutils other (see https://docutils.sourceforge.io/docs/ref/rst/directives.html#figure)
 docutils.parsers.rst.directives.body.CodeBlock: direct
 docutils.parsers.rst.directives.body.Compound: eval_rst
-docutils.parsers.rst.directives.body.Container: content_only_colon
+docutils.parsers.rst.directives.body.Container: parse_content
 docutils.parsers.rst.directives.body.Epigraph: eval_rst
 docutils.parsers.rst.directives.body.Highlights: eval_rst
 docutils.parsers.rst.directives.body.LineBlock: eval_rst
 docutils.parsers.rst.directives.body.MathBlock: eval_rst
 docutils.parsers.rst.directives.body.ParsedLiteral: eval_rst
 docutils.parsers.rst.directives.body.PullQuote: eval_rst
-docutils.parsers.rst.directives.body.Rubric: argument_only_colon
-docutils.parsers.rst.directives.body.Sidebar: argument_content_colon
-docutils.parsers.rst.directives.body.Topic: argument_content_colon
+docutils.parsers.rst.directives.body.Rubric: parse_argument
+docutils.parsers.rst.directives.body.Sidebar: parse_all
+docutils.parsers.rst.directives.body.Topic: parse_all
 docutils.parsers.rst.directives.html.Meta: eval_rst
-docutils.parsers.rst.directives.images.Figure: content_only_colon
+docutils.parsers.rst.directives.images.Figure: parse_content
 docutils.parsers.rst.directives.images.Image: direct
 docutils.parsers.rst.directives.misc.Class: eval_rst
-docutils.parsers.rst.directives.misc.Date: eval_rst
+docutils.parsers.rst.directives.misc.Date: direct
 docutils.parsers.rst.directives.misc.DefaultRole: eval_rst
 docutils.parsers.rst.directives.misc.Include: direct
 docutils.parsers.rst.directives.misc.Raw: direct
-docutils.parsers.rst.directives.misc.Replace: content_only
+docutils.parsers.rst.directives.misc.Replace: parse_content
 docutils.parsers.rst.directives.misc.Role: eval_rst
 docutils.parsers.rst.directives.misc.TestDirective: eval_rst
 docutils.parsers.rst.directives.misc.Title: direct
 docutils.parsers.rst.directives.misc.Unicode: eval_rst
-docutils.parsers.rst.directives.parts.Contents: argument_only_colon
-docutils.parsers.rst.directives.parts.Footer: content_only_colon
-docutils.parsers.rst.directives.parts.Header: content_only_colon
+docutils.parsers.rst.directives.parts.Contents: parse_argument
+docutils.parsers.rst.directives.parts.Footer: parse_content
+docutils.parsers.rst.directives.parts.Header: parse_content
 docutils.parsers.rst.directives.parts.Sectnum: eval_rst
 docutils.parsers.rst.directives.references.TargetNotes: eval_rst
 docutils.parsers.rst.directives.tables.CSVTable: direct
@@ -67,14 +65,14 @@ sphinx.directives.patches.CSVTable: eval_rst
 # list-table
 sphinx.directives.patches.ListTable: eval_rst
 # figure
-sphinx.directives.patches.Figure: content_only_colon
+sphinx.directives.patches.Figure: parse_content
 # meta
 sphinx.directives.patches.Meta: eval_rst
 
 # deprecated, versionadded, versionchanged
-sphinx.domains.changeset.VersionChange: content_only_colon
+sphinx.domains.changeset.VersionChange: parse_content
 # seealso
-sphinx.directives.other.SeeAlso: content_only_colon
+sphinx.directives.other.SeeAlso: parse_content
 # index
 sphinx.domains.index.IndexDirective: direct
 # default-domain
@@ -105,7 +103,7 @@ sphinx.directives.other.Acks: eval_rst
 # hlist
 sphinx.directives.other.HList: eval_rst
 # only
-sphinx.directives.other.Only: content_only_titles
+sphinx.directives.other.Only: parse_content_titles
 
 # c:member
 # c:var
@@ -207,6 +205,10 @@ sphinx.domains.std.Cmdoption: eval_rst
 # std:envvar
 sphinx.domains.std.EnvVar: eval_rst
 # std:glossary
-sphinx.domains.std.Glossary: eval_rst
+sphinx.domains.std.Glossary: parse_content
 # std:productionlist
 sphinx.domains.std.ProductionList: eval_rst
+
+# third-party directives
+sphinxcontrib.bibtex.directives.BibliographyDirective: direct
+sphinx_panels.dropdpwn.DropdownDirective: parse_all

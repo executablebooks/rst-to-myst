@@ -372,8 +372,6 @@ class Inliner:
         4. If not found or invalid, generate a warning and ignore the start-string.
         5. Implicit inline markup (e.g. standalone URIs) is found last.
         """
-        # TODO Needs to be refactored for nested inline markup
-        # (add nested_parse() method?)
         self.reporter = memo.reporter  # type: Reporter
         self.document = memo.document  # type: nodes.document
         self.language = memo.language
@@ -506,7 +504,7 @@ class Inliner:
     def phrase_ref(
         self, before: str, after: str, rawsource: str, escaped: str, text: str
     ) -> DispatchResult:
-        """Handle phrase references e.g. `phrase ref`_, `embedded <ref_>`_ """
+        """Handle phrase references e.g. `phrase ref`_, `embedded <ref_>`_"""
         match = self.patterns.embedded_link.search(escaped)
         if match:  # embedded <URI> or <alias_>
             text = unescape(escaped[: match.start(0)])
@@ -618,7 +616,7 @@ class Inliner:
         return before, inlines, remaining, sysmessages
 
     def inline_internal_target(self, match: Match, lineno: int) -> DispatchResult:
-        """Handle an inline internal target, e.g. _`target` """
+        """Handle an inline internal target, e.g. _`target`"""
         before, inlines, remaining, sysmessages, endstring = self.inline_obj(
             match, lineno, self.patterns.target, nodes.target
         )
@@ -632,7 +630,7 @@ class Inliner:
         return before, inlines, remaining, sysmessages
 
     def substitution_reference(self, match: Match, lineno: int) -> DispatchResult:
-        """Handle a substitution reference, e.g. |sub| """
+        """Handle a substitution reference, e.g. |sub|"""
         before, inlines, remaining, sysmessages, endstring = self.inline_obj(
             match, lineno, self.patterns.substitution_ref, nodes.substitution_reference
         )
@@ -687,7 +685,7 @@ class Inliner:
     def reference(
         self, match: Match, lineno: int, anonymous: bool = False
     ) -> DispatchResult:
-        """Handle simple references,  e.g. reference_ and anonymous__ """
+        """Handle simple references,  e.g. reference_ and anonymous__"""
         referencename = match.group("refname")
         refname = normalize_name(referencename)
         referencenode = nodes.reference(
@@ -707,7 +705,7 @@ class Inliner:
         return (string[:matchstart], [referencenode], string[matchend:], [])
 
     def anonymous_reference(self, match: Match, lineno: int) -> DispatchResult:
-        """Handle anonymous references, e.g. anonymous__ """
+        """Handle anonymous references, e.g. anonymous__"""
         return self.reference(match, lineno, anonymous=True)
 
     def inline_obj(
@@ -805,7 +803,7 @@ class Inliner:
             raise MarkupMismatch("not a valid scheme")
 
     def pep_reference(self, match: Match, lineno: int) -> ImplicitResult:
-        """Handle reference to a PEP (Python Enhancement Proposal), e.g. `PEP 287`__ """
+        """Handle reference to a PEP (Python Enhancement Proposal), e.g. `PEP 287`__"""
         text = match.group(0)
         if text.startswith("pep-"):
             pepnum = int(match.group("pepnum1"))
@@ -821,7 +819,7 @@ class Inliner:
         return [nodes.reference(unescape(text, True), unescaped, refuri=ref)]
 
     def rfc_reference(self, match: Match, lineno: int) -> ImplicitResult:
-        """Handle reference to a RFC (Request For Comments), e.g. `RFC 2822`__ """
+        """Handle reference to a RFC (Request For Comments), e.g. `RFC 2822`__"""
         text = match.group(0)
         if text.startswith("RFC"):
             rfcnum = int(match.group("rfcnum"))
@@ -833,6 +831,8 @@ class Inliner:
 
 
 class InlinerMyst(Inliner):
+    """Inliner that does not run roles."""
+
     def interpreted(
         self, rawsource: str, text: str, role: str, lineno: int
     ) -> Tuple[List[nodes.Node], List[nodes.system_message]]:

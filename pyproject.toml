@@ -17,18 +17,34 @@ classifiers = [
 description-file = "README.md"
 keywords = "restructuredtext,markdown,myst"
 
-requires-python=">=3.6"
-requires=["docutils==0.15", "importlib_resources~=3.1", "pyyaml", "click~=7.1"]
+requires-python=">=3.7"
+requires=[
+    "docutils>=0.15,<0.18",
+    "importlib_resources~=3.1;python_version<'3.9'",
+    "pyyaml",
+    "markdown-it-py~=1.0",
+    "mdformat~=0.7.6",
+    "mdformat-myst~=0.1.4",
+    "mdformat-deflist~=0.1.0",
+    "click~=7.1"
+]
 
 [tool.flit.entrypoints."console_scripts"]
 rst2myst = "rst_to_myst.cli:main"
 
 [tool.flit.metadata.requires-extra]
-sphinx = ["sphinx~=3.2"]
+sphinx = ["sphinx>=3.2,<5"]
 test = [
     "pytest~=6.0",
     "coverage",
     "pytest-cov",
+    "pytest-regressions"
+]
+docs = [
+    "myst-parser~=0.15.0",
+    "sphinx-book-theme",
+    "sphinx-click~=2.6",
+    "sphinx-panels",
 ]
 
 [tool.flit.sdist]

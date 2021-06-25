@@ -12,16 +12,25 @@ from docutils.transforms.references import (
     PropagateTargets,
 )
 from docutils.utils import new_document, roman
-from importlib_resources import files
+
+try:
+    from importlib.resources import files
+except ImportError:
+    from importlib_resources import files
 
 from . import data as package_data
 from .inliner import InlinerMyst
 from .namespace import compile_namespace
-from .nodes import DirectiveNode, FrontMatterNode
+from .nodes import FrontMatterNode
 from .states import get_state_classes
 
 
-class RSTParser(Parser):
+class LosslessRSTParser(Parser):
+    """Modified RST Parser, allowing for the retrieval of the original source text.
+
+    Principally, roles and directives are not run.
+    """
+
     def __init__(self):
         self.initial_state = "Body"
         self.state_classes = get_state_classes()
@@ -32,16 +41,19 @@ class RSTParser(Parser):
 
 
 class IndirectHyperlinks(Transform):
+    """Resolve indirect hyperlinks."""
+
     def apply(self):
         for target in self.document.indirect_targets:
             if not target.resolved:
-                self.resolve_indirect_target(target)
+                self.resolve_indirect_target(target)  # TODO implement this resolve?
             # Do not resolve the actual references, since this replaces the "refname"
             # self.resolve_indirect_references(target)
 
 
 class StripFootnoteLabel(Transform):
-    # footnotes and citations can start with a label note, which we do not need
+    """Footnotes and citations can start with a label note, which we do not need."""
+
     def apply(self):
         for node in self.document.traverse(
             lambda n: isinstance(n, (nodes.footnote, nodes.citation))
@@ -60,6 +72,15 @@ ENUM_CONVERTERS = {
 
 
 class ResolveListItems(Transform):
+    """For bullet/enumerated lists, propagate attributes to their child list items.
+
+    Also decide if they are loose/tight::
+
+        A list is loose if any of its list items are separated by blank lines,
+        or if any of its list items directly contain two block-level elements
+        with a blank line between them. Otherwise a list is tight.
+    """
+
     def apply(self):
         for node in self.document.traverse(nodes.bullet_list):
             prefix = node["bullet"] + " "
@@ -67,6 +88,7 @@ class ResolveListItems(Transform):
                 if isinstance(child, nodes.list_item):
                     child["style"] = "bullet"
                     child["prefix"] = prefix
+
         for node in self.document.traverse(nodes.enumerated_list):
             number = 1
             if "start" in node:
@@ -82,20 +104,12 @@ class ResolveListItems(Transform):
                     number += 1
 
 
-class DirectiveNesting(Transform):
-    def apply(self):
-        for node in self.document.traverse(DirectiveNode):  # type: DirectiveNode
-            # TODO this will overcount if multiple directives at same nesting depth
-            node["delimiter"] *= (
-                3
-                + sum(1 for _ in node.traverse(DirectiveNode, include_self=False))
-                # add an extra delimiter if the directive contains a table,
-                # because we wrap some in eval_rst directive
-                + (1 if sum(1 for _ in node.traverse(nodes.table)) else 0)
-            )
-
-
 class FrontMatter(Transform):
+    """Extract an initial field list into a `FrontMatterNode`.
+
+    Similar to ``docutils.transforms.frontmatter.DocInfo``.
+    """
+
     def apply(self):
         if not self.document.settings.front_matter:
             return
@@ -103,12 +117,17 @@ class FrontMatter(Transform):
         if index is None:
             return
         candidate = self.document[index]
+        if isinstance(candidate, nodes.section):
+            index = candidate.first_child_not_matching_class(nodes.PreBibliographic)
+            if index is None:
+                return
+            candidate = candidate[index]
         if isinstance(candidate, nodes.field_list):
             front_matter = FrontMatterNode("", *candidate.children)
-            self.document[index] = front_matter
+            candidate.replace_self(front_matter)
 
 
-def to_ast(
+def to_docutils_ast(
     text: str,
     uri: str = "source",
     report_level=2,
@@ -121,7 +140,7 @@ def to_ast(
     conversions=None,
     front_matter=True,
 ) -> Tuple[nodes.document, StringIO]:
-    settings = OptionParser(components=(RSTParser,)).get_default_values()
+    settings = OptionParser(components=(LosslessRSTParser,)).get_default_values()
     warning_stream = StringIO() if warning_stream is None else warning_stream
     settings.warning_stream = warning_stream
     settings.report_level = report_level  # 2=warning
@@ -152,7 +171,7 @@ def to_ast(
     # whether to treat initial field list as front matter
     document.settings.front_matter = front_matter
 
-    parser = RSTParser()
+    parser = LosslessRSTParser()
     parser.parse(text, document)
 
     # these three transforms are required for converting targets correctly
@@ -160,12 +179,11 @@ def to_ast(
         PropagateTargets,  # Propagate empty internal targets to the next element. (260)
         FrontMatter,  # convert initial field list (DocInfo=340)
         AnonymousHyperlinks,  # Link anonymous references to targets. (440)
-        IndirectHyperlinks,  # "refuri" migrated back to all indirect targets (460)
+        # IndirectHyperlinks,  # "refuri" migrated back to all indirect targets (460)
         Footnotes,  # Assign numbers to autonumbered footnotes (620)
         # bespoke transforms
         StripFootnoteLabel,
         ResolveListItems,
-        DirectiveNesting,
     ]:
         transform = transform_cls(document)
         transform.apply()

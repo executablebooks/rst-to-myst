@@ -39,5 +39,5 @@ class YamlDumper(yaml.SafeDumper):
 YamlDumper.add_representer(str, represent_str)
 
 
-def yaml_dump(data):
-    return yaml.dump(data, Dumper=YamlDumper)
+def yaml_dump(data, sort_keys: bool = True):
+    return yaml.dump(data, Dumper=YamlDumper, sort_keys=sort_keys)
