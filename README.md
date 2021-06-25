@@ -48,7 +48,7 @@ conversions:
     sphinx_panels.dropdpwn.DropdownDirective: parse_all
 ```
 
-See the documentation for more information.
+See the documentation for more information: <https://rst-to-myst.readthedocs.io/>
 
 ## Development
 
