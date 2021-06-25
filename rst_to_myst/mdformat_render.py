@@ -149,7 +149,7 @@ def get_myst_extensions(tokens: List[Token]) -> Set[str]:
     for token in tokens:
         if token.type == "substitution_inline" or token.type == "substitution_block":
             extensions.add("substitution")
-        elif token.type == "front_matter_tokens_open":
+        elif token.type == "front_matter_key_open":
             key_path = token.meta.get("key_path")
             if key_path and key_path[0] == "substitutions":
                 extensions.add("substitution")

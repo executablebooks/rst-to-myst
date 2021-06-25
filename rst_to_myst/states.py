@@ -24,16 +24,16 @@ def get_state_classes():
     # therefore sub-classes, must be named the same as their parent.
     return (
         Body,
-        states.BulletList,
-        states.DefinitionList,
-        states.EnumeratedList,
+        BulletList,
+        DefinitionList,
+        EnumeratedList,
         states.FieldList,
         states.OptionList,
         states.LineBlock,
         states.ExtensionOptions,
         Explicit,
         Text,
-        states.Definition,
+        Definition,
         Line,
         SubstitutionDef,
     )
@@ -463,3 +463,39 @@ class SubstitutionDef(Body):
         if not self.state_machine.at_eof():
             self.blank_finish = self.state_machine.is_next_line_blank()
         raise EOFError
+
+
+class BulletList(ExplicitMixin, states.BulletList):
+    def __init__(self, state_machine, debug=False):
+        super().__init__(state_machine, debug=debug)
+        self.nested_sm_kwargs = {
+            "state_classes": get_state_classes(),
+            "initial_state": "Body",
+        }
+
+
+class DefinitionList(ExplicitMixin, states.DefinitionList):
+    def __init__(self, state_machine, debug=False):
+        super().__init__(state_machine, debug=debug)
+        self.nested_sm_kwargs = {
+            "state_classes": get_state_classes(),
+            "initial_state": "Body",
+        }
+
+
+class Definition(ExplicitMixin, states.Definition):
+    def __init__(self, state_machine, debug=False):
+        super().__init__(state_machine, debug=debug)
+        self.nested_sm_kwargs = {
+            "state_classes": get_state_classes(),
+            "initial_state": "Body",
+        }
+
+
+class EnumeratedList(ExplicitMixin, states.EnumeratedList):
+    def __init__(self, state_machine, debug=False):
+        super().__init__(state_machine, debug=debug)
+        self.nested_sm_kwargs = {
+            "state_classes": get_state_classes(),
+            "initial_state": "Body",
+        }
