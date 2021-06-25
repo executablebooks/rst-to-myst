@@ -372,8 +372,6 @@ class Inliner:
         4. If not found or invalid, generate a warning and ignore the start-string.
         5. Implicit inline markup (e.g. standalone URIs) is found last.
         """
-        # TODO Needs to be refactored for nested inline markup
-        # (add nested_parse() method?)
         self.reporter = memo.reporter  # type: Reporter
         self.document = memo.document  # type: nodes.document
         self.language = memo.language

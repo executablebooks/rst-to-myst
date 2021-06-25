@@ -31,17 +31,17 @@ For all commands see:
 rst2myst --help
 ```
 
-Parse *via* stdin:
+Parse *via* stdin (with `-`):
 
 ```console
-$ echo ":role:`content`" | rst2myst parse
+$ echo ":role:`content`" | rst2myst stream -
 {role}`content`
 ```
 
-Parse *via* file:
+Parse *via* a single file:
 
 ```console
-$ rst2myst parse -f path/to/file.rst
+$ rst2myst stream path/to/file.rst
 ...
 ```
 
@@ -97,21 +97,21 @@ To **convert**
 You can select a language to translate directive/role names:
 
 ```console
-$ rst2myst parse -l fr -f path/to/file.rst
+$ rst2myst stream -l fr path/to/file.rst
 ...
 ```
 
 You can select whether sphinx directives/roles are loaded:
 
 ```console
-$ rst2myst parse --no-sphinx -f path/to/file.rst
+$ rst2myst stream --no-sphinx path/to/file.rst
 ...
 ```
 
 You can load directives/roles from extensions:
 
 ```console
-$ rst2myst parse -e sphinx.ext.autodoc -e sphinx_panels -f path/to/file.rst
+$ rst2myst stream -e sphinx.ext.autodoc,sphinx_panels path/to/file.rst
 ...
 ```
 
@@ -135,7 +135,7 @@ This is a mapping of directive import paths to a conversion type:
   content `link`_
   ```
   ````
-- "argument_only":  convert to MyST directive and convert the argument to Markdown
+- "parse_argument":  convert to MyST directive and convert the argument to Markdown
   ````
   ```{name} argument [link](link)
   :option: value
@@ -143,7 +143,7 @@ This is a mapping of directive import paths to a conversion type:
   content `link`_
   ```
   ````
-- "content_only":  convert to MyST directive and convert the content to Markdown
+- "parse_content":  convert to MyST directive and convert the content to Markdown
   ````
   ```{name} argument `link`_
   :option: value
@@ -151,7 +151,7 @@ This is a mapping of directive import paths to a conversion type:
   content [link](link)
   ```
   ````
-- "argument_content":  convert to MyST directive and convert the content to Markdown
+- "parse_all":  convert to MyST directive and convert the content to Markdown
   ````
   ```{name} argument [link](link)
   :option: value
@@ -159,17 +159,6 @@ This is a mapping of directive import paths to a conversion type:
   content [link](link)
   ```
   ````
-
-If a conversion type is prepended by "_colon", use `:::` delimiters instad of ```` ``` ````,
-e.g. "argument_content_colon"
-
-````
-:::{name} argument [link](link)
-:option: value
-
-content [link](link)
-:::
-````
 
 ## Conversion Notes
 
@@ -190,7 +179,6 @@ The only syntax where some checks are required is matching anonymous references 
 The conversion covers almost all syntaxes (see <https://docutils.sourceforge.io/docs/user/rst/quickref.htm>) except:
 
 - line blocks
-- field lists (except at top of document, which are converted to front matter)
 - option lists
 
 Also custom functions for directive parsing would be desirable.

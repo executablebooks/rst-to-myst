@@ -1,5 +1,6 @@
 from io import TextIOWrapper
 from pathlib import Path
+from typing import List, Optional
 
 import click
 import yaml
@@ -23,13 +24,18 @@ OPT_LANGUAGE = click.option(
     help="Language code for directive names",
 )
 
-# TODO don't hang when when no stdin provided (test file.isatty()?)
-OPT_READ = click.option(
-    "--file",
-    "-f",
-    type=click.File("r"),
-    default="-",
-    help="Input file [default: stdin]",
+
+ARG_STREAM = click.argument("stream", type=click.File("r"), metavar="PATH_OR_STDIN")
+
+
+ARG_PATHS = click.argument(
+    "paths",
+    type=click.Path(exists=True, file_okay=True, dir_okay=True),
+    nargs=-1,
+)
+
+OPT_ENCODING = click.option(
+    "--encoding", default="utf8", show_default=True, help="Encoding for read/write"
 )
 
 
@@ -68,7 +74,6 @@ def check_sphinx(ctx, param, value):
 
 OPT_SPHINX = click.option(
     "--sphinx/--no-sphinx",
-    "-s/-ns",
     is_flag=True,
     default=True,
     show_default=True,
@@ -88,16 +93,58 @@ OPT_EXTENSIONS = click.option(
     help="A comma-separated list of sphinx extensions to load.",
 )
 
+OPT_DEFAULT_DOMAIN = click.option(
+    "--default-domain",
+    "-dd",
+    default="py",
+    show_default=True,
+    help="Default sphinx domain",
+)
+OPT_DEFAULT_ROLE = click.option(
+    "--default-role",
+    "-dr",
+    default=None,
+    help="Default sphinx role [default: convert to literal]",
+)
+OPT_CITE_PREFIX = click.option(
+    "--cite-prefix",
+    "-cp",
+    default="cite_",
+    show_default=True,
+    help="Prefix to add to citation references",
+)
+OPT_RAISE_ON_WARNING = click.option(
+    "--raise-on-warning", "-W", is_flag=True, help="Raise exception on parsing warning"
+)
+OPT_CONSECUTIVE_NUMBERING = click.option(
+    "--consecutive-numbering/--no-consecutive-numbering",
+    default=True,
+    show_default=True,
+    help="Apply consecutive numbering to ordered lists",
+)
+OPT_COLON_FENCES = click.option(
+    "--colon-fences/--no-colon-fences",
+    default=True,
+    show_default=True,
+    help="Use colon fences for directives with parsed content",
+)
+OPT_DOLLAR_MATH = click.option(
+    "--dollar-math/--no-dollar-math",
+    default=True,
+    show_default=True,
+    help="Convert math roles to dollar delimited math",
+)
+
 
 @main.command("ast")
-@OPT_READ
+@ARG_STREAM
 @OPT_LANGUAGE
 @OPT_SPHINX
 @OPT_EXTENSIONS
 @OPT_CONVERSIONS
-def ast(file: TextIOWrapper, language: str, sphinx: bool, extensions, conversions):
-    """Convert ReStructuredText to an Abstract Syntax Tree."""
-    text = file.read()
+def ast(stream: TextIOWrapper, language: str, sphinx: bool, extensions, conversions):
+    """Parse a single file or stdin (-) to and print the Abstract Syntax Tree."""
+    text = stream.read()
     document, _ = to_docutils_ast(
         text,
         warning_stream=click.get_text_stream("stderr"),
@@ -110,16 +157,33 @@ def ast(file: TextIOWrapper, language: str, sphinx: bool, extensions, conversion
     click.echo(output)
 
 
-@main.command("parse")
-@OPT_READ
+@main.command("stream")
+@ARG_STREAM
 @OPT_LANGUAGE
 @OPT_SPHINX
 @OPT_EXTENSIONS
+@OPT_DEFAULT_DOMAIN
+@OPT_DEFAULT_ROLE
+@OPT_CITE_PREFIX
+@OPT_CONSECUTIVE_NUMBERING
+@OPT_COLON_FENCES
+@OPT_DOLLAR_MATH
 @OPT_CONVERSIONS
-def parse(file: TextIOWrapper, language: str, sphinx: bool, extensions, conversions):
-    """Convert ReStructuredText to MyST Markdown."""
-    text = file.read()
-    # TODO expose more options
+def stream(
+    stream: TextIOWrapper,
+    language: str,
+    sphinx: bool,
+    extensions: List[str],
+    default_domain: str,
+    default_role: Optional[str],
+    cite_prefix: str,
+    consecutive_numbering: bool,
+    colon_fences: bool,
+    dollar_math: bool,
+    conversions,
+):
+    """Parse a single file or stdin (-) and print output."""
+    text = stream.read()
     output = rst_to_myst(
         text,
         warning_stream=click.get_text_stream("stderr"),
@@ -127,8 +191,89 @@ def parse(file: TextIOWrapper, language: str, sphinx: bool, extensions, conversi
         use_sphinx=sphinx,
         extensions=extensions,
         conversions=conversions,
+        default_domain=default_domain,
+        default_role=default_role,
+        cite_prefix=cite_prefix,
+        consecutive_numbering=consecutive_numbering,
+        colon_fences=colon_fences,
+        dollar_math=dollar_math,
     )
     click.echo(output.text)
+
+
+@main.command("convert")
+@ARG_PATHS
+@click.option("--dry-run", "-d", is_flag=True, help="Do not write/remove any files")
+@click.option("--replace-files", "-R", is_flag=True, help="Remove parsed files")
+@click.option("--stop-on-fail", "-S", is_flag=True, help="Stop on first failure")
+@OPT_RAISE_ON_WARNING
+@OPT_LANGUAGE
+@OPT_SPHINX
+@OPT_EXTENSIONS
+@OPT_DEFAULT_DOMAIN
+@OPT_DEFAULT_ROLE
+@OPT_CITE_PREFIX
+@OPT_CONSECUTIVE_NUMBERING
+@OPT_COLON_FENCES
+@OPT_DOLLAR_MATH
+@OPT_CONVERSIONS
+@OPT_ENCODING
+def convert(
+    paths: List[str],
+    dry_run: bool,
+    replace_files: bool,
+    raise_on_warning: bool,
+    stop_on_fail: bool,
+    language: str,
+    sphinx: bool,
+    extensions: List[str],
+    default_domain: str,
+    default_role: Optional[str],
+    cite_prefix: str,
+    consecutive_numbering: bool,
+    colon_fences: bool,
+    dollar_math: bool,
+    conversions,
+    encoding: str,
+):
+    """Convert one or more files."""
+    myst_extensions = set()
+    for path in paths:
+        path = Path(path)
+        output_path = path.parent / (path.stem + ".md")
+        click.secho(f"{path} -> {output_path}", fg="blue")
+        input_text = path.read_text(encoding)
+        try:
+            output = rst_to_myst(
+                input_text,
+                warning_stream=click.get_text_stream("stderr"),
+                raise_on_warning=raise_on_warning,
+                language_code=language,
+                use_sphinx=sphinx,
+                extensions=extensions,
+                conversions=conversions,
+                default_domain=default_domain,
+                default_role=default_role,
+                cite_prefix=cite_prefix,
+                consecutive_numbering=consecutive_numbering,
+                colon_fences=colon_fences,
+                dollar_math=dollar_math,
+            )
+        except Exception:
+            click.secho("FAILED", fg="red")
+            if stop_on_fail:
+                raise SystemExit(1)
+            continue
+
+        click.secho(f"CONVERTED (extensions: {output.extensions!r})", fg="green")
+        myst_extensions.update(output.extensions)
+        if dry_run:
+            continue
+        output_path.write_text(output.text, encoding=encoding)
+        if replace_files and output_path != path:
+            path.unlink()
+    click.echo("")
+    click.secho(f"FINISHED ALL! (extensions: {myst_extensions!r})", fg="green")
 
 
 @main.group("directives")

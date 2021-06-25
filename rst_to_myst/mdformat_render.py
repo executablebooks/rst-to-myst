@@ -1,6 +1,6 @@
 import logging
 from textwrap import indent
-from typing import IO, Any, Dict, Iterable, List, NamedTuple, Optional
+from typing import IO, Any, Dict, Iterable, List, NamedTuple, Optional, Set
 
 from markdown_it.token import Token
 from mdformat.plugins import PARSER_EXTENSIONS
@@ -143,6 +143,25 @@ def from_tokens(
     return text
 
 
+def get_myst_extensions(tokens: List[Token]) -> Set[str]:
+    """Return the MyST extensions required to parse a token sequence."""
+    extensions = set()
+    for token in tokens:
+        if token.type == "substitution_inline" or token.type == "substitution_block":
+            extensions.add("substitution")
+        elif token.type == "front_matter_tokens_open":
+            key_path = token.meta.get("key_path")
+            if key_path and key_path[0] == "substitutions":
+                extensions.add("substitution")
+        elif token.type == "directive_open" and ":" in token.markup:
+            extensions.add("colon_fence")
+        elif token.type == "math_inline" or token.type == "math_block":
+            extensions.add("dollarmath")
+        elif token.type == "dl_open":
+            extensions.add("deflist")
+    return extensions
+
+
 class ConvertedOutput(NamedTuple):
     """Output from ``rst_to_myst``."""
 
@@ -150,7 +169,7 @@ class ConvertedOutput(NamedTuple):
     tokens: List[Token]
     env: Dict[str, Any]
     warning_stream: IO
-    # TODO list myst extensions required for parsing
+    extensions: Set[str]
 
 
 def rst_to_myst(
@@ -163,11 +182,11 @@ def rst_to_myst(
     conversions: Optional[Dict[str, str]] = None,
     default_domain: str = "py",
     default_role: Optional[str] = None,
-    raise_on_error: bool = False,
+    raise_on_warning: bool = False,
     cite_prefix: str = "cite_",
     consecutive_numbering: bool = True,
     colon_fences: bool = True,
-    dollarmath: bool = True,
+    dollar_math: bool = True,
 ) -> ConvertedOutput:
     """Convert RST text to MyST Markdown text.
 
@@ -184,10 +203,10 @@ def rst_to_myst(
     :param default_role: name of the default role, otherwise convert to a literal
 
     :param cite_prefix: Prefix to add to citation references
-    :param raise_on_error: Raise exception on parsing errors (or only warn)
+    :param raise_on_warning: Raise exception on parsing warning
     :param consecutive_numbering: Apply consecutive numbering to ordered lists
     :param colon_fences: Use colon fences for directives with parsed content
-    :param dollarmath: Convert ``math`` roles to dollar delimited math
+    :param dollar_math: Convert ``math`` roles to dollar delimited math
 
     """
     document, warning_stream = to_docutils_ast(
@@ -203,15 +222,18 @@ def rst_to_myst(
         document,
         warning_stream=warning_stream,
         cite_prefix=cite_prefix,
-        raise_on_error=raise_on_error,
+        raise_on_warning=raise_on_warning,
         default_role=default_role,
         colon_fences=colon_fences,
-        dollarmath=dollarmath,
+        dollar_math=dollar_math,
     )
     output = token_renderer.to_tokens()
+    myst_extension = get_myst_extensions(output.tokens)
     output_text = from_tokens(
         output,
         consecutive_numbering=consecutive_numbering,
         warning_stream=warning_stream,
     )
-    return ConvertedOutput(output_text, output.tokens, output.env, warning_stream)
+    return ConvertedOutput(
+        output_text, output.tokens, output.env, warning_stream, myst_extension
+    )

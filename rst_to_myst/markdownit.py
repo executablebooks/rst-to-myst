@@ -20,21 +20,21 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         document: nodes.document,
         *,
         warning_stream: Optional[IO] = None,
-        raise_on_error: bool = False,
+        raise_on_warning: bool = False,
         cite_prefix: str = "cite_",
         default_role: Optional[str] = None,
         colon_fences: bool = True,
-        dollarmath: bool = True,
+        dollar_math: bool = True,
     ):
         self._document = document
         self._warning_stream = warning_stream or StringIO()
-        self.raise_on_error = raise_on_error
+        self.raise_on_warning = raise_on_warning
         # prefix added to citation labels
         self.cite_prefix = cite_prefix
         # if no default role, convert to literal
         self.default_role = default_role
         self.colon_fences = colon_fences
-        self.dollarmath = dollarmath
+        self.dollar_math = dollar_math
 
         self.reset_state()
 
@@ -85,7 +85,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
             cite_prefix=self.cite_prefix,
             default_role=self.default_role,
             colon_fences=self.colon_fences,
-            dollarmath=self.dollarmath,
+            dollar_math=self.dollar_math,
         )
         for node in nodes:
             node.walkabout(new_inst)
@@ -134,13 +134,13 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
     def unknown_visit(self, node):
         message = f"no visit method for: {node.__class__}"
         self.warning(message, node.line)
-        if self.raise_on_error:
+        if self.raise_on_warning:
             raise NotImplementedError(message)
 
     def unknown_departure(self, node):
         message = f"no depart method for: {node.__class__}"
         self.warning(message, node.line)
-        if self.raise_on_error:
+        if self.raise_on_warning:
             raise NotImplementedError(message)
 
     # Skipped components
@@ -311,7 +311,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         else:
             message = f"unknown reference type: {node.rawsource}"
             self.warning(message, node.line)
-            if self.raise_on_error:
+            if self.raise_on_warning:
                 raise NotImplementedError(message)
 
         raise nodes.SkipNode
@@ -321,7 +321,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
             # TODO inline targets
             message = f"inline targets not implemented: {node.rawsource}"
             self.warning(message, node.line)
-            if self.raise_on_error:
+            if self.raise_on_warning:
                 raise NotImplementedError(message)
             self.add_token(
                 "code_inline", "code", 0, markup="`", content=str(node.rawsource)
@@ -484,7 +484,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         else:
             message = f"unknown footnote reference type: {node.rawsource}"
             self.warning(message, node.line)
-            if self.raise_on_error:
+            if self.raise_on_warning:
                 raise NotImplementedError(message)
 
         self.add_token(
@@ -554,7 +554,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         # TODO nested parse of specific roles
         role = node["role"] or self.default_role
         if role:
-            if self.dollarmath and role == "math":
+            if self.dollar_math and role == "math":
                 self.add_token(
                     "math_inline", "math", 0, markup="$", content=node["text"].strip()
                 )
