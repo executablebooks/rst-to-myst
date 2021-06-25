@@ -629,6 +629,33 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
                 info=argument.astext().strip(),
             )
             raise nodes.SkipNode
+        elif (
+            (
+                node["name"] == "math"
+                or node["module"] == "docutils.parsers.rst.directives.body.MathBlock"
+            )
+            and self.dollar_math
+            and (
+                not node["options_list"]
+                or (
+                    len(node["options_list"]) == 1
+                    and node["options_list"][0][0] == "label"
+                )
+            )
+            and len(node.children) == 2
+            and node.children[0].astext().strip() == ""
+        ):
+            # special case where we use dollarmath
+            _, content = node.children
+            text = "\n" + content.astext().strip() + "\n"
+            if node["options_list"]:
+                label = node["options_list"][0][1]
+                self.add_token(
+                    "math_block_eqno", "math", 0, markup="$$", content=text, info=label
+                )
+            else:
+                self.add_token("math_block", "math", 0, markup="$$", content=text)
+            raise nodes.SkipNode
         else:
             self.add_token(
                 "directive_open",

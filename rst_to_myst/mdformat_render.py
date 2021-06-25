@@ -161,7 +161,11 @@ def get_myst_extensions(tokens: List[Token]) -> Set[str]:
                 extensions.add("substitution")
         elif token.type == "directive_open" and ":" in token.markup:
             extensions.add("colon_fence")
-        elif token.type == "math_inline" or token.type == "math_block":
+        elif (
+            token.type == "math_inline"
+            or token.type == "math_block"
+            or token.type == "math_block_eqno"
+        ):
             extensions.add("dollarmath")
         elif token.type == "dl_open":
             extensions.add("deflist")
@@ -212,7 +216,7 @@ def rst_to_myst(
     :param raise_on_warning: Raise exception on parsing warning
     :param consecutive_numbering: Apply consecutive numbering to ordered lists
     :param colon_fences: Use colon fences for directives with parsed content
-    :param dollar_math: Convert ``math`` roles to dollar delimited math
+    :param dollar_math: Convert math (where possible) to dollar-delimited math
 
     """
     document, warning_stream = to_docutils_ast(

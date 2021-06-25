@@ -175,7 +175,7 @@ OPT_DOLLAR_MATH = click.option(
     "--dollar-math/--no-dollar-math",
     default=True,
     show_default=True,
-    help="Convert math roles to dollar delimited math",
+    help="Convert math (where possible) to dollar-delimited math",
 )
 
 
