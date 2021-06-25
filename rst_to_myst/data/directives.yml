@@ -24,7 +24,7 @@ docutils.parsers.rst.directives.body.Container: parse_content
 docutils.parsers.rst.directives.body.Epigraph: eval_rst
 docutils.parsers.rst.directives.body.Highlights: eval_rst
 docutils.parsers.rst.directives.body.LineBlock: eval_rst
-docutils.parsers.rst.directives.body.MathBlock: eval_rst
+docutils.parsers.rst.directives.body.MathBlock: direct
 docutils.parsers.rst.directives.body.ParsedLiteral: eval_rst
 docutils.parsers.rst.directives.body.PullQuote: eval_rst
 docutils.parsers.rst.directives.body.Rubric: parse_argument
