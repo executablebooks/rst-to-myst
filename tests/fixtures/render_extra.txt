@@ -440,3 +440,23 @@ Revision: \$Revision\$
 
 # reStructuredText Directives
 .
+
+math-directives
+.
+.. math::
+   :label: poisson-ratio
+
+   \begin{aligned}
+   \lambda &= \frac{E \nu}{(1 + \nu)(1 - 2 \nu)} \\
+   \mu &= \frac{E}{2(1 + \nu)}
+   \end{aligned}.
+.
+```{math}
+:label: poisson-ratio
+
+\begin{aligned}
+\lambda &= \frac{E \nu}{(1 + \nu)(1 - 2 \nu)} \\
+\mu &= \frac{E}{2(1 + \nu)}
+\end{aligned}.
+```
+.

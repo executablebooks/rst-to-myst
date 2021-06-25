@@ -200,6 +200,10 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         self.add_token("text", "", 0, content=node.astext())
         raise nodes.SkipNode
 
+    def visit_UnprocessedText(self, node):
+        self.add_token("unprocessed", "", 0, content=node.astext())
+        raise nodes.SkipNode
+
     def visit_emphasis(self, node):
         self.add_token("em_open", "em", 1, markup="*")
 

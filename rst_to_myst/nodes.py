@@ -3,6 +3,10 @@ from typing import Any, List, Tuple
 from docutils import nodes
 
 
+class UnprocessedText(nodes.Text):
+    """Text that should not be processed in any way (e.g. escaping characters)."""
+
+
 class EvalRstNode(nodes.Element):
     """Should contain a single ``Text`` node with the contents to wrap."""
 

@@ -12,6 +12,11 @@ from .parser import to_docutils_ast
 from .utils import yaml_dump
 
 
+def _unprocessed_render(node: RenderTreeNode, context: RenderContext) -> str:
+    """Text that should not be processed in any way (e.g. escaping characters)."""
+    return node.content
+
+
 def _front_matter_tokens_render(node: RenderTreeNode, context: RenderContext) -> str:
     """Special render for front-matter whose values also need to be rendered."""
     dct = {}
@@ -95,6 +100,7 @@ def _directive_render(node: RenderTreeNode, context: RenderContext) -> str:
 
 class AdditionalRenderers:
     RENDERERS = {
+        "unprocessed": _unprocessed_render,
         "front_matter_tokens": _front_matter_tokens_render,
         "substitution_block": _sub_renderer,
         "substitution_inline": _sub_renderer,

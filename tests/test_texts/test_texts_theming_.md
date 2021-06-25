@@ -1,34 +1,34 @@
 ---
 substitutions:
   agogo: |-
-    ```{image} /\_static/themes/agogo.png
+    ```{image} /_static/themes/agogo.png
     ```
   alabaster: |-
-    ```{image} /\_static/themes/alabaster.png
+    ```{image} /_static/themes/alabaster.png
     ```
   bizstyle: |-
-    ```{image} /\_static/themes/bizstyle.png
+    ```{image} /_static/themes/bizstyle.png
     ```
   classic: |-
-    ```{image} /\_static/themes/classic.png
+    ```{image} /_static/themes/classic.png
     ```
   haiku: |-
-    ```{image} /\_static/themes/haiku.png
+    ```{image} /_static/themes/haiku.png
     ```
   nature: |-
-    ```{image} /\_static/themes/nature.png
+    ```{image} /_static/themes/nature.png
     ```
   pyramid: |-
-    ```{image} /\_static/themes/pyramid.png
+    ```{image} /_static/themes/pyramid.png
     ```
   scrolls: |-
-    ```{image} /\_static/themes/scrolls.png
+    ```{image} /_static/themes/scrolls.png
     ```
   sphinxdoc: |-
-    ```{image} /\_static/themes/sphinxdoc.png
+    ```{image} /_static/themes/sphinxdoc.png
     ```
   traditional: |-
-    ```{image} /\_static/themes/traditional.png
+    ```{image} /_static/themes/traditional.png
     ```
 ---
 
