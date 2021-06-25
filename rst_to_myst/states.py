@@ -12,7 +12,13 @@ from docutils.utils import (
     extract_options,
 )
 
-from .nodes import ArgumentNode, ContentNode, DirectiveNode, EvalRstNode
+from .nodes import (
+    ArgumentNode,
+    ContentNode,
+    DirectiveNode,
+    EvalRstNode,
+    UnprocessedText,
+)
 
 # Alphanumerics with isolated internal [-._+:] chars (i.e. not 2 together):
 SIMPLENAME_RE = r"(?:(?!_)\w)+(?:[-._+:](?:(?!_)\w)+)*"
@@ -176,7 +182,7 @@ class ExplicitMixin:
                 # TODO report messages?
                 argument_node.extend(textnodes)
             else:
-                argument_node += nodes.Text(" ".join(arg_block))
+                argument_node += UnprocessedText(" ".join(arg_block))
 
         if directive_class.has_content:
             content_node = ContentNode()
@@ -189,7 +195,7 @@ class ExplicitMixin:
                     match_titles="titles" in conversion,
                 )
             else:
-                content_node += nodes.Text("\n".join(content or []))
+                content_node += UnprocessedText("\n".join(content or []))
 
         return [directive_node], blank_finish
 
@@ -202,7 +208,7 @@ class ExplicitMixin:
         if not block_text.startswith(".. "):
             # substitution definition directives
             block_text = ".. " + block_text
-        node += nodes.Text(block_text)
+        node += UnprocessedText(block_text)
         return [node], blank_finish
 
     def parse_directive_match(self, match):
