@@ -1,6 +1,6 @@
 from io import TextIOWrapper
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Mapping, Optional
 
 import click
 import yaml
@@ -13,6 +13,33 @@ from .utils import yaml_dump
 @click.version_option()
 def main():
     """CLI for converting ReStructuredText to MyST Markdown."""
+
+
+def read_config(ctx, param, value):
+    if not value:
+        return
+    try:
+        with open(value, encoding="utf8") as handle:
+            data = yaml.safe_load(handle)
+    except Exception as exc:
+        raise click.BadOptionUsage(
+            "--config", f"Error reading configuration file: {exc}", ctx
+        )
+
+    ctx.default_map = ctx.default_map or {}
+    ctx.default_map.update(data or {})
+
+    return value
+
+
+OPT_CONFIG = click.option(
+    "--config",
+    help="YAML file to read default configuration from",
+    is_eager=True,
+    expose_value=False,
+    type=click.Path(exists=True, file_okay=True, dir_okay=False, readable=True),
+    callback=read_config,
+)
 
 
 OPT_LANGUAGE = click.option(
@@ -42,11 +69,24 @@ OPT_ENCODING = click.option(
 def read_conversions(ctx, param, value):
     if not value:
         return {}
-    path = Path(value)
-    if not path.exists():
-        raise click.BadParameter(f"Path does not exist: {value}")
-    with path.open("r") as handle:
-        data = yaml.safe_load(handle)
+    if isinstance(value, Mapping):
+        # read from config file
+        data = value
+    else:
+        path = Path(str(value))
+        if not path.exists():
+            raise click.BadOptionUsage(
+                "--conversions", f"Path does not exist: {value}", ctx
+            )
+        try:
+            with path.open("r") as handle:
+                data = yaml.safe_load(handle)
+        except Exception as exc:
+            raise click.BadOptionUsage(
+                "--conversions", f"Error reading conversions file: {exc}", ctx
+            )
+    if not isinstance(value, Mapping):
+        raise click.BadOptionUsage("--conversions", f"Not a mapping: {value!r}", ctx)
     return data
 
 
@@ -56,7 +96,7 @@ OPT_CONVERSIONS = click.option(
     default=None,
     callback=read_conversions,
     metavar="PATH",
-    help="YAML file containing directive conversions",
+    help="YAML file mapping directives -> conversions",
 )
 
 
@@ -83,6 +123,9 @@ OPT_SPHINX = click.option(
 
 
 def split_extension(ctx, param, value):
+    if isinstance(value, list):
+        # if reading from config
+        return value
     return [ext.strip() for ext in value.split(",")] if value else []
 
 
@@ -142,6 +185,7 @@ OPT_DOLLAR_MATH = click.option(
 @OPT_SPHINX
 @OPT_EXTENSIONS
 @OPT_CONVERSIONS
+@OPT_CONFIG
 def ast(stream: TextIOWrapper, language: str, sphinx: bool, extensions, conversions):
     """Parse file / stdin (-) and print RST Abstract Syntax Tree."""
     text = stream.read()
@@ -168,6 +212,7 @@ def ast(stream: TextIOWrapper, language: str, sphinx: bool, extensions, conversi
 @OPT_COLON_FENCES
 @OPT_DOLLAR_MATH
 @OPT_CONVERSIONS
+@OPT_CONFIG
 def tokens(
     stream: TextIOWrapper,
     language: str,
@@ -210,6 +255,7 @@ def tokens(
 @OPT_COLON_FENCES
 @OPT_DOLLAR_MATH
 @OPT_CONVERSIONS
+@OPT_CONFIG
 def stream(
     stream: TextIOWrapper,
     language: str,
@@ -259,6 +305,7 @@ def stream(
 @OPT_DOLLAR_MATH
 @OPT_CONVERSIONS
 @OPT_ENCODING
+@OPT_CONFIG
 def convert(
     paths: List[str],
     dry_run: bool,

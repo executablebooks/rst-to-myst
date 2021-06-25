@@ -61,10 +61,24 @@ def test_stream():
     assert "{name}`content`" in result.output
 
 
-def test_convert(tmp_path: Path):
-    tmp_path.joinpath("test.rst").write_text("head\n====\n\ncontent\n", encoding="utf8")
+def test_convert(tmp_path: Path, file_regression):
+    tmp_path.joinpath("test.rst").write_text(
+        "head\n====\n\ncontent `a`\n", encoding="utf8"
+    )
+    tmp_path.joinpath("config.yaml").write_text("default_role: math\n", encoding="utf8")
     runner = CliRunner()
-    result = runner.invoke(cli.convert, [str(tmp_path.joinpath("test.rst"))])
+    result = runner.invoke(
+        cli.convert,
+        [
+            "--config",
+            str(tmp_path.joinpath("config.yaml")),
+            str(tmp_path.joinpath("test.rst")),
+        ],
+    )
     assert result.exit_code == 0, result.output
     assert tmp_path.joinpath("test.md").exists()
-    assert "# head" in tmp_path.joinpath("test.md").read_text(encoding="utf8")
+    file_regression.check(
+        tmp_path.joinpath("test.md").read_text(encoding="utf8"),
+        encoding="utf8",
+        extension=".md",
+    )
