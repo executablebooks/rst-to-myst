@@ -47,6 +47,13 @@ def test_ast():
     assert '<RoleNode role="name" text="content">' in result.output
 
 
+def test_tokens():
+    runner = CliRunner()
+    result = runner.invoke(cli.tokens, ["-"], input=":name:`content`")
+    assert result.exit_code == 0, result.output
+    assert "paragraph_open" in result.output
+
+
 def test_stream():
     runner = CliRunner()
     result = runner.invoke(cli.stream, ["-"], input=":name:`content`")

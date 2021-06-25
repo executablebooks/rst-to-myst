@@ -143,7 +143,7 @@ OPT_DOLLAR_MATH = click.option(
 @OPT_EXTENSIONS
 @OPT_CONVERSIONS
 def ast(stream: TextIOWrapper, language: str, sphinx: bool, extensions, conversions):
-    """Parse a single file or stdin (-) to and print the Abstract Syntax Tree."""
+    """Parse file / stdin (-) and print RST Abstract Syntax Tree."""
     text = stream.read()
     document, _ = to_docutils_ast(
         text,
@@ -155,6 +155,47 @@ def ast(stream: TextIOWrapper, language: str, sphinx: bool, extensions, conversi
     )
     output = document.pformat()
     click.echo(output)
+
+
+@main.command("tokens")
+@ARG_STREAM
+@OPT_LANGUAGE
+@OPT_SPHINX
+@OPT_EXTENSIONS
+@OPT_DEFAULT_DOMAIN
+@OPT_DEFAULT_ROLE
+@OPT_CITE_PREFIX
+@OPT_COLON_FENCES
+@OPT_DOLLAR_MATH
+@OPT_CONVERSIONS
+def tokens(
+    stream: TextIOWrapper,
+    language: str,
+    sphinx: bool,
+    extensions: List[str],
+    default_domain: str,
+    default_role: Optional[str],
+    cite_prefix: str,
+    colon_fences: bool,
+    dollar_math: bool,
+    conversions,
+):
+    """Parse file / stdin (-) and print Markdown-It tokens."""
+    text = stream.read()
+    output = rst_to_myst(
+        text,
+        warning_stream=click.get_text_stream("stderr"),
+        language_code=language,
+        use_sphinx=sphinx,
+        extensions=extensions,
+        conversions=conversions,
+        default_domain=default_domain,
+        default_role=default_role,
+        cite_prefix=cite_prefix,
+        colon_fences=colon_fences,
+        dollar_math=dollar_math,
+    )
+    click.echo(yaml_dump([token.as_dict() for token in output.tokens]))
 
 
 @main.command("stream")
@@ -182,7 +223,7 @@ def stream(
     dollar_math: bool,
     conversions,
 ):
-    """Parse a single file or stdin (-) and print output."""
+    """Parse file / stdin (-) and print Markdown text."""
     text = stream.read()
     output = rst_to_myst(
         text,
