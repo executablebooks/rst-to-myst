@@ -441,7 +441,24 @@ Revision: \$Revision\$
 # reStructuredText Directives
 .
 
-math-directives
+math-directive-no-options
+.
+.. math::
+
+   \begin{aligned}
+   \lambda &= \frac{E \nu}{(1 + \nu)(1 - 2 \nu)} \\
+   \mu &= \frac{E}{2(1 + \nu)}
+   \end{aligned}.
+.
+$$
+\begin{aligned}
+\lambda &= \frac{E \nu}{(1 + \nu)(1 - 2 \nu)} \\
+\mu &= \frac{E}{2(1 + \nu)}
+\end{aligned}.
+$$
+.
+
+math-directive-label
 .
 .. math::
    :label: poisson-ratio
@@ -451,8 +468,26 @@ math-directives
    \mu &= \frac{E}{2(1 + \nu)}
    \end{aligned}.
 .
+$$
+\begin{aligned}
+\lambda &= \frac{E \nu}{(1 + \nu)(1 - 2 \nu)} \\
+\mu &= \frac{E}{2(1 + \nu)}
+\end{aligned}.
+$$ (poisson-ratio)
+.
+
+math-directive-nowrap
+.
+.. math::
+   :nowrap:
+
+   \begin{aligned}
+   \lambda &= \frac{E \nu}{(1 + \nu)(1 - 2 \nu)} \\
+   \mu &= \frac{E}{2(1 + \nu)}
+   \end{aligned}.
+.
 ```{math}
-:label: poisson-ratio
+:nowrap: true
 
 \begin{aligned}
 \lambda &= \frac{E \nu}{(1 + \nu)(1 - 2 \nu)} \\
