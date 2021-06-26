@@ -643,11 +643,14 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
                 )
             )
             and len(node.children) == 2
-            and node.children[0].astext().strip() == ""
         ):
             # special case where we use dollarmath
-            _, content = node.children
-            text = "\n" + content.astext().strip() + "\n"
+            argument, content = node.children
+            text = ""
+            if argument.astext().strip():
+                text += "\n" + argument.astext().strip() + "\n"
+            if content.astext().strip():
+                text += "\n" + content.astext().strip() + "\n"
             if node["options_list"]:
                 label = node["options_list"][0][1]
                 self.add_token(
