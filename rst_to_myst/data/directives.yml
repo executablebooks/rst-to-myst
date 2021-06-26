@@ -3,7 +3,7 @@
 # - "direct": convert directly to MyST directive, keeping original argument/content
 # - "parse_argument":  convert to MyST directive and convert the argument to Markdown
 # - "parse_content":  convert to MyST directive and convert the content to Markdown
-# - "parse_all":  convert to MyST directive and convert the content to Markdown
+# - "parse_all":  convert to MyST directive and convert the argument and content to Markdown
 
 # admonitions (docutils)
 docutils.parsers.rst.directives.admonitions.Admonition: parse_all
@@ -211,4 +211,4 @@ sphinx.domains.std.ProductionList: eval_rst
 
 # third-party directives
 sphinxcontrib.bibtex.directives.BibliographyDirective: direct
-sphinx_panels.dropdpwn.DropdownDirective: parse_all
+sphinx_panels.dropdown.DropdownDirective: parse_all
