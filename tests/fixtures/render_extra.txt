@@ -495,3 +495,13 @@ math-directive-nowrap
 \end{aligned}.
 ```
 .
+
+math-directive-nospace
+.
+.. math::
+   \int_{\Omega} \nabla v \cdot \nabla u = 0, \forall v
+.
+$$
+\int_{\Omega} \nabla v \cdot \nabla u = 0, \forall v
+$$
+.
