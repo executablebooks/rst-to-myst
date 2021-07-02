@@ -82,3 +82,25 @@ def test_convert(tmp_path: Path, file_regression):
         encoding="utf8",
         extension=".md",
     )
+
+def test_convert_code_to_code_cell(tmp_path: Path, file_regression):
+    tmp_path.joinpath("test-code-cell.rst").write_text(
+        "head\n====\n\n.. code::\n\n\timport numpy as np", encoding="utf8"
+    )
+    tmp_path.joinpath("config-code-cell.yaml").write_text("code_to_code_cell: true\n", encoding="utf8")
+    runner = CliRunner()
+    result = runner.invoke(
+        cli.convert,
+        [
+            "--config",
+            str(tmp_path.joinpath("config-code-cell.yaml")),
+            str(tmp_path.joinpath("test-code-cell.rst")),
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    assert tmp_path.joinpath("test-code-cell.md").exists()
+    file_regression.check(
+        tmp_path.joinpath("test-code-cell.md").read_text(encoding="utf8"),
+        encoding="utf8",
+        extension=".md",
+    )

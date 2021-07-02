@@ -177,6 +177,12 @@ OPT_DOLLAR_MATH = click.option(
     show_default=True,
     help="Convert math (where possible) to dollar-delimited math",
 )
+OPT_CODE_TO_CODE_CELL = click.option(
+    "--code-to-code-cell",
+    default=False,
+    show_default=True,
+    help="Convert code directives to code-cell directives",
+)
 
 
 @main.command("ast")
@@ -211,6 +217,7 @@ def ast(stream: TextIOWrapper, language: str, sphinx: bool, extensions, conversi
 @OPT_CITE_PREFIX
 @OPT_COLON_FENCES
 @OPT_DOLLAR_MATH
+@OPT_CODE_TO_CODE_CELL
 @OPT_CONVERSIONS
 @OPT_CONFIG
 def tokens(
@@ -223,6 +230,7 @@ def tokens(
     cite_prefix: str,
     colon_fences: bool,
     dollar_math: bool,
+    code_to_code_cell: bool,
     conversions,
 ):
     """Parse file / stdin (-) and print Markdown-It tokens."""
@@ -239,6 +247,7 @@ def tokens(
         cite_prefix=cite_prefix + "_",
         colon_fences=colon_fences,
         dollar_math=dollar_math,
+        code_to_code_cell=code_to_code_cell,
     )
     click.echo(yaml_dump([token.as_dict() for token in output.tokens]))
 
