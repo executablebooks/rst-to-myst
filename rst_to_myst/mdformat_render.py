@@ -237,7 +237,7 @@ def rst_to_myst(
         default_role=default_role,
         colon_fences=colon_fences,
         dollar_math=dollar_math,
-        code_to_code_cell = code_to_code_cell,
+        code_to_code_cell=code_to_code_cell,
     )
     output = token_renderer.to_tokens()
     myst_extension = get_myst_extensions(output.tokens)
