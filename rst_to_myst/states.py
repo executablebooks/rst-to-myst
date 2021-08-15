@@ -128,7 +128,7 @@ class ExplicitMixin:
         # default to eval rst
         if directive_class is None:
             # TODO warning message?
-            return self.eval_rst(type_name, block_text, indent, indented, blank_finish)
+            return self.eval-rst(type_name, block_text, indent, indented, blank_finish)
 
         # get directive path for lookup
         directive_path = f"{directive_class.__module__}.{directive_class.__name__}"
@@ -143,13 +143,13 @@ class ExplicitMixin:
             "parse_content_titles",
             "parse_all",
         ]:
-            if conversion and conversion != "eval_rst":
+            if conversion and conversion != "eval-rst":
                 self.reporter.warning(
                     f'Unknown conversion type "{conversion}"',
                     nodes.literal_block(block_text, block_text),
                     line=lineno,
                 )
-            return self.eval_rst(type_name, block_text, indent, indented, blank_finish)
+            return self.eval-rst(type_name, block_text, indent, indented, blank_finish)
 
         try:
             (
@@ -164,7 +164,7 @@ class ExplicitMixin:
                 nodes.literal_block(block_text, block_text),
                 line=lineno,
             )
-            return self.eval_rst(type_name, block_text, indent, indented, blank_finish)
+            return self.eval-rst(type_name, block_text, indent, indented, blank_finish)
 
         directive_node = DirectiveNode(
             block_text,
@@ -200,7 +200,7 @@ class ExplicitMixin:
         return [directive_node], blank_finish
 
     @staticmethod
-    def eval_rst(
+    def eval-rst(
         name: str, block_text: str, indent: int, indented: List[str], blank_finish: bool
     ):
         """Return an EvalRstNode."""

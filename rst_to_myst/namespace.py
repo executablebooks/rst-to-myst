@@ -254,8 +254,8 @@ if __name__ == "__main__":
     for _name, _cls in _app.directives.items():
         if "patch" in _cls.__module__:
             print(f"# {_name}")
-            print(f"{_cls.__module__}.{_cls.__name__}: eval_rst")
+            print(f"{_cls.__module__}.{_cls.__name__}: eval-rst")
     # for _dname, _domain in _app.domains.items():
     #     for _name, _cls in _domain.directives.items():
     #         print(f"# {_dname}:{_name}")
-    #         print(f"{_cls.__module__}.{_cls.__name__}: eval_rst")
+    #         print(f"{_cls.__module__}.{_cls.__name__}: eval-rst")

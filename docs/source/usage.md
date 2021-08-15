@@ -16,7 +16,7 @@ Conversion notes:
 - only one kind of footnote (i.e. no symbol prefixes)
 - citation are turned into footnotes, with label prepended by `cite_prefix`
 - inline targets are not convertible (and so ignored)
-- If tables are not compatible with Markdown (single header row, no merged cells, etc), then they will be wrapped in an `eval_rst`
+- If tables are not compatible with Markdown (single header row, no merged cells, etc), then they will be wrapped in an `eval-rst`
 - Markdown blockquotes do not have an attribution syntax, so it is converted instead to `<p class="attribution">—text</p>` (the standard HTML render)
 
 ## Converting text snippets
@@ -82,10 +82,10 @@ conversions:
 
 Directives are converted according to a mapping of the directive module path to a conversion type:
 
-- "eval_rst" (the default): no conversion, wrap in MyST `eval_rst` directive
+- "eval-rst" (the default): no conversion, wrap in MyST `eval-rst` directive
 
   ````
-  ```{eval_rst}
+  ```{eval-rst}
   .. name:: argument `link`_
      :option: value
 

@@ -326,7 +326,7 @@ X  Y
 C  D
 == ==
 .
-```{eval_rst}
+```{eval-rst}
 == ==
 A  B
 X  Y
