@@ -408,7 +408,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
             if not text.endswith("\n"):
                 text += "\n"
             self.add_token(
-                "fence", "code", 0, content=text, markup="```", info="{eval_rst}"
+                "fence", "code", 0, content=text, markup="```", info="{eval-rst}"
             )
             raise nodes.SkipNode
 
