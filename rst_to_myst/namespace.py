@@ -1,5 +1,6 @@
 import copy
 import threading
+from functools import lru_cache
 from importlib import import_module
 from inspect import getdoc
 from itertools import chain
@@ -176,6 +177,7 @@ class ApplicationNamespace:
         }
 
 
+@lru_cache
 def compile_namespace(
     extensions: Iterable[str] = (),
     use_sphinx: bool = True,
