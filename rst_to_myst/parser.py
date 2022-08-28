@@ -1,5 +1,6 @@
+from functools import lru_cache
 from io import StringIO
-from typing import Tuple
+from typing import Any, Dict, Tuple
 
 import yaml
 from docutils import nodes
@@ -127,6 +128,13 @@ class FrontMatter(Transform):
             candidate.replace_self(front_matter)
 
 
+@lru_cache
+def _load_directive_data() -> Dict[str, Any]:
+    return yaml.safe_load(
+        files(package_data).joinpath("directives.yml").read_text("utf8")
+    )
+
+
 def to_docutils_ast(
     text: str,
     uri: str = "source",
@@ -161,9 +169,7 @@ def to_docutils_ast(
     document.settings.namespace = namespace
 
     # get conversion lookup for directives
-    directive_data = yaml.safe_load(
-        files(package_data).joinpath("directives.yml").read_text("utf8")
-    )
+    directive_data = _load_directive_data()
     if conversions:
         directive_data.update(conversions)
     document.settings.directive_data = directive_data
