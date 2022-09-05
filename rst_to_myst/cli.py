@@ -126,7 +126,7 @@ def split_extension(ctx, param, value):
     if isinstance(value, list):
         # if reading from config
         return value
-    return [ext.strip() for ext in value.split(",")] if value else []
+    return tuple(ext.strip() for ext in value.split(",")) if value else ()
 
 
 OPT_EXTENSIONS = click.option(
