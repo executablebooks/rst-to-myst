@@ -260,6 +260,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         raise nodes.SkipNode
 
     def visit_doctest_block(self, node):
+        self.warning("Treating doctest block as a literal block", node.line)
         self.visit_literal_block(node)
 
     def visit_block_quote(self, node):
