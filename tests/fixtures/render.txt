@@ -41,6 +41,21 @@ literal text
 normal text
 .
 
+doctest block:
+.
+::
+
+>>> some text
+
+normal text
+.
+```
+>>> some text
+```
+
+normal text
+.
+
 block quotes
 .
 a
