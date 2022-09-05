@@ -259,6 +259,9 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         self.add_token("code_block", "code", 0, content=text)
         raise nodes.SkipNode
 
+    def visit_doctest_block(self, node):
+        self.visit_literal_block(node)
+
     def visit_block_quote(self, node):
         self.add_token("blockquote_open", "blockquote", 1, markup=">")
 
