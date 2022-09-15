@@ -5,6 +5,7 @@ from typing import IO, Any, Dict, List, NamedTuple, Optional, Tuple
 
 from docutils import nodes
 from markdown_it.token import Token
+from mdit_py_plugins import __version__ as mdit_plug_version
 
 
 class RenderOutput(NamedTuple):
@@ -657,9 +658,11 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
                 text += "\n" + content.astext().strip() + "\n"
             if node["options_list"]:
                 label = node["options_list"][0][1]
-                self.add_token(
-                    "math_block_eqno", "math", 0, markup="$$", content=text, info=label
-                )
+                major, minor, patch = [int(i) for i in mdit_plug_version.split(".")]
+                name = "math_block_label"
+                if major == 0 and minor < 3:
+                    name = "math_block_eqno"
+                self.add_token(name, "math", 0, markup="$$", content=text, info=label)
             else:
                 self.add_token("math_block", "math", 0, markup="$$", content=text)
             raise nodes.SkipNode
