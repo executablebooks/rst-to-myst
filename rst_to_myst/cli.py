@@ -1,9 +1,10 @@
 from io import TextIOWrapper
 from pathlib import Path
-from typing import List, Mapping, Optional
+from typing import Iterable, List, Mapping, Optional, Tuple
 
 import click
 import yaml
+from click_path import GlobPaths
 
 from . import compile_namespace, rst_to_myst, to_docutils_ast
 from .utils import yaml_dump
@@ -57,7 +58,7 @@ ARG_STREAM = click.argument("stream", type=click.File("r"), metavar="PATH_OR_STD
 
 ARG_PATHS = click.argument(
     "paths",
-    type=click.Path(exists=True, file_okay=True, dir_okay=True),
+    type=GlobPaths(),
     nargs=-1,
 )
 
@@ -307,7 +308,7 @@ def stream(
 @OPT_ENCODING
 @OPT_CONFIG
 def convert(
-    paths: List[str],
+    paths: Tuple[Iterable[Path]],
     dry_run: bool,
     replace_files: bool,
     raise_on_warning: bool,
@@ -326,8 +327,8 @@ def convert(
 ):
     """Convert one or more files."""
     myst_extensions = set()
+    paths: Iterable[Path] = [file for path_arg in paths for file in path_arg]
     for path in paths:
-        path = Path(path)
         output_path = path.parent / (path.stem + ".md")
         click.secho(f"{path} -> {output_path}", fg="blue")
         input_text = path.read_text(encoding)

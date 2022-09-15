@@ -26,7 +26,8 @@ requires=[
     "mdformat~=0.7.6",
     "mdformat-myst~=0.1.4",
     "mdformat-deflist~=0.1.0",
-    "click~=7.1"
+    "click~=7.1",
+    "click-path~=0.0.5"
 ]
 
 [tool.flit.entrypoints."console_scripts"]
