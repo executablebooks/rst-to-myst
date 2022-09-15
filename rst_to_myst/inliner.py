@@ -108,9 +108,9 @@ class Regexes:
         # Last URI character; same as uric but no punctuation:
         urilast = r"""[_~*/=+a-zA-Z0-9]"""
         # End of a URI (either 'urilast' or 'uric followed by a uri_end_delim'):
-        uri_end = fr"""(?:{urilast}|{uric}(?={uri_end_delim}))"""
+        uri_end = rf"""(?:{urilast}|{uric}(?={uri_end_delim}))"""
         emailc = r"""[-_!~*'{|}/#?^`&=+$%a-zA-Z0-9\x00]"""
-        email_pattern = fr"""
+        email_pattern = rf"""
                 {emailc}+(?:\.{emailc}+)*       # name
                 (?<!\x00)@                      # at
                 {emailc}+(?:\.{emailc}*)*       # host
@@ -146,16 +146,16 @@ class Regexes:
                     end_string_suffix,
                     [
                         # reference name & end-string
-                        fr"(?P<refname>{simplename})(?P<refend>__?)",
+                        rf"(?P<refname>{simplename})(?P<refend>__?)",
                         (
                             "footnotelabel",
                             r"\[",
                             r"(?P<fnend>\]_)",
                             [
                                 r"[0-9]+",  # manually numbered
-                                fr"\#({simplename})?",  # auto-numbered (w/ label?)
+                                rf"\#({simplename})?",  # auto-numbered (w/ label?)
                                 r"\*",  # auto-symbol
-                                fr"(?P<citationlabel>{simplename})",
+                                rf"(?P<citationlabel>{simplename})",
                             ],  # citation reference
                         ),
                     ],
@@ -180,7 +180,7 @@ class Regexes:
         )
 
         self.interpreted_or_phrase_ref = re.compile(
-            fr"""
+            rf"""
             {non_unescaped_whitespace_escape_before}
             (
             `
@@ -195,7 +195,7 @@ class Regexes:
         )
 
         self.embedded_link = re.compile(
-            fr"""
+            rf"""
             (
             (?:[ \n]+|^)            # spaces or beginning of line/string
             <                       # open bracket
@@ -224,7 +224,7 @@ class Regexes:
 
         self.uri = re.compile(
             (
-                fr"""
+                rf"""
             {start_string_prefix}
             (?P<whole>
                 (?P<absolute>           # absolute URI
@@ -252,7 +252,7 @@ class Regexes:
                 (?P<email>              # email address
                 """
                 + email_pattern
-                + fr"""
+                + rf"""
                 )
             )
             {end_string_suffix}
@@ -262,7 +262,7 @@ class Regexes:
         )
 
         self.pep = re.compile(
-            fr"""
+            rf"""
             {start_string_prefix}
             (
                 (pep-(?P<pepnum1>\d+)(.txt)?) # reference to source file
@@ -274,7 +274,7 @@ class Regexes:
         )
 
         self.rfc = re.compile(
-            fr"""
+            rf"""
             {start_string_prefix}
             (RFC(-|\s+)?(?P<rfcnum>\d+))
             {end_string_suffix}""",

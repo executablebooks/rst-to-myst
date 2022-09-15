@@ -1,6 +1,6 @@
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.0.1
+  rev: v4.3.0
   hooks:
   - id: end-of-file-fixer
   - id: mixed-line-ending
@@ -16,11 +16,11 @@ repos:
   hooks:
   - id: python-check-blanket-noqa
 - repo: https://github.com/timothycrosley/isort
-  rev: 5.8.0
+  rev: 5.10.1
   hooks:
   - id: isort
 - repo: https://github.com/psf/black
-  rev: 21.6b0
+  rev: 22.8.0
   hooks:
   - id: black
 - repo: https://gitlab.com/pycqa/flake8
