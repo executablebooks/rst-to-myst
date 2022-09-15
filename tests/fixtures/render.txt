@@ -41,19 +41,23 @@ literal text
 normal text
 .
 
-doctest block:
+doctest block [EXPECT_WARNING]:
 .
-::
+This is an ordinary paragraph.
 
->>> some text
+>>> print 'this is a Doctest block'
+this is a Doctest block
 
-normal text
+Another paragraph
 .
-```
->>> some text
+This is an ordinary paragraph.
+
+```pycon
+>>> print 'this is a Doctest block'
+this is a Doctest block
 ```
 
-normal text
+Another paragraph
 .
 
 block quotes
