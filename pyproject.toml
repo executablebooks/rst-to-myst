@@ -41,10 +41,10 @@ test = [
     "pytest-regressions"
 ]
 docs = [
-    "myst-parser~=0.15.0",
+    "myst-parser",
     "sphinx-book-theme",
-    "sphinx-click~=2.6",
-    "sphinx-panels",
+    "sphinx-click",
+    "sphinx-design"
 ]
 
 [tool.flit.sdist]
