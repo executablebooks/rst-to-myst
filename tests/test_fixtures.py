@@ -32,7 +32,10 @@ def test_ast(line, title, rst, expected):
 def test_render(line, title, rst, expected):
     output = rst_to_myst(rst)
     try:
-        assert output.warning_stream.getvalue() == ""
+        if "EXPECT_WARNING" not in title:
+            assert output.warning_stream.getvalue() == ""
+        else:
+            assert output.warning_stream.getvalue() != ""
         assert output.text.rstrip() == expected.rstrip()
     except AssertionError:
         print(output.text)
