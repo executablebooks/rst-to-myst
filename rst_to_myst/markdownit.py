@@ -260,6 +260,23 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         self.add_token("code_block", "code", 0, content=text)
         raise nodes.SkipNode
 
+    def visit_doctest_block(self, node):
+        # https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#doctest-blocks
+        # https://pygments.org/docs/lexers/#pygments.lexers.python.PythonConsoleLexer
+        self.warning("Treating doctest block as pycon literal block", node.line)
+        text = node.astext()
+        if not text.endswith("\n"):
+            text += "\n"
+        self.add_token(
+            "fence",
+            "code",
+            0,
+            content=text,
+            markup="```",
+            info="pycon",
+        )
+        raise nodes.SkipNode
+
     def visit_block_quote(self, node):
         self.add_token("blockquote_open", "blockquote", 1, markup=">")
 
