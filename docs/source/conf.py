@@ -14,7 +14,7 @@ version = __version__
 extensions = [
     # read Markdown files
     "myst_parser",
-    "sphinx_panels",
+    "sphinx_design",
     # document CLI
     "sphinx_click",
     # document API
