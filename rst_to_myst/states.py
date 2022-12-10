@@ -370,7 +370,7 @@ class ExplicitMixin:
                 parser = parser_class()
                 tabledata = parser.parse(block)
                 tableline = self.state_machine.abs_line_number() - len(block) + 1
-                table = self.build_table(tabledata, tableline)  # type: nodes.table
+                table: nodes.table = self.build_table(tabledata, tableline)
                 table.rawsource = "\n".join(block)  # added for MyST
                 nodelist = [table] + messages
             except tableparser.TableMarkupError as err:
