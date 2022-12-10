@@ -128,7 +128,7 @@ class FrontMatter(Transform):
             candidate.replace_self(front_matter)
 
 
-@lru_cache
+@lru_cache()
 def _load_directive_data() -> Dict[str, Any]:
     return yaml.safe_load(
         files(package_data).joinpath("directives.yml").read_text("utf8")
