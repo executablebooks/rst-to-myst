@@ -177,7 +177,7 @@ class ApplicationNamespace:
         }
 
 
-@lru_cache
+@lru_cache()
 def compile_namespace(
     extensions: Iterable[str] = (),
     use_sphinx: bool = True,
