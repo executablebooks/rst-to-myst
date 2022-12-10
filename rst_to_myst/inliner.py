@@ -300,7 +300,7 @@ class Inliner:
     def __init__(self, regex_class=None):
         """Initialise inliner."""
         # list of (pattern, bound method) tuples, used by `self.implicit_inline`.
-        self.implicit_dispatch = []  # type: List[Tuple[Pattern, Callable]]
+        self.implicit_dispatch: List[Tuple[Pattern, Callable]] = []
         self.regex_class = regex_class or Regexes
         # this is required by ``rfc_reference_role()``
         self.rfc_url = "rfc%d.html"
@@ -372,8 +372,8 @@ class Inliner:
         4. If not found or invalid, generate a warning and ignore the start-string.
         5. Implicit inline markup (e.g. standalone URIs) is found last.
         """
-        self.reporter = memo.reporter  # type: Reporter
-        self.document = memo.document  # type: nodes.document
+        self.reporter: Reporter = memo.reporter
+        self.document: nodes.document = memo.document
         self.language = memo.language
         self.parent = parent
         remaining = escape2null(text)
