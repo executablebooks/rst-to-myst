@@ -1,5 +1,5 @@
 from io import StringIO
-from typing import Tuple
+from typing import Iterable, Optional, Tuple
 
 import yaml
 from docutils import nodes
@@ -20,7 +20,7 @@ except ImportError:
 
 from . import data as package_data
 from .inliner import InlinerMyst
-from .namespace import compile_namespace
+from .namespace import ApplicationNamespace, compile_namespace
 from .nodes import FrontMatterNode
 from .states import get_state_classes
 
@@ -130,16 +130,32 @@ class FrontMatter(Transform):
 def to_docutils_ast(
     text: str,
     uri: str = "source",
-    report_level=2,
-    halt_level=4,
-    warning_stream=None,
-    language_code="en",
-    use_sphinx=True,
-    extensions=(),
-    default_domain="py",
-    conversions=None,
-    front_matter=True,
+    report_level: int = 2,
+    halt_level: int = 4,
+    warning_stream: Optional[StringIO] = None,
+    language_code: str = "en",
+    use_sphinx: bool = True,
+    extensions: Iterable[str] = (),
+    default_domain: str = "py",
+    conversions: Optional[dict] = None,
+    front_matter: bool = True,
+    namespace: Optional[ApplicationNamespace] = None,
 ) -> Tuple[nodes.document, StringIO]:
+    """Convert a string of text to a docutils AST.
+
+    :param text: The text to convert.
+    :param uri: The URI of the document.
+    :param report_level: The report level for docutils.
+    :param halt_level: The halt level for docutils.
+    :param warning_stream: A stream to write warnings to.
+    :param language_code: The language code for docutils.
+    :param use_sphinx: Whether to use Sphinx roles and directives.
+    :param extensions: A list of Sphinx extensions to use.
+    :param default_domain: The default Sphinx domain.
+    :param conversions: A dictionary of conversion functions.
+    :param front_matter: Whether to treat initial field list as front matter.
+    :param namespace: A pre-computed docutils namespace to use.
+    """
     settings = OptionParser(components=(LosslessRSTParser,)).get_default_values()
     warning_stream = StringIO() if warning_stream is None else warning_stream
     settings.warning_stream = warning_stream
@@ -152,11 +168,15 @@ def to_docutils_ast(
     document = new_document(uri, settings=settings)
 
     # compile lookup for directives/roles
-    namespace = compile_namespace(
-        language_code=language_code,
-        use_sphinx=use_sphinx,
-        extensions=extensions,
-        default_domain=default_domain,
+    namespace = (
+        compile_namespace(
+            language_code=language_code,
+            use_sphinx=use_sphinx,
+            extensions=extensions,
+            default_domain=default_domain,
+        )
+        if namespace is None
+        else namespace
     )
     document.settings.namespace = namespace
 

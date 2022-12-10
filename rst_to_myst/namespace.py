@@ -182,7 +182,13 @@ def compile_namespace(
     default_domain="py",
     language_code="en",
 ) -> ApplicationNamespace:
-    """Gather all available directives and roles."""
+    """Gather all available directives and roles.
+
+    :param extensions: list of extensions to load
+    :param use_sphinx: whether to load sphinx extensions
+    :param default_domain: default domain to use
+    :param language_code: language code to use for translation
+    """
     app = ApplicationNamespace(
         default_domain=default_domain, language_code=language_code
     )
