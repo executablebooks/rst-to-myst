@@ -74,6 +74,13 @@ def read_conversions(ctx, param, value):
         # read from config file
         data = value
     else:
+        could_be_map = "{" in value or "}" in value
+        if could_be_map:
+            try:
+                return ast_from_standard_library.literal_eval(value)
+            except Exception:
+                pass
+
         path = Path(str(value))
         if not path.exists():
             raise click.BadOptionUsage(
