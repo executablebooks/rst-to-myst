@@ -65,17 +65,8 @@ $ rst2myst convert --config config.yaml docs/**/*.rst
 
 YAML config options mirror the CLI options, except using `_` instead of `-`, e.g.
 
-```yaml
-language: en
-sphinx: true
-extensions:
-  - sphinx_panels
-default_domain: py
-consecutive_numbering: true
-colon_fences: true
-dollar_math: true
-conversions:
-  sphinx_panels.dropdown.DropdownDirective: parse_all
+```{literalinclude} ../snippets/yaml/example_config.yaml
+:language: yaml
 ```
 
 ### Directive conversion

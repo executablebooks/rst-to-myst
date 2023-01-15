@@ -5,6 +5,7 @@ from click.testing import CliRunner
 from rst_to_myst import cli
 
 TEST_CLI_PATH = Path(__file__).parent.joinpath("test_cli")
+YAML_SNIPPETS_PATH = Path(__file__).parent.parent.joinpath("docs", "snippets", "yaml")
 
 
 def test_directives_list():
@@ -92,7 +93,7 @@ def test_sphinx_design_config():
         cli.convert,
         [
             "--config",
-            str(TEST_CLI_PATH.joinpath("test_config.yaml")),
+            str(YAML_SNIPPETS_PATH.joinpath("example_config.yaml")),
             "--dry-run",
             str(TEST_CLI_PATH.joinpath("test_sphinx_design_dropdown.rst")),
         ],
