@@ -135,12 +135,13 @@ def split_extension(ctx, param, value):
         # if reading from config
         return value
 
-    could_be_list = "[" in value or "]" in value
-    if could_be_list:
-        try:
-            return ast_from_standard_library.literal_eval(value)
-        except Exception:
-            raise click.BadParameter("{value!r} is not a legal Python module name")
+    if isinstance(value, str):
+        could_be_list = "[" in value or "]" in value
+        if could_be_list:
+            try:
+                return ast_from_standard_library.literal_eval(value)
+            except Exception:
+                raise click.BadParameter("{value!r} is not a legal Python module name")
     return [ext.strip() for ext in value.split(",")] if value else []
 
 
