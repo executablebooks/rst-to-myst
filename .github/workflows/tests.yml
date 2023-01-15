@@ -41,7 +41,7 @@ jobs:
       # so that coverage will be recorded up for the module
       run: |
         pip install flit
-        flit install --deps=production --extras=test,sphinx --pth-file
+        flit install --deps=production --extras=test,sphinx,docs --pth-file
 
     - name: Run pytest
       run: |
