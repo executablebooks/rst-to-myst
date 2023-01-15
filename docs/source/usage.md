@@ -75,7 +75,7 @@ consecutive_numbering: true
 colon_fences: true
 dollar_math: true
 conversions:
-  sphinx_panels.dropdpwn.DropdownDirective: parse_all
+  sphinx_panels.dropdown.DropdownDirective: parse_all
 ```
 
 ### Directive conversion
