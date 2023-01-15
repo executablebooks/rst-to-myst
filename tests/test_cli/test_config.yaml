@@ -1,0 +1,8 @@
+language: en
+sphinx: true
+extensions:
+- sphinx_design
+default_domain: py
+consecutive_numbering: true
+colon_fences: true
+dollar_math: true

@@ -4,6 +4,8 @@ from click.testing import CliRunner
 
 from rst_to_myst import cli
 
+TEST_CLI_PATH = Path(__file__).parent.joinpath("test_cli")
+
 
 def test_directives_list():
     runner = CliRunner()
@@ -82,3 +84,18 @@ def test_convert(tmp_path: Path, file_regression):
         encoding="utf8",
         extension=".md",
     )
+
+
+def test_sphinx_design_config():
+    runner = CliRunner()
+    result = runner.invoke(
+        cli.convert,
+        [
+            "--config",
+            str(TEST_CLI_PATH.joinpath("test_config.yaml")),
+            "--dry-run",
+            str(TEST_CLI_PATH.joinpath("test_sphinx_design_dropdown.rst")),
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    assert "FAILED" in result.output
