@@ -145,7 +145,7 @@ class ExplicitMixin:
         ]:
             if conversion and conversion != "eval_rst":
                 self.reporter.warning(
-                    f'Unknown conversion type "{conversion}"',
+                    f"Unknown conversion type {conversion!r}",
                     nodes.literal_block(block_text, block_text),
                     line=lineno,
                 )
@@ -160,7 +160,7 @@ class ExplicitMixin:
             ) = self.parse_directive_block(indented, line_offset, directive_class)
         except states.MarkupError as error:
             self.reporter.warning(
-                f'Error in "{type_name}" directive parse:\n{" ".join(error.args)}',
+                f'Error in {type_name!r} directive parse:\n{" ".join(error.args)}',
                 nodes.literal_block(block_text, block_text),
                 line=lineno,
             )
@@ -347,7 +347,7 @@ class ExplicitMixin:
         substitution_node.line = srcline
         if not block:
             raise states.MarkupError(
-                f'Substitution definition "{subname}" missing contents: {src}:{srcline}'
+                f"Substitution definition {subname!r} missing contents: {src}:{srcline}"
             )
         block[0] = block[0].strip()
         substitution_node["names"].append(nodes.whitespace_normalize_name(subname))
