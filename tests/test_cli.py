@@ -98,4 +98,4 @@ def test_sphinx_design_config():
         ],
     )
     assert result.exit_code == 0, result.output
-    assert "FAILED" in result.output
+    assert "FAILED" not in result.output
