@@ -1,24 +1,26 @@
 [build-system]
-requires = ["flit_core >=2,<4"]
+requires = ["flit_core >=3.2,<4"]
 build-backend = "flit_core.buildapi"
 
-[tool.flit.metadata]
-dist-name = "rst-to-myst"
-module = "rst_to_myst"
-author = "Chris Sewell"
-author-email = "executablebooks@gmail.com"
-home-page = "https://github.com/executablebooks/rst-to-myst"
+[tool.flit.module]
+name = "rst_to_myst"
+
+[project]
+name = "rst-to-myst"
+dynamic = ["version", "description"]
+authors = [{name = "Chris Sewell", email = "chrisj_sewell@hotmail.com"}]
+license = {file = "LICENSE"}
 classifiers = [
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
-description-file = "README.md"
-keywords = "restructuredtext,markdown,myst"
+readme = "README.md"
+keywords = ["restructuredtext","markdown", "myst"]
 
 requires-python=">=3.7"
-requires=[
+dependencies=[
     "docutils>=0.15,<0.18",
     "importlib_resources~=3.1;python_version<'3.9'",
     "pyyaml",
@@ -29,10 +31,14 @@ requires=[
     "click>=7.1,<9"
 ]
 
-[tool.flit.entrypoints."console_scripts"]
+[project.urls]
+Home = "https://github.com/executablebooks/rst-to-myst"
+Documentation = "https://rst-to-myst.readthedocs.io"
+
+[project.scripts]
 rst2myst = "rst_to_myst.cli:main"
 
-[tool.flit.metadata.requires-extra]
+[project.optional-dependencies]
 sphinx = ["sphinx>=3.2,<5"]
 test = [
     "pytest~=6.0",
@@ -48,7 +54,6 @@ docs = [
 ]
 
 [tool.flit.sdist]
-include = ["LICENSE", "README.md", "rst_to_myst/data/directives.yml"]
 exclude = [".github/", "tests/"]
 
 [tool.isort]
