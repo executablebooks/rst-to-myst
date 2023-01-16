@@ -94,6 +94,7 @@ OPT_CONVERSIONS = click.option(
     "--conversions",
     "-c",
     default=None,
+    type=click.types.UNPROCESSED,
     callback=read_conversions,
     metavar="PATH",
     help="YAML file mapping directives -> conversions",
@@ -132,6 +133,7 @@ def split_extension(ctx, param, value):
 OPT_EXTENSIONS = click.option(
     "--extensions",
     "-e",
+    type=click.types.UNPROCESSED,
     callback=split_extension,
     help="A comma-separated list of sphinx extensions to load.",
 )

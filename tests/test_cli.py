@@ -1,4 +1,5 @@
 from pathlib import Path
+from textwrap import dedent
 
 from click.testing import CliRunner
 
@@ -63,9 +64,31 @@ def test_stream():
 
 def test_convert(tmp_path: Path, file_regression):
     tmp_path.joinpath("test.rst").write_text(
-        "head\n====\n\ncontent `a`\n", encoding="utf8"
+        dedent(
+            """\
+        head
+        ====
+
+        content `a`
+
+        .. note:: `c`
+        ```
+        """
+        ),
+        encoding="utf8",
     )
-    tmp_path.joinpath("config.yaml").write_text("default_role: math\n", encoding="utf8")
+    tmp_path.joinpath("config.yaml").write_text(
+        dedent(
+            """\
+        default_role: math
+        sphinx: true
+        extensions: [sphinx.ext.intersphinx]
+        conversions:
+            docutils.parsers.rst.directives.admonitions.Note: direct
+        """
+        ),
+        encoding="utf8",
+    )
     runner = CliRunner()
     result = runner.invoke(
         cli.convert,

@@ -191,7 +191,7 @@ def to_docutils_ast(
     # get conversion lookup for directives
     directive_data = _load_directive_data()
     if conversions:
-        directive_data.update(conversions)
+        directive_data = {**directive_data, **conversions}
     document.settings.directive_data = directive_data
 
     # whether to treat initial field list as front matter
