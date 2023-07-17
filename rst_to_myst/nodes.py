@@ -26,7 +26,7 @@ class DirectiveNode(nodes.Element):
         module: str,
         conversion: str,
         options_list: List[Tuple[str, Any]],
-        **kwargs
+        **kwargs,
     ) -> None:
         super().__init__(
             rawsource,
@@ -34,7 +34,7 @@ class DirectiveNode(nodes.Element):
             module=module,
             conversion=conversion,
             options_list=options_list,
-            **kwargs
+            **kwargs,
         )
 
 

@@ -231,7 +231,6 @@ class ExplicitMixin:
         return block_text, indented, indent, lineno, line_offset, blank_finish
 
     def parse_directive_block(self, indented, line_offset, directive):
-
         if indented and not indented[0].strip():
             indented.trim_start()
             line_offset += 1

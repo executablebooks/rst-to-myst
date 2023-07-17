@@ -81,7 +81,6 @@ class ApplicationNamespace:
     # additional methods
 
     def get_element(self, attr: str, name: str):
-
         # convert to standardised name
         canonicalname = name.lower()
         # try translation
@@ -218,12 +217,10 @@ def compile_namespace(
 
     LOCK.acquire()
     try:
-
         directives._directives = app.directives
         roles._roles = app.roles
 
         for extname in chain(builtin_extensions, extensions):
-
             if extname in app.extensions or extname in EXTENSION_BLACKLIST:
                 continue
 
