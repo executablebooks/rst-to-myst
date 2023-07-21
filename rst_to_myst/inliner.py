@@ -91,7 +91,6 @@ class Regexes:
     """Initialise and store compiled regexes."""
 
     def __init__(self, start_string_prefix: str, end_string_suffix: str):
-
         # Define inline object recognitions
         # ---------------------------------
         non_whitespace_before = r"(?<!\s)"

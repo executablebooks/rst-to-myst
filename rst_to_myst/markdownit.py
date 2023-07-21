@@ -420,7 +420,6 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         return True
 
     def visit_table(self, node):
-
         if not self.parse_gfm_table(node):
             text = node.rawsource
             if not text.endswith("\n"):
