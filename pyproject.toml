@@ -41,7 +41,7 @@ rst2myst = "rst_to_myst.cli:main"
 [project.optional-dependencies]
 sphinx = ["sphinx>=5,<7"]
 test = [
-    "pytest~=6.0",
+    "pytest~=7.4",
     "coverage",
     "pytest-cov",
     "pytest-regressions",
