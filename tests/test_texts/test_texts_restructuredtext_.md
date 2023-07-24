@@ -485,14 +485,14 @@ matching "overlines" above the title.  An underline/overline is a
 single repeated punctuation character that begins in column 1 and
 forms a line extending at least as far as the right edge of the title
 text.  Specifically, an underline/overline character may be any
-non-alphanumeric printable 7-bit ASCII character [^id2].  When an
+non-alphanumeric printable 7-bit ASCII character [^footnote-1].  When an
 overline is used, the length and character used must match the
 underline.  Underline-only adornment styles are distinct from
 overline-and-underline styles that use the same character.  There may
 be any number of levels of section titles, although some output
 formats may have limits (HTML has 6 levels).
 
-[^id2]: The following are all valid section title adornment
+[^footnote-1]: The following are all valid section title adornment
     characters:
 
     ```
@@ -966,20 +966,20 @@ arbitrary body elements.
 ##### RCS Keywords
 
 [Bibliographic fields] recognized by the parser are normally checked
-for RCS [^id6] keywords and cleaned up [^id7].  RCS keywords may be
+for RCS [^footnote-2] keywords and cleaned up [^footnote-3].  RCS keywords may be
 entered into source files as "\$keyword\$", and once stored under RCS or
-CVS [^id8], they are expanded to "\$keyword: expansion text \$".  For
+CVS [^footnote-4], they are expanded to "\$keyword: expansion text \$".  For
 example, a "Status" field will be transformed to a "status" element:
 
 ```
 :Status: $keyword: expansion text $
 ```
 
-[^id6]: Revision Control System.
+[^footnote-2]: Revision Control System.
 
-[^id7]: RCS keyword processing can be turned off (unimplemented).
+[^footnote-3]: RCS keyword processing can be turned off (unimplemented).
 
-[^id8]: Concurrent Versions System.  CVS uses the same keywords as RCS.
+[^footnote-4]: Concurrent Versions System.  CVS uses the same keywords as RCS.
 
 Processed, the "status" element's text will become simply "expansion
 text".  The dollar sign delimiters and leading RCS keyword name are
@@ -1176,10 +1176,10 @@ Syntax diagram:
 
 Quoted literal blocks are unindented contiguous blocks of text where
 each line begins with the same non-alphanumeric printable 7-bit ASCII
-character [^id10].  A blank line ends a quoted literal block.  The
+character [^footnote-5].  A blank line ends a quoted literal block.  The
 quoting characters are preserved in the processed document.
 
-[^id10]: The following are all valid quoting characters:
+[^footnote-5]: The following are all valid quoting characters:
 
     ```
     ! " # $ % & ' ( ) * + , - . / : ; < = > ? @ [ \ ] ^ _ ` { | } ~
@@ -1743,7 +1743,7 @@ the number of footnotes.  One symbol footnote cannot have multiple
 references.
 
 The standard Docutils system uses the following symbols for footnote
-marks [^id12]:
+marks [^footnote-6]:
 
 - asterisk/star ("\*")
 - dagger (HTML character entity "\&dagger;", Unicode U+02020)
@@ -1756,7 +1756,7 @@ marks [^id12]:
 - diamond suit ("\&diams;"/U+02666)
 - club suit ("\&clubs;"/U+02663)
 
-[^id12]: This list was inspired by the list of symbols for "Note
+[^footnote-6]: This list was inspired by the list of symbols for "Note
     Reference Marks" in The Chicago Manual of Style, 14th edition,
     section 12.51.  "Parallels" ("||") were given in CMoS instead of
     the pilcrow.  The last four symbols (the card suits) were added
@@ -2308,7 +2308,7 @@ Images
 
   The "[image]" directive has been implemented.
 
-Styles [^id15]
+Styles [^footnote-7]
 
 : Substitution references may be used to associate inline text with
   an externally defined presentation style:
@@ -2340,7 +2340,7 @@ Styles [^id15]
   %     .. style:: disclaimer
   %        All rights reversed.  Reprint what you like.
 
-  [^id15]: There may be sufficient need for a "style" mechanism to
+  [^footnote-7]: There may be sufficient need for a "style" mechanism to
       warrant simpler syntax such as an extension to the interpreted
       text role syntax.  The substitution mechanism is cumbersome for
       simple text styling.

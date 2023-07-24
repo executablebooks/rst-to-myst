@@ -1687,7 +1687,7 @@ The following options are recognized:
 ```
 
 The "class" directive sets the ["classes"] attribute value on its content
-or on the first immediately following non-comment element [^id13].  For
+or on the first immediately following non-comment element [^footnote-1].  For
 details of the "classes" attribute, see [its entry](../doctree.html#classes) in [The Docutils
 Document Tree][the docutils document tree].
 
@@ -1740,7 +1740,7 @@ The text above is parsed and transformed into this doctree fragment:
         Second paragraph.
 ```
 
-[^id13]: To set a "classes" attribute value on a block quote, the
+[^footnote-1]: To set a "classes" attribute value on a block quote, the
     "class" directive must be followed by an empty comment:
 
     ```
