@@ -24,10 +24,10 @@ dependencies=[
     "docutils>=0.17,<0.20",
     "importlib_resources~=3.1;python_version<'3.9'",
     "pyyaml",
-    "markdown-it-py~=1.0",
-    "mdformat~=0.7.6",
-    "mdformat-myst~=0.1.4",
-    "mdformat-deflist~=0.1.0",
+    "markdown-it-py~=2.0",
+    "mdformat~=0.7.16",
+    "mdformat-myst~=0.1.5",
+    "mdformat-deflist~=0.1.2",
     "click>=7.1,<9"
 ]
 
