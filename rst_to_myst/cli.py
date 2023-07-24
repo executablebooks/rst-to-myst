@@ -85,8 +85,8 @@ def read_conversions(ctx, param, value):
             raise click.BadOptionUsage(
                 "--conversions", f"Error reading conversions file: {exc}", ctx
             )
-    if not isinstance(value, Mapping):
-        raise click.BadOptionUsage("--conversions", f"Not a mapping: {value!r}", ctx)
+    if not isinstance(data, Mapping):
+        raise click.BadOptionUsage("--conversions", f"Not a mapping: {data!r}", ctx)
     return data
 
 
