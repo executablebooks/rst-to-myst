@@ -21,7 +21,7 @@ keywords = ["restructuredtext","markdown", "myst"]
 
 requires-python=">=3.7"
 dependencies=[
-    "docutils>=0.15,<0.18",
+    "docutils>=0.16,<0.19",
     "importlib_resources~=3.1;python_version<'3.9'",
     "pyyaml",
     "markdown-it-py~=1.0",
@@ -39,12 +39,13 @@ Documentation = "https://rst-to-myst.readthedocs.io"
 rst2myst = "rst_to_myst.cli:main"
 
 [project.optional-dependencies]
-sphinx = ["sphinx>=3.2,<5"]
+sphinx = ["sphinx>=4,<6"]
 test = [
     "pytest~=6.0",
     "coverage",
     "pytest-cov",
-    "pytest-regressions"
+    "pytest-regressions",
+    "pytest-param-files",
 ]
 docs = [
     "myst-parser",

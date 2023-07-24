@@ -34,21 +34,21 @@ e `literal` f
 g [reference] h
 i [a phrase] j
 k [text][ref] l
-m [anonymous](id5) n
+m [anonymous](target-1) n
 o (inline target not supported) p
 q {{ sub }} r
-s [^1] [^id6] [^id7] t
+s [^1] [^footnote-1] [^footnote-2] t
 u [^cite_cit2002] v
 w <http://a.net/> x
 y [uri](a.org) z
 
-(id5)=
+(target-1)=
 
 anonymous target paragraph
 
-[^id6]: auto-number footnote.
+[^footnote-1]: auto-number footnote.
 
-[^id7]: auto-symbol footnote.
+[^footnote-2]: auto-symbol footnote.
     next line
 
     new paragraph

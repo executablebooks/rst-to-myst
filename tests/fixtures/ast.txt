@@ -65,17 +65,17 @@ y `uri <a.org>`_ z
             sub
          r
         s 
-        <footnote_reference ids="id1" refid="id6">
+        <footnote_reference ids="footnote-reference-1" refid="footnote-1">
             1
          
-        <footnote_reference auto="1" ids="id2" refid="id7">
+        <footnote_reference auto="1" ids="footnote-reference-2" refid="footnote-2">
             2
          
-        <footnote_reference auto="*" ids="id3" refid="id8">
+        <footnote_reference auto="*" ids="footnote-reference-3" refid="footnote-3">
             *
          t
         u 
-        <citation_reference ids="id4" refname="cit2002">
+        <citation_reference ids="citation-reference-1" refname="cit2002">
             CIT2002
          v
         w 
@@ -86,14 +86,14 @@ y `uri <a.org>`_ z
         <reference embedded="True" name="uri" refuri="a.org">
             uri
          z
-    <target anonymous="1" ids="id5" refuri="anonymous-target">
-    <footnote backrefs="id1" ids="id6" names="1">
+    <target anonymous="1" ids="target-1" refuri="anonymous-target">
+    <footnote backrefs="footnote-reference-1" ids="footnote-1" names="1">
         <paragraph>
             normal footnote
-    <footnote auto="1" backrefs="id2" ids="id7" names="2">
+    <footnote auto="1" backrefs="footnote-reference-2" ids="footnote-2" names="2">
         <paragraph>
             auto-number footnote.
-    <footnote auto="*" backrefs="id3" ids="id8">
+    <footnote auto="*" backrefs="footnote-reference-3" ids="footnote-3">
         <paragraph>
             auto-symbol footnote.
     <citation ids="a" names="a">

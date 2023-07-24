@@ -251,14 +251,14 @@ footnote:
 .. [#] auto-number footnote.
 .. [*] auto-symbol footnote.
 .
-[^id4] [^id5] [^id6]
+[^footnote-1] [^footnote-2] [^footnote-3]
 
-[^id4]: normal footnote
+[^footnote-1]: normal footnote
     next line
 
-[^id5]: auto-number footnote.
+[^footnote-2]: auto-number footnote.
 
-[^id6]: auto-symbol footnote.
+[^footnote-3]: auto-symbol footnote.
 .
 
 citation:
@@ -310,9 +310,9 @@ table, nested syntax:
 .
 | *A* | <http://a.net/> |
 | --- | --------------- |
-| `C` | [^id2]          |
+| `C` | [^footnote-1]   |
 
-[^id2]: footnote
+[^footnote-1]: footnote
 .
 
 tables-grid:
@@ -426,7 +426,6 @@ next term
 
 : Description `a` [a].
 .
-
 
 directive-eval-rst
 .
