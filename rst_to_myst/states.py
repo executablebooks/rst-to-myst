@@ -1,4 +1,5 @@
 """docutils states."""
+
 import re
 from typing import List, Optional
 
@@ -121,9 +122,9 @@ class ExplicitMixin:
         # directive_class, messages = directives.directive(
         #     type_name, self.memo.language, self.document
         # )
-        directive_class: Optional[
-            Directive
-        ] = self.document.settings.namespace.get_directive(type_name)
+        directive_class: Optional[Directive] = (
+            self.document.settings.namespace.get_directive(type_name)
+        )
 
         # default to eval rst
         if directive_class is None:

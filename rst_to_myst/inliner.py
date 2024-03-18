@@ -41,6 +41,7 @@ hyperlink uri   http://a.net/
 embedded uri    `uri <a.org>`_
 --------------- --------------- --------------------------------------------------------
 """
+
 import re
 from typing import Any, Callable, List, Match, Pattern, Tuple
 
