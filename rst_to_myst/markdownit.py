@@ -1,4 +1,5 @@
 """Convert to markdown-it tokens, which can then be rendered by mdformat."""
+
 from io import StringIO
 from textwrap import indent
 from typing import IO, Any, Dict, List, NamedTuple, Optional, Tuple
