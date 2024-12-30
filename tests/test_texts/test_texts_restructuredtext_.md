@@ -3039,7 +3039,7 @@ Two forms of URI are recognized:
 Punctuation at the end of a URI is not considered part of the URI,
 unless the URI is terminated by a closing angle bracket (">").
 Backslashes may be used in URIs to escape markup characters,
-specifically asterisks ("\*") and underscores ("\_") which are vaid URI
+specifically asterisks ("\*") and underscores ("\_") which are valid URI
 characters (see [Escaping Mechanism] above).
 
 [^uri]: Uniform Resource Identifier.  URIs are a general form of

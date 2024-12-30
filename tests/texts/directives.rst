@@ -508,7 +508,7 @@ The following options are recognized:
 
 ``number-lines`` : [start line number]
     Precede every line with a line number.
-    The optional argument is the number of the first line (defaut 1).
+    The optional argument is the number of the first line (default 1).
 
 and the common options `:class:`_ and `:name:`_.
 
@@ -818,7 +818,7 @@ Working limitations:
 .. [#whitespace-delim] Whitespace delimiters are supported only for external
    CSV files.
 
-.. [#ASCII-char] With Python 2, the valuess for the ``delimiter``,
+.. [#ASCII-char] With Python 2, the values for the ``delimiter``,
    ``quote``, and ``escape`` options must be ASCII characters. (The csv
    module does not support Unicode and all non-ASCII characters are
    encoded as multi-byte utf-8 string). This limitation does not exist
@@ -1450,7 +1450,7 @@ The following options are recognized:
 
 ``number-lines`` : [start line number]
     Precede every code line with a line number.
-    The optional argument is the number of the first line (defaut 1).
+    The optional argument is the number of the first line (default 1).
     Works only with ``code`` or ``literal``.
     (New in Docutils 0.9)
 

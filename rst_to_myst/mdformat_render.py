@@ -205,7 +205,7 @@ def rst_to_myst(
     :param warning_stream: The warning IO to write to
     :param language_code: the language module to use,
         for directive/role name translation
-    :param use_sphinx: Whether to load sphinx roles, directives and extentions
+    :param use_sphinx: Whether to load sphinx roles, directives and extensions
     :param extensions: Sphinx extension to load
     :param conversions: Overrides for mapping of how to convert directives;
         directive module path -> conversion type
