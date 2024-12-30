@@ -5,8 +5,8 @@ version: 2
 
 build:
   os: ubuntu-22.04
-  # tools:
-  #  python: "3.12"
+  tools:
+    python: "3.x"
 
 python:
   version: 3
