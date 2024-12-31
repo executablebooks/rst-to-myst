@@ -2,7 +2,6 @@ from functools import lru_cache
 from io import StringIO
 from typing import Any, Dict, Iterable, Optional, Tuple
 
-import yaml
 from docutils import nodes
 from docutils.frontend import OptionParser
 from docutils.parsers.rst import Parser
@@ -13,6 +12,7 @@ from docutils.transforms.references import (
     PropagateTargets,
 )
 from docutils.utils import new_document, roman
+import yaml
 
 try:
     from importlib.resources import files

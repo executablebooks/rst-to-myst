@@ -46,7 +46,7 @@ jobs:
         pytest --cov=rst_to_myst --cov-report=xml --cov-report=term-missing
 
     - name: Upload to Codecov
-      if: matrix.os == 'ubuntu-latest'
+      if: matrix.os == 'ubuntu-latest' && github.ref == 'refs/heads/main'
       uses: codecov/codecov-action@v3
       with:
         name: pytests

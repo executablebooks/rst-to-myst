@@ -19,12 +19,12 @@ def read_config(ctx, param, value):
     if not value:
         return
     try:
-        with open(value, encoding="utf8") as handle:
+        with open(value, encoding="utf8") as handle:  # noqa: PTH123
             data = yaml.safe_load(handle)
     except Exception as exc:
         raise click.BadOptionUsage(
             "--config", f"Error reading configuration file: {exc}", ctx
-        )
+        ) from exc
 
     ctx.default_map = ctx.default_map or {}
     ctx.default_map.update(data or {})
@@ -84,7 +84,7 @@ def read_conversions(ctx, param, value):
         except Exception as exc:
             raise click.BadOptionUsage(
                 "--conversions", f"Error reading conversions file: {exc}", ctx
-            )
+            ) from exc
     if not isinstance(data, Mapping):
         raise click.BadOptionUsage("--conversions", f"Not a mapping: {data!r}", ctx)
     return data
@@ -106,10 +106,10 @@ def check_sphinx(ctx, param, value):
         return value
     try:
         import sphinx  # noqa: F401
-    except ImportError:
+    except ImportError as exc:
         raise click.BadParameter(
             "sphinx not installed: install or use '--no-sphinx' option"
-        )
+        ) from exc
     return value
 
 
@@ -329,7 +329,7 @@ def convert(
     """Convert one or more files."""
     myst_extensions = set()
     for path in paths:
-        path = Path(path)
+        path = Path(path)  # noqa: PLW2901
         output_path = path.parent / (path.stem + ".md")
         click.secho(f"{path} -> {output_path}", fg="blue")
         input_text = path.read_text(encoding)
@@ -352,7 +352,7 @@ def convert(
         except Exception as exc:
             click.secho(f"FAILED:\n{exc}", fg="red")
             if stop_on_fail:
-                raise SystemExit(1)
+                raise SystemExit(1) from exc
             continue
 
         click.secho(f"CONVERTED (extensions: {list(output.extensions)!r})", fg="green")
@@ -393,7 +393,7 @@ def directives_show(name, sphinx, extensions, language):
     try:
         data = namespace.get_directive_data(name)
     except KeyError as error:
-        raise click.ClickException(str(error))
+        raise click.ClickException(str(error)) from error
     click.echo(yaml_dump(data))
 
 
@@ -424,7 +424,7 @@ def roles_show(name, sphinx, extensions, language):
     try:
         data = namespace.get_role_data(name)
     except KeyError as error:
-        raise click.ClickException(str(error))
+        raise click.ClickException(str(error)) from error
     click.echo(yaml_dump(data))
 
 

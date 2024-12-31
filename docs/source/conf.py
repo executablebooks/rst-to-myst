@@ -4,10 +4,11 @@ It is recommended to use tox to run the build (see tox.ini):
 `tox -e docs-clean` and `tox -e docs-update`,
 or directly: `sphinx-build -n -W --keep-going docs/source docs/_build`
 """
+
 from rst_to_myst import __version__
 
 project = "RST-to-MyST"
-copyright = "2021, Executable Book Project"  # noqa: A001
+copyright = "2021, Executable Book Project"
 author = "Executable Book Project"
 version = __version__
 

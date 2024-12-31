@@ -1,8 +1,9 @@
+import contextlib
 import copy
-import threading
 from importlib import import_module
 from inspect import getdoc
 from itertools import chain
+import threading
 from types import ModuleType
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Type
 from unittest.mock import Mock
@@ -34,7 +35,7 @@ class ApplicationNamespace:
         language_code: str = "en",
         default_domain: Optional[str] = "py",
     ):
-        self.extensions: Dict[str, "Extension"] = {}
+        self.extensions: Dict[str, Extension] = {}
         self.directives: Dict[str, Directive] = {}
         self.roles: Dict[str, Any] = {}
         self.domains: Dict[str, DomainMock] = {}
@@ -85,10 +86,8 @@ class ApplicationNamespace:
         canonicalname = name.lower()
         # try translation
         if self.language_module is not None:
-            try:
+            with contextlib.suppress(AttributeError, KeyError):
                 canonicalname = getattr(self.language_module, attr)[canonicalname]
-            except (AttributeError, KeyError):
-                pass
 
         if ":" in canonicalname:
             # look in domains
@@ -254,10 +253,9 @@ def compile_namespace(
 
 if __name__ == "__main__":
     _app = compile_namespace(("sphinx.ext.autosummary",))
-    for _name, _cls in _app.directives.items():
+    for _cls in _app.directives.values():
         if "patch" in _cls.__module__:
-            print(f"# {_name}")
-            print(f"{_cls.__module__}.{_cls.__name__}: eval_rst")
+            pass
     # for _dname, _domain in _app.domains.items():
     #     for _name, _cls in _domain.directives.items():
     #         print(f"# {_dname}:{_name}")

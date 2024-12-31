@@ -153,7 +153,7 @@ def get_myst_extensions(tokens: List[Token]) -> Set[str]:
     """Return the MyST extensions required to parse a token sequence."""
     extensions = set()
     for token in tokens:
-        if token.type == "substitution_inline" or token.type == "substitution_block":
+        if token.type in ("substitution_inline", "substitution_block"):
             extensions.add("substitution")
         elif token.type == "front_matter_key_open":
             key_path = token.meta.get("key_path")
@@ -161,11 +161,7 @@ def get_myst_extensions(tokens: List[Token]) -> Set[str]:
                 extensions.add("substitution")
         elif token.type == "directive_open" and ":" in token.markup:
             extensions.add("colon_fence")
-        elif (
-            token.type == "math_inline"
-            or token.type == "math_block"
-            or token.type == "math_block_eqno"
-        ):
+        elif token.type in ("math_inline", "math_block", "math_block_eqno"):
             extensions.add("dollarmath")
         elif token.type == "dl_open":
             extensions.add("deflist")

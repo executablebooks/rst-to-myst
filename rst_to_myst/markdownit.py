@@ -1,4 +1,5 @@
 """Convert to markdown-it tokens, which can then be rendered by mdformat."""
+
 from io import StringIO
 from textwrap import indent
 from typing import IO, Any, Dict, List, NamedTuple, Optional, Tuple
@@ -339,7 +340,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         raise nodes.SkipNode
 
     def visit_target(self, node):
-        if "inline" in node and node["inline"]:
+        if node.get("inline"):
             # TODO inline targets
             message = f"inline targets not implemented: {node.rawsource}"
             self.warning(message, node.line)
@@ -414,10 +415,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         if len(thead.children) != 1 or len(thead.children[0]) != ncolumns:
             return False
         # each body row should have the full amount of columns
-        for row in tbody.children:
-            if len(row.children) != ncolumns:
-                return False
-        return True
+        return all(len(row.children) == ncolumns for row in tbody.children)
 
     def visit_table(self, node):
         if not self.parse_gfm_table(node):
@@ -555,7 +553,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
 
     def visit_FrontMatterNode(self, node):
         for field in node:
-            if not len(field) == 2:
+            if len(field) != 2:
                 continue
             key = field[0][0].astext()
             tokens = self.nested_parse(field[1].children)
@@ -670,7 +668,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
                 text += "\n" + content.astext().strip() + "\n"
             if node["options_list"]:
                 label = node["options_list"][0][1]
-                major, minor, patch = [int(i) for i in mdit_plug_version.split(".")]
+                major, minor, patch = (int(i) for i in mdit_plug_version.split("."))
                 name = "math_block_label"
                 if major == 0 and minor < 3:
                     name = "math_block_eqno"

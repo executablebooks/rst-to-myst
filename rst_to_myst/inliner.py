@@ -41,6 +41,8 @@ hyperlink uri   http://a.net/
 embedded uri    `uri <a.org>`_
 --------------- --------------- --------------------------------------------------------
 """
+
+import contextlib
 import re
 from typing import Any, Callable, List, Match, Pattern, Tuple
 
@@ -61,7 +63,7 @@ from docutils.utils import (
 from .nodes import RoleNode
 
 
-class MarkupMismatch(Exception):
+class MarkupMismatch(Exception):  # noqa: N818
     """A mismatch occurred in the Markup."""
 
 
@@ -320,15 +322,8 @@ class Inliner:
             start_string_prefix = "(^|(?<!\x00))"
             end_string_suffix = ""
         else:
-            start_string_prefix = "(^|(?<=\\s|[%s%s]))" % (
-                punctuation_chars.openers,
-                punctuation_chars.delimiters,
-            )
-            end_string_suffix = "($|(?=\\s|[\x00%s%s%s]))" % (
-                punctuation_chars.closing_delimiters,
-                punctuation_chars.delimiters,
-                punctuation_chars.closers,
-            )
+            start_string_prefix = f"(^|(?<=\\s|[{punctuation_chars.openers}{punctuation_chars.delimiters}]))"
+            end_string_suffix = f"($|(?=\\s|[\x00{punctuation_chars.closing_delimiters}{punctuation_chars.delimiters}{punctuation_chars.closers}]))"
 
         self.patterns = self.regex_class(
             start_string_prefix=start_string_prefix, end_string_suffix=end_string_suffix
@@ -473,8 +468,8 @@ class Inliner:
             if rawsource[-1:] == "_":
                 if role:
                     msg = self.reporter.warning(
-                        "Mismatch: both interpreted text role %s and "
-                        "reference suffix." % position,
+                        f"Mismatch: both interpreted text role {position} and "
+                        "reference suffix.",
                         line=lineno,
                     )
                     text = unescape(string[rolestart:textend], True)
@@ -530,7 +525,7 @@ class Inliner:
                 target = nodes.target(match.group(1), refuri=alias)
                 target.referenced = 1
             if not aliastext:
-                raise ApplicationError("problem with embedded link: %r" % aliastext)
+                raise ApplicationError(f"problem with embedded link: {aliastext!r}")
             if not text:
                 text = alias
                 rawtext = rawaliastext
@@ -555,21 +550,20 @@ class Inliner:
                 reference["refuri"] = alias
             else:
                 reference["anonymous"] = 1
-        else:
-            if target:
-                target["names"].append(refname)
-                if aliastype == "name":
-                    reference["refname"] = alias
-                    self.document.note_indirect_target(target)
-                    self.document.note_refname(reference)
-                else:
-                    reference["refuri"] = alias
-                    self.document.note_explicit_target(target, self.parent)
-                # target.note_referenced_by(name=refname)
-                node_list.append(target)
-            else:
-                reference["refname"] = refname
+        elif target:
+            target["names"].append(refname)
+            if aliastype == "name":
+                reference["refname"] = alias
+                self.document.note_indirect_target(target)
                 self.document.note_refname(reference)
+            else:
+                reference["refuri"] = alias
+                self.document.note_explicit_target(target, self.parent)
+            # target.note_referenced_by(name=refname)
+            node_list.append(target)
+        else:
+            reference["refname"] = refname
+            self.document.note_refname(reference)
         return before, node_list, after, []
 
     def adjust_uri(self, uri: str) -> str:
@@ -592,16 +586,14 @@ class Inliner:
         role_fn, messages = roles.role(role, self.language, lineno, self.reporter)
         if role_fn:
             nodes, messages2 = role_fn(role, rawsource, text, lineno, self)
-            try:
+            with contextlib.suppress(IndexError):
                 nodes[0][0].rawsource = unescape(text, True)
-            except IndexError:
-                pass
             return nodes, messages + messages2
         else:
             msg = self.reporter.error(
-                'Unknown interpreted text role "%s".' % role, line=lineno
+                f'Unknown interpreted text role "{role}".', line=lineno
             )
-            return ([self.problematic(rawsource, rawsource, msg)], messages + [msg])
+            return ([self.problematic(rawsource, rawsource, msg)], [*messages, msg])
 
     def literal(self, match: Match, lineno: int) -> DispatchResult:
         """Handle a string literal, e.g. ``literals``"""
@@ -639,9 +631,7 @@ class Inliner:
                 subref_text = subref_node.astext()
                 self.document.note_substitution_ref(subref_node, subref_text)
                 if endstring[-1:] == "_":
-                    reference_node = nodes.reference(
-                        "|%s%s" % (subref_text, endstring), ""
-                    )
+                    reference_node = nodes.reference(f"|{subref_text}{endstring}", "")
                     if endstring[-2:] == "__":
                         reference_node["anonymous"] = 1
                     else:
@@ -737,7 +727,7 @@ class Inliner:
                 endmatch.group(1),
             )
         msg = self.reporter.warning(
-            "Inline %s start-string without end-string." % nodeclass.__name__,
+            f"Inline {nodeclass.__name__} start-string without end-string.",
             line=lineno,
         )
         text = unescape(string[matchstart:matchend], True)
@@ -785,10 +775,7 @@ class Inliner:
             not match.group("scheme")
             or match.group("scheme").lower() in urischemes.schemes
         ):
-            if match.group("email"):
-                addscheme = "mailto:"
-            else:
-                addscheme = ""
+            addscheme = "mailto:" if match.group("email") else ""
             text = match.group("whole")
             unescaped = unescape(text)
             rawsource = unescape(text, True)
@@ -883,7 +870,7 @@ class InlinerMyst(Inliner):
                 target = nodes.target(match.group(1), refuri=alias)
                 target.referenced = 1
             if not aliastext:
-                raise ApplicationError("problem with embedded link: %r" % aliastext)
+                raise ApplicationError(f"problem with embedded link: {aliastext!r}")
             if not text:
                 text = alias
                 rawtext = rawaliastext
@@ -909,15 +896,14 @@ class InlinerMyst(Inliner):
                 reference["refuri"] = alias
             else:
                 reference["anonymous"] = 1
-        else:
-            if target:
-                if aliastype == "name":
-                    reference["refname"] = alias
-                    self.document.note_refname(reference)
-                else:
-                    reference["refuri"] = alias
-            else:
-                reference["refname"] = refname
+        elif target:
+            if aliastype == "name":
+                reference["refname"] = alias
                 self.document.note_refname(reference)
+            else:
+                reference["refuri"] = alias
+        else:
+            reference["refname"] = refname
+            self.document.note_refname(reference)
 
         return before, [reference], after, []

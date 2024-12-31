@@ -1,4 +1,5 @@
 """docutils states."""
+
 import re
 from typing import List, Optional
 
@@ -121,9 +122,9 @@ class ExplicitMixin:
         # directive_class, messages = directives.directive(
         #     type_name, self.memo.language, self.document
         # )
-        directive_class: Optional[
-            Directive
-        ] = self.document.settings.namespace.get_directive(type_name)
+        directive_class: Optional[Directive] = (
+            self.document.settings.namespace.get_directive(type_name)
+        )
 
         # default to eval rst
         if directive_class is None:
@@ -307,7 +308,7 @@ class ExplicitMixin:
         try:
             option_list = extract_options(field_list)
         except (BadOptionError, BadOptionDataError) as error:
-            raise states.MarkupError(str(error))
+            raise states.MarkupError(str(error)) from error
 
         return option_list, arg_block
 
@@ -331,8 +332,8 @@ class ExplicitMixin:
             blockindex += 1
             try:
                 escaped = escaped + " " + escape2null(block[blockindex].strip())
-            except IndexError:
-                raise states.MarkupError("malformed substitution definition.")
+            except IndexError as exc:
+                raise states.MarkupError("malformed substitution definition.") from exc
         del block[:blockindex]  # strip out the substitution marker
         block[0] = (block[0].strip() + " ")[subdefmatch.end() - len(escaped) - 1 : -1]
         if not block[0]:
@@ -371,7 +372,7 @@ class ExplicitMixin:
                 tableline = self.state_machine.abs_line_number() - len(block) + 1
                 table: nodes.table = self.build_table(tabledata, tableline)
                 table.rawsource = "\n".join(block)  # added for MyST
-                nodelist = [table] + messages
+                nodelist = [table, *messages]
             except tableparser.TableMarkupError as err:
                 nodelist = (
                     self.malformed_table(block, " ".join(err.args), offset=err.offset)
@@ -452,7 +453,7 @@ class SubstitutionDef(Body):
     """
 
     patterns = {
-        "embedded_directive": re.compile(r"(%s)::( +|$)" % SIMPLENAME_RE, re.UNICODE),
+        "embedded_directive": re.compile(rf"({SIMPLENAME_RE})::( +|$)", re.UNICODE),
         "text": r"",
     }
     initial_transitions = ["embedded_directive", "text"]
