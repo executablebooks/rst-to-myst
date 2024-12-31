@@ -19,10 +19,9 @@ classifiers = [
 readme = "README.md"
 keywords = ["restructuredtext","markdown", "myst"]
 
-requires-python=">=3.7"
+requires-python=">=3.9"
 dependencies=[
-    "docutils>=0.17,<0.20",
-    "importlib_resources~=3.1;python_version<'3.9'",
+    "docutils>=0.17,<0.22",
     "pyyaml",
     "markdown-it-py~=2.0",
     "mdformat~=0.7.16",
@@ -41,7 +40,7 @@ rst2myst = "rst_to_myst.cli:main"
 [project.optional-dependencies]
 sphinx = ["sphinx>=5,<7"]
 test = [
-    "pytest~=6.0",
+    "pytest~=8.3",
     "coverage",
     "pytest-cov",
     "pytest-regressions",
@@ -57,8 +56,38 @@ docs = [
 [tool.flit.sdist]
 exclude = [".github/", "tests/"]
 
-[tool.isort]
-profile = "black"
-known_first_party = ["rst_to_myst", "tests"]
-# Group first party and local folder imports together
-no_lines_before = ["LOCALFOLDER"]
+[tool.ruff.lint]
+extend-select = [
+  "B",    # flake8-bugbear
+  "C4",   # flake8-comprehensions
+  "FURB", # refurb (modernising code)
+  "I",    # isort
+  "ICN",  # flake8-import-conventions
+  "ISC",  # flake8-implicit-str-concat
+  "N",    # pep8-naming
+  "PERF", # perflint (performance anti-patterns)
+  "PGH",  # pygrep-hooks
+  "PIE",  # flake8-pie
+  "PL",   # pylint
+  "PTH",  # flake8-use-pathlib
+  "RUF",  # Ruff-specific rules
+  "SIM",  # flake8-simplify
+  "SLF",  # private member access
+  "UP",   # pyupgrade
+  "T20",  # flake8-print
+]
+extend-ignore = [
+  "ISC001", # implicit-str-concat
+  "N802", # lower-case function name
+  "PLR0911",  # too many return statements
+  "PLR0912",  # too many branches
+  "PLR0913",  # too many arguments
+  "PLR0915",  # too many statements
+  "PLR2004",  # magic value
+  "RUF012", # typing.ClassVar
+  "SLF001", # Private member accessed
+]
+
+[tool.ruff.lint.isort]
+split-on-trailing-comma = false
+force-sort-within-sections = true

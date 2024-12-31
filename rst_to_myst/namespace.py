@@ -1,10 +1,12 @@
+from collections.abc import Iterable
+import contextlib
 import copy
-import threading
 from importlib import import_module
 from inspect import getdoc
 from itertools import chain
+import threading
 from types import ModuleType
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Type
+from typing import TYPE_CHECKING, Any, Optional
 from unittest.mock import Mock
 
 from docutils.parsers.rst import Directive, directives, languages, roles
@@ -34,10 +36,10 @@ class ApplicationNamespace:
         language_code: str = "en",
         default_domain: Optional[str] = "py",
     ):
-        self.extensions: Dict[str, "Extension"] = {}
-        self.directives: Dict[str, Directive] = {}
-        self.roles: Dict[str, Any] = {}
-        self.domains: Dict[str, DomainMock] = {}
+        self.extensions: dict[str, Extension] = {}
+        self.directives: dict[str, Directive] = {}
+        self.roles: dict[str, Any] = {}
+        self.domains: dict[str, DomainMock] = {}
         # the default domain will be tried even without the domain prefix
         self.default_domain = default_domain
 
@@ -52,20 +54,20 @@ class ApplicationNamespace:
     # sphinx application methods
 
     def add_directive(
-        self, name: str, cls: Type[Directive], override: bool = False
+        self, name: str, cls: type[Directive], override: bool = False
     ) -> None:
         self.directives[name] = cls
 
     def add_role(self, name: str, role: Any, override: bool = False) -> None:
         self.roles[name] = role
 
-    def add_domain(self, domain: Type["Domain"], override: bool = False) -> None:
+    def add_domain(self, domain: type["Domain"], override: bool = False) -> None:
         self.domains[domain.name] = DomainMock(
             domain.name, domain.directives, domain.roles
         )
 
     def add_directive_to_domain(
-        self, domain: str, name: str, cls: Type[Directive], override: bool = False
+        self, domain: str, name: str, cls: type[Directive], override: bool = False
     ) -> None:
         if domain not in self.domains:
             raise KeyError(f"domain {domain} not yet registered")
@@ -85,10 +87,8 @@ class ApplicationNamespace:
         canonicalname = name.lower()
         # try translation
         if self.language_module is not None:
-            try:
+            with contextlib.suppress(AttributeError, KeyError):
                 canonicalname = getattr(self.language_module, attr)[canonicalname]
-            except (AttributeError, KeyError):
-                pass
 
         if ":" in canonicalname:
             # look in domains
@@ -122,7 +122,7 @@ class ApplicationNamespace:
     def get_role(self, name: str):
         return self.get_element("roles", name)
 
-    def list_directives(self) -> List[str]:
+    def list_directives(self) -> list[str]:
         """List all directive names"""
         return sorted(self.directives) + sorted(
             f"{prefix}:{name}"
@@ -130,7 +130,7 @@ class ApplicationNamespace:
             for name in domain.directives
         )
 
-    def list_roles(self) -> List[str]:
+    def list_roles(self) -> list[str]:
         """List all role names"""
         return sorted(self.roles) + sorted(
             f"{prefix}:{name}"
@@ -254,10 +254,9 @@ def compile_namespace(
 
 if __name__ == "__main__":
     _app = compile_namespace(("sphinx.ext.autosummary",))
-    for _name, _cls in _app.directives.items():
+    for _cls in _app.directives.values():
         if "patch" in _cls.__module__:
-            print(f"# {_name}")
-            print(f"{_cls.__module__}.{_cls.__name__}: eval_rst")
+            pass
     # for _dname, _domain in _app.domains.items():
     #     for _name, _cls in _domain.directives.items():
     #         print(f"# {_dname}:{_name}")

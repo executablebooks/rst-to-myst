@@ -11,9 +11,9 @@ Revision: \$Revision\$
 This document describes the interpreted text roles implemented in the
 reference reStructuredText parser.
 
-Interpreted text uses backquotes (\`) around the text.  An explicit
+Interpreted text uses backquotes (\`) around the text. An explicit
 role marker may optionally appear before or after the text, delimited
-with colons.  For example:
+with colons. For example:
 
 ```
 This is `interpreted text` using the default role.
@@ -22,14 +22,14 @@ This is :title:`interpreted text` using an explicit role.
 ```
 
 A default role may be defined by applications of reStructuredText; it
-is used if no explicit `:role:` prefix or suffix is given.  The
-"default default role" is [:title-reference:].  It can be changed
+is used if no explicit `:role:` prefix or suffix is given. The
+"default default role" is [:title-reference:]. It can be changed
 using the [default-role] directive.
 
 See the [Interpreted Text] section in the [reStructuredText Markup
-Specification][restructuredtext markup specification] for syntax details.  For details on the hierarchy of
+Specification][restructuredtext markup specification] for syntax details. For details on the hierarchy of
 elements, please see [The Docutils Document Tree] and the [Docutils
-Generic DTD][docutils generic dtd] XML document type definition.  For interpreted text role
+Generic DTD][docutils generic dtd] XML document type definition. For interpreted text role
 implementation details, see [Creating reStructuredText Interpreted
 Text Roles][creating restructuredtext interpreted text roles].
 
@@ -39,12 +39,12 @@ Text Roles][creating restructuredtext interpreted text roles].
 ## Customization
 
 Custom interpreted text roles may be defined in a document with the
-["role" directive].  Customization details are listed with each role.
+["role" directive]. Customization details are listed with each role.
 
 (class)=
 
 A `class` option is recognized by the "role" directive for most
-interpreted text roles.  A [description](directives.html#role-class) is provided in the ["role"
+interpreted text roles. A [description](directives.html#role-class) is provided in the ["role"
 directive]["role" directive] documentation.
 
 ## Standard Roles
@@ -60,7 +60,7 @@ directive]["role" directive] documentation.
     :Content: None.
 ```
 
-Implements emphasis.  These are equivalent:
+Implements emphasis. These are equivalent:
 
 ```
 *text*
@@ -78,14 +78,14 @@ Implements emphasis.  These are equivalent:
     :Content: None.
 ```
 
-Implements inline literal text.  These are equivalent:
+Implements inline literal text. These are equivalent:
 
 ```
 ``text``
 :literal:`text`
 ```
 
-Care must be taken with backslash-escapes though.  These are *not*
+Care must be taken with backslash-escapes though. These are *not*
 equivalent:
 
 ```
@@ -172,8 +172,8 @@ on mathematical notation in reStructuredText.
 ```
 
 The `:pep-reference:` role is used to create an HTTP reference to a
-PEP (Python Enhancement Proposal).  The `:PEP:` alias is usually
-used.  For example:
+PEP (Python Enhancement Proposal). The `:PEP:` alias is usually
+used. For example:
 
 ```
 See :PEP:`287` for more information about reStructuredText.
@@ -199,8 +199,8 @@ __ http://www.python.org/peps/pep-0287.html
 ```
 
 The `:rfc-reference:` role is used to create an HTTP reference to an
-RFC (Internet Request for Comments).  The `:RFC:` alias is usually
-used.  For example:
+RFC (Internet Request for Comments). The `:RFC:` alias is usually
+used. For example:
 
 ```
 See :RFC:`2822` for information about email headers.
@@ -225,7 +225,7 @@ __ http://www.faqs.org/rfcs/rfc2822.html
     :Content: None.
 ```
 
-Implements strong emphasis.  These are equivalent:
+Implements strong emphasis. These are equivalent:
 
 ```
 **text**
@@ -280,7 +280,7 @@ See [the reStructuredText spec](restructuredtext.html) for further information o
     :Content: None.
 ```
 
-Implements superscripts.  See the tip in [:subscript:] above.
+Implements superscripts. See the tip in [:subscript:] above.
 
 ### `:title-reference:`
 
@@ -294,7 +294,7 @@ Implements superscripts.  See the tip in [:subscript:] above.
 ```
 
 The `:title-reference:` role is used to describe the titles of
-books, periodicals, and other materials.  It is the equivalent of the
+books, periodicals, and other materials. It is the equivalent of the
 HTML "cite" element, and it is expected that HTML writers will
 typically render "title_reference" elements using "cite".
 
@@ -324,8 +324,8 @@ processing:
 ```
 
 `:title-reference:` is the default interpreted text role in the
-standard reStructuredText parser.  This means that no explicit role is
-required.  Applications of reStructuredText may designate a different
+standard reStructuredText parser. This means that no explicit role is
+required. Applications of reStructuredText may designate a different
 default role, in which case the explicit `:title-reference:` role
 must be used to obtain a `title_reference` element.
 
@@ -344,24 +344,24 @@ must be used to obtain a `title_reference` element.
 
 :::{WARNING}
 The "raw" role is a stop-gap measure allowing the author to bypass
-reStructuredText's markup.  It is a "power-user" feature that
-should not be overused or abused.  The use of "raw" ties documents
+reStructuredText's markup. It is a "power-user" feature that
+should not be overused or abused. The use of "raw" ties documents
 to specific output formats and makes them less portable.
 
 If you often need to use "raw"-derived interpreted text roles or
 the "raw" directive, that is a sign either of overuse/abuse or that
-functionality may be missing from reStructuredText.  Please
+functionality may be missing from reStructuredText. Please
 describe your situation in a message to the [Docutils-users] mailing
 list.
 :::
 
 The "raw" role indicates non-reStructuredText data that is to be
-passed untouched to the Writer.  It is the inline equivalent of the
+passed untouched to the Writer. It is the inline equivalent of the
 ["raw" directive]; see its documentation for details on the
 semantics.
 
-The "raw" role cannot be used directly.  The ["role" directive] must
-first be used to build custom roles based on the "raw" role.  One or
+The "raw" role cannot be used directly. The ["role" directive] must
+first be used to build custom roles based on the "raw" role. One or
 more formats (Writer names) must be provided in a "format" option.
 
 For example, the following creates an HTML-specific "raw-html" role:
@@ -372,7 +372,7 @@ For example, the following creates an HTML-specific "raw-html" role:
 ```
 
 This role can now be used directly to pass data untouched to the HTML
-Writer.  For example:
+Writer. For example:
 
 ```
 If there just *has* to be a line break here,
@@ -383,7 +383,7 @@ But the line block syntax should be considered first.
 
 :::{Tip}
 Roles based on "raw" should clearly indicate their origin, so
-they are not mistaken for reStructuredText markup.  Using a "raw-"
+they are not mistaken for reStructuredText markup. Using a "raw-"
 prefix for role names is recommended.
 :::
 

@@ -12,21 +12,21 @@ Revision: \$Revision\$
 
 :::{Note}
 This document is a detailed technical specification; it is not a
-tutorial or a primer.  If this is your first exposure to
+tutorial or a primer. If this is your first exposure to
 reStructuredText, please read [A ReStructuredText Primer] and the
 [Quick reStructuredText] user reference first.
 :::
 
 [reStructuredText] is plaintext that uses simple and intuitive
-constructs to indicate the structure of a document.  These constructs
-are equally easy to read in raw and processed forms.  This document is
+constructs to indicate the structure of a document. These constructs
+are equally easy to read in raw and processed forms. This document is
 itself an example of reStructuredText (raw, if you are reading the
 text file, or processed, if you are reading an HTML document, for
-example).  The reStructuredText parser is a component of [Docutils].
+example). The reStructuredText parser is a component of [Docutils].
 
 Simple, implicit markup is used to indicate special constructs, such
-as section headings, bullet lists, and emphasis.  The markup used is
-as minimal and unobtrusive as possible.  Less often-used constructs
+as section headings, bullet lists, and emphasis. The markup used is
+as minimal and unobtrusive as possible. Less often-used constructs
 and extensions to the basic reStructuredText syntax may have more
 elaborate or explicit markup.
 
@@ -35,7 +35,7 @@ very small (such as inline program documentation fragments, e.g.
 Python docstrings) to the quite large (this document).
 
 The first section gives a quick overview of the syntax of the
-reStructuredText markup by example.  A complete specification is given
+reStructuredText markup by example. A complete specification is given
 in the [Syntax Details] section.
 
 [Literal blocks] (in which no markup processing is done) are used for
@@ -47,11 +47,11 @@ examples throughout this document, to illustrate the plaintext markup.
 ## Quick Syntax Overview
 
 A reStructuredText document is made up of body or block-level
-elements, and may be structured into sections.  [Sections] are
+elements, and may be structured into sections. [Sections] are
 indicated through title style (underlines & optional overlines).
-Sections contain body elements and/or subsections.  Some body elements
+Sections contain body elements and/or subsections. Some body elements
 contain further elements, such as lists containing list items, which
-in turn may contain paragraphs and other body elements.  Others, such
+in turn may contain paragraphs and other body elements. Others, such
 as paragraphs, contain text and [inline markup] elements.
 
 Here are examples of [body elements]:
@@ -238,17 +238,17 @@ Here are examples of [body elements]:
 
 Descriptions below list "doctree elements" (document tree element
 names; XML DTD generic identifiers) corresponding to syntax
-constructs.  For details on the hierarchy of elements, please see [The
+constructs. For details on the hierarchy of elements, please see [The
 Docutils Document Tree][the docutils document tree] and the [Docutils Generic DTD] XML document
 type definition.
 
 ### Whitespace
 
 Spaces are recommended for [indentation], but tabs may also be used.
-Tabs will be converted to spaces.  Tab stops are at every 8th column.
+Tabs will be converted to spaces. Tab stops are at every 8th column.
 
-Other whitespace characters (form feeds \[chr(12)\] and vertical tabs
-\[chr(11)\]) are converted to single spaces before processing.
+Other whitespace characters (form feeds [chr(12)] and vertical tabs
+[chr(11)]) are converted to single spaces before processing.
 
 #### Blank Lines
 
@@ -256,7 +256,7 @@ Blank lines are used to separate paragraphs and other elements.
 Multiple successive blank lines are equivalent to a single blank line,
 except within literal blocks (where all whitespace is preserved).
 Blank lines may be omitted when the markup makes element separation
-unambiguous, in conjunction with indentation.  The first line of a
+unambiguous, in conjunction with indentation. The first line of a
 document is treated as if it is preceded by a blank line, and the last
 line of a document is treated as if it is followed by a blank line.
 
@@ -276,7 +276,7 @@ Any text whose indentation is less than that of the current level
 indentation.
 
 Since all indentation is significant, the level of indentation must be
-consistent.  For example, indentation is the sole markup indicator for
+consistent. For example, indentation is the sole markup indicator for
 [block quotes]:
 
 ```
@@ -321,11 +321,11 @@ lines are not left-aligned.  In addition
 ```
 
 Several constructs begin with a marker, and the body of the construct
-must be indented relative to the marker.  For constructs using simple
+must be indented relative to the marker. For constructs using simple
 markers ([bullet lists], [enumerated lists], [footnotes], [citations],
 [hyperlink targets], [directives], and [comments]), the level of
 indentation of the body is determined by the position of the first
-line of text, which begins on the same line as the marker.  For
+line of text, which begins on the same line as the marker. For
 example, bullet list bodies must be indented by at least two columns
 relative to the left edge of the bullet:
 
@@ -349,7 +349,7 @@ item.
 For constructs using complex markers ([field lists] and [option
 lists][option lists]), where the marker may contain arbitrary text, the indentation
 of the first line *after* the marker determines the left edge of the
-body.  For example, field lists may have very long markers (containing
+body. For example, field lists may have very long markers (containing
 the field names):
 
 ```
@@ -365,18 +365,18 @@ the field names):
 ### Escaping Mechanism
 
 The character set universally available to plaintext documents, 7-bit
-ASCII, is limited.  No matter what characters are used for markup,
-they will already have multiple meanings in written text.  Therefore
+ASCII, is limited. No matter what characters are used for markup,
+they will already have multiple meanings in written text. Therefore
 markup characters *will* sometimes appear in text **without being
-intended as markup**.  Any serious markup system requires an escaping
+intended as markup**. Any serious markup system requires an escaping
 mechanism to override the default meaning of the characters used for
-the markup.  In reStructuredText we use the backslash, commonly used
+the markup. In reStructuredText we use the backslash, commonly used
 as an escaping character in other domains.
 
 A backslash followed by any character (except whitespace characters)
-escapes that character.  The escaped character represents the
+escapes that character. The escaped character represents the
 character itself, and is prevented from playing a role in any markup
-interpretation.  The backslash is removed from the output.  A literal
+interpretation. The backslash is removed from the output. A literal
 backslash is represented by two backslashes in a row (the first
 backslash "escapes" the second, preventing it being interpreted in an
 "escaping" role).
@@ -385,16 +385,16 @@ Backslash-escaped whitespace characters are removed from the document.
 This allows for character-level [inline markup].
 
 There are two contexts in which backslashes have no special meaning:
-literal blocks and inline literals.  In these contexts, a single
+literal blocks and inline literals. In these contexts, a single
 backslash represents a literal backslash, without having to double up.
 
 Please note that the reStructuredText specification and parser do not
 address the issue of the representation or extraction of text input
 (how and in what form the text actually *reaches* the parser).
 Backslashes and other characters may serve a character-escaping
-purpose in certain contexts and must be dealt with appropriately.  For
+purpose in certain contexts and must be dealt with appropriately. For
 example, Python uses backslashes in strings to escape certain
-characters, but not others.  The simplest solution when backslashes
+characters, but not others. The simplest solution when backslashes
 appear in Python docstrings is to use raw docstrings:
 
 ```
@@ -406,7 +406,7 @@ r"""This is a raw docstring.  Backslashes (\) are not touched."""
 Simple reference names are single words consisting of alphanumerics
 plus isolated (no two adjacent) internal hyphens, underscores,
 periods, colons and plus signs; no whitespace or other characters are
-allowed.  Footnote labels ([Footnotes] & [Footnote References]), citation
+allowed. Footnote labels ([Footnotes] & [Footnote References]), citation
 labels ([Citations] & [Citation References]), [interpreted text] roles,
 and some [hyperlink references] use the simple reference name syntax.
 
@@ -423,7 +423,7 @@ Want to learn about `my favorite programming language`_?
 
 Simple reference names may also optionally use backquotes.
 
-Reference names are whitespace-neutral and case-insensitive.  When
+Reference names are whitespace-neutral and case-insensitive. When
 resolving reference names internally:
 
 - whitespace is normalized (one or more spaces, horizontal or vertical
@@ -442,13 +442,13 @@ For example, the following [hyperlink references] are equivalent:
 ```
 
 [Hyperlinks], [footnotes], and [citations] all share the same namespace
-for reference names.  The labels of citations (simple reference names)
+for reference names. The labels of citations (simple reference names)
 and manually-numbered footnotes (numbers) are entered into the same
-database as other hyperlink names.  This means that a footnote
+database as other hyperlink names. This means that a footnote
 (defined as "`.. [1]`") which can be referred to by a footnote
 reference (`[1]_`), can also be referred to by a plain hyperlink
-reference ([1]).  Of course, each type of reference (hyperlink,
-footnote, citation) may be processed and rendered differently.  Some
+reference ([1]). Of course, each type of reference (hyperlink,
+footnote, citation) may be processed and rendered differently. Some
 care should be taken to avoid reference name conflicts.
 
 ### Document Structure
@@ -458,21 +458,21 @@ care should be taken to avoid reference name conflicts.
 Doctree element: document.
 
 The top-level element of a parsed reStructuredText document is the
-"document" element.  After initial parsing, the document element is a
+"document" element. After initial parsing, the document element is a
 simple container for a document fragment, consisting of [body
 elements][body elements], [transitions], and [sections], but lacking a document title
-or other bibliographic elements.  The code that calls the parser may
+or other bibliographic elements. The code that calls the parser may
 choose to run one or more optional post-parse [transforms],
 rearranging the document fragment into a complete document with a
 title and possibly other metadata elements (author, date, etc.; see
 [Bibliographic Fields]).
 
 Specifically, there is no way to indicate a document title and
-subtitle explicitly in reStructuredText.  Instead, a lone top-level
+subtitle explicitly in reStructuredText. Instead, a lone top-level
 section title (see [Sections] below) can be treated as the document
-title.  Similarly, a lone second-level section title immediately after
-the "document title" can become the document subtitle.  The rest of
-the sections are then lifted up a level or two.  See the [DocTitle
+title. Similarly, a lone second-level section title immediately after
+the "document title" can become the document subtitle. The rest of
+the sections are then lifted up a level or two. See the [DocTitle
 transform][doctitle transform] for details.
 
 #### Sections
@@ -481,14 +481,14 @@ Doctree elements: section, title.
 
 Sections are identified through their titles, which are marked up with
 adornment: "underlines" below the title text, or underlines and
-matching "overlines" above the title.  An underline/overline is a
+matching "overlines" above the title. An underline/overline is a
 single repeated punctuation character that begins in column 1 and
 forms a line extending at least as far as the right edge of the title
-text.  Specifically, an underline/overline character may be any
-non-alphanumeric printable 7-bit ASCII character [^footnote-1].  When an
+text. Specifically, an underline/overline character may be any
+non-alphanumeric printable 7-bit ASCII character [^footnote-1]. When an
 overline is used, the length and character used must match the
-underline.  Underline-only adornment styles are distinct from
-overline-and-underline styles that use the same character.  There may
+underline. Underline-only adornment styles are distinct from
+overline-and-underline styles that use the same character. There may
 be any number of levels of section titles, although some output
 formats may have limits (HTML has 6 levels).
 
@@ -499,7 +499,7 @@ formats may have limits (HTML has 6 levels).
     ! " # $ % & ' ( ) * + , - . / : ; < = > ? @ [ \ ] ^ _ ` { | } ~
     ```
 
-    Some characters are more suitable than others.  The following are
+    Some characters are more suitable than others. The following are
     recommended:
 
     ```
@@ -552,22 +552,22 @@ Section Title
 ``````````````
 
 When a title has both an underline and an overline, the title text may
-be inset, as in the first two examples above.  This is merely
-aesthetic and not significant.  Underline-only title text may *not* be
+be inset, as in the first two examples above. This is merely
+aesthetic and not significant. Underline-only title text may *not* be
 inset.
 
-A blank line after a title is optional.  All text blocks up to the
+A blank line after a title is optional. All text blocks up to the
 next title of the same or higher level are included in a section (or
 subsection, etc.).
 
 All section title styles need not be used, nor need any specific
-section title style be used.  However, a document must be consistent
+section title style be used. However, a document must be consistent
 in its use of section titles: once a hierarchy of title styles is
 established, sections must use that hierarchy.
 
 Each section title automatically generates a hyperlink target pointing
-to the section.  The text of the hyperlink target (the "reference
-name") is the same as that of the section title.  See [Implicit
+to the section. The text of the hyperlink target (the "reference
+name") is the same as that of the section title. See [Implicit
 Hyperlink Targets][implicit hyperlink targets] for a complete description.
 
 Sections may contain [body elements], [transitions], and nested
@@ -585,13 +585,13 @@ Doctree element: transition.
 
 Transitions are commonly seen in novels and short fiction, as a gap
 spanning one or more lines, with or without a type ornament such as a
-row of asterisks.  Transitions separate other body elements.  A
+row of asterisks. Transitions separate other body elements. A
 transition should not begin or end a section or document, nor should
 two transitions be immediately adjacent.
 
 The syntax for a transition marker is a horizontal line of 4 or more
-repeated punctuation characters.  The syntax is the same as section
-title underlines without title text.  Transition markers require blank
+repeated punctuation characters. The syntax is the same as section
+title underlines without title text. Transition markers require blank
 lines before and after:
 
 ```
@@ -604,10 +604,10 @@ Para.
 
 Unlike section title underlines, no hierarchy of transition markers is
 enforced, nor do differences in transition markers accomplish
-anything.  It is recommended that a single consistent style be used.
+anything. It is recommended that a single consistent style be used.
 
 The processing system is free to render transitions in output in any
-way it likes.  For example, horizontal rules (`<hr>`) in HTML output
+way it likes. For example, horizontal rules (`<hr>`) in HTML output
 would be an obvious choice.
 
 ### Body Elements
@@ -617,8 +617,8 @@ would be an obvious choice.
 Doctree element: paragraph.
 
 Paragraphs consist of blocks of left-aligned text with no markup
-indicating any other body element.  Blank lines separate paragraphs
-from each other and from other body elements.  Paragraphs may contain
+indicating any other body element. Blank lines separate paragraphs
+from each other and from other body elements. Paragraphs may contain
 [inline markup].
 
 Syntax diagram:
@@ -641,9 +641,9 @@ Doctree elements: bullet_list, list_item.
 
 A text block which begins with a "\*", "+", "-", "•", "‣", or "⁃",
 followed by whitespace, is a bullet list item (a.k.a. "unordered" list
-item).  List item bodies must be left-aligned and indented relative to
+item). List item bodies must be left-aligned and indented relative to
 the bullet; the text immediately after the bullet determines the
-indentation.  For example:
+indentation. For example:
 
 ```
 - This is the first bullet list item.  The blank line above the
@@ -693,7 +693,7 @@ Syntax diagram:
 Doctree elements: enumerated_list, list_item.
 
 Enumerated lists (a.k.a. "ordered" lists) are similar to bullet lists,
-but use enumerators instead of bullets.  An enumerator consists of an
+but use enumerators instead of bullets. An enumerator consists of an
 enumeration sequence member and formatting, followed by whitespace.
 The following enumeration sequences are recognized:
 
@@ -704,9 +704,9 @@ The following enumeration sequences are recognized:
 - lowercase Roman numerals: i, ii, iii, iv, ..., mmmmcmxcix (4999).
 
 In addition, the auto-enumerator, "#", may be used to automatically
-enumerate a list.  Auto-enumerated lists may begin with explicit
-enumeration, which sets the sequence.  Fully auto-enumerated lists use
-arabic numerals and begin with 1.  (Auto-enumerated lists are new in
+enumerate a list. Auto-enumerated lists may begin with explicit
+enumeration, which sets the sequence. Fully auto-enumerated lists use
+arabic numerals and begin with 1. (Auto-enumerated lists are new in
 Docutils 0.3.8.)
 
 The following formatting types are recognized:
@@ -724,13 +724,13 @@ While parsing an enumerated list, a new list will be started whenever:
   separate lists).
 
 It is recommended that the enumerator of the first list item be
-ordinal-1 ("1", "A", "a", "I", or "i").  Although other start-values
-will be recognized, they may not be supported by the output format.  A
-level-1 \[info\] system message will be generated for any list beginning
+ordinal-1 ("1", "A", "a", "I", or "i"). Although other start-values
+will be recognized, they may not be supported by the output format. A
+level-1 [info] system message will be generated for any list beginning
 with a non-ordinal-1 enumerator.
 
 Lists using Roman numerals must begin with "I"/"i" or a
-multi-character value, such as "II" or "XV".  Any other
+multi-character value, such as "II" or "XV". Any other
 single-character Roman numeral ("V", "X", "L", "C", "D", "M") will be
 interpreted as a letter of the alphabet, not as a Roman numeral.
 Likewise, lists using letters of the alphabet may not begin with
@@ -739,7 +739,7 @@ Likewise, lists using letters of the alphabet may not begin with
 The second line of each enumerated list item is checked for validity.
 This is to prevent ordinary paragraphs from being mistakenly
 interpreted as list items, when they happen to begin with text
-identical to enumerators.  For example, this text is parsed as an
+identical to enumerators. For example, this text is parsed as an
 ordinary paragraph:
 
 ```
@@ -748,7 +748,7 @@ smart dude.
 ```
 
 However, ambiguity cannot be avoided if the paragraph consists of only
-one line.  This text is parsed as an enumerated list item:
+one line. This text is parsed as an enumerated list item:
 
 ```
 A. Einstein was a really smart dude.
@@ -789,14 +789,14 @@ Doctree elements: definition_list, definition_list_item, term,
 classifier, definition.
 
 Each definition list item contains a term, optional classifiers, and a
-definition.  A term is a simple one-line word or phrase.  Optional
+definition. A term is a simple one-line word or phrase. Optional
 classifiers may follow the term on the same line, each after an inline
-" : " (space, colon, space).  A definition is a block indented
+" : " (space, colon, space). A definition is a block indented
 relative to the term, and may contain multiple paragraphs and other
-body elements.  There may be no blank line between a term line and a
+body elements. There may be no blank line between a term line and a
 definition block (this distinguishes definition lists from [block
-quotes][block quotes]).  Blank lines are required before the first and after the
-last definition list item, but are optional in-between.  For example:
+quotes][block quotes]). Blank lines are required before the first and after the
+last definition list item, but are optional in-between. For example:
 
 ```
 term 1
@@ -815,18 +815,18 @@ term 4 : classifier one : classifier two
 ```
 
 Inline markup is parsed in the term line before the classifier
-delimiter (" : ") is recognized.  The delimiter will only be
+delimiter (" : ") is recognized. The delimiter will only be
 recognized if it appears outside of any inline markup.
 
 A definition list may be used in various ways, including:
 
-- As a dictionary or glossary.  The term is the word itself, a
+- As a dictionary or glossary. The term is the word itself, a
   classifier may be used to indicate the usage of the term (noun,
   verb, etc.), and the definition follows.
-- To describe program variables.  The term is the variable name, a
+- To describe program variables. The term is the variable name, a
   classifier may be used to indicate the type of the variable (string,
   integer, etc.), and the definition describes the variable's use in
-  the program.  This usage of definition lists supports the classifier
+  the program. This usage of definition lists supports the classifier
   syntax of [Grouch], a system for describing and enforcing a Python
   object schema.
 
@@ -847,23 +847,23 @@ Doctree elements: field_list, field, field_name, field_body.
 
 Field lists are used as part of an extension syntax, such as options
 for [directives], or database-like records meant for further
-processing.  They may also be used for two-column table-like
+processing. They may also be used for two-column table-like
 structures resembling database records (label & data pairs).
 Applications of reStructuredText may recognize field names and
-transform fields or field bodies in certain contexts.  For examples,
+transform fields or field bodies in certain contexts. For examples,
 see [Bibliographic Fields] below, or the "[image]" and "[meta]"
 directives in [reStructuredText Directives].
 
 Field lists are mappings from field names to field bodies, modeled on
-[RFC822] headers.  A field name may consist of any characters, but
+[RFC822] headers. A field name may consist of any characters, but
 colons (":") inside of field names must be escaped with a backslash.
-Inline markup is parsed in field names.  Field names are
-case-insensitive when further processed or transformed.  The field
+Inline markup is parsed in field names. Field names are
+case-insensitive when further processed or transformed. The field
 name, along with a single colon prefix and suffix, together form the
-field marker.  The field marker is followed by whitespace and the
-field body.  The field body may contain multiple body elements,
-indented relative to the field marker.  The first line after the field
-name marker determines the indentation of the field body.  For
+field marker. The field marker is followed by whitespace and the
+field body. The field body may contain multiple body elements,
+indented relative to the field marker. The first line after the field
+name marker determines the indentation of the field body. For
 example:
 
 ```
@@ -880,14 +880,14 @@ example:
 ```
 
 The interpretation of individual words in a multi-word field name is
-up to the application.  The application may specify a syntax for the
-field name.  For example, second and subsequent words may be treated
+up to the application. The application may specify a syntax for the
+field name. For example, second and subsequent words may be treated
 as "arguments", quoted phrases may be treated as a single argument,
 and direct support for the "name=value" syntax may be added.
 
 Standard [RFC822] headers cannot be used for this construct because
-they are ambiguous.  A word followed by a colon at the beginning of a
-line is common in written text.  However, in well-defined contexts
+they are ambiguous. A word followed by a colon at the beginning of a
+line is common in written text. However, in well-defined contexts
 such as when a field list invariably occurs at the beginning of a
 document (PEPs and email messages), standard RFC822 headers could be
 used.
@@ -909,17 +909,17 @@ version, status, date, copyright, field, topic.
 
 When a field list is the first non-comment element in a document
 (after the document title, if there is one), it may have its fields
-transformed to document bibliographic data.  This bibliographic data
+transformed to document bibliographic data. This bibliographic data
 corresponds to the front matter of a book, such as the title page and
 copyright page.
 
 Certain registered field names (listed below) are recognized and
 transformed to the corresponding doctree elements, most becoming child
-elements of the "docinfo" element.  No ordering is required of these
+elements of the "docinfo" element. No ordering is required of these
 fields, although they may be rearranged to fit the document structure,
-as noted.  Unless otherwise indicated below, each of the bibliographic
-elements' field bodies may contain a single paragraph only.  Field
-bodies may be checked for [RCS keywords] and cleaned up.  Any
+as noted. Unless otherwise indicated below, each of the bibliographic
+elements' field bodies may contain a single paragraph only. Field
+bodies may be checked for [RCS keywords] and cleaned up. Any
 unrecognized fields will remain as generic fields in the docinfo
 element.
 
@@ -940,11 +940,11 @@ doctree elements are as follows:
 
 The "Authors" field may contain either: a single paragraph consisting
 of a list of authors, separated by ";" or ","; or a bullet list whose
-elements each contain a single paragraph per author.  ";" is checked
-first, so "Doe, Jane; Doe, John" will work.  In some languages
+elements each contain a single paragraph per author. ";" is checked
+first, so "Doe, Jane; Doe, John" will work. In some languages
 (e.g. Swedish), there is no singular/plural distinction between
 "Author" and "Authors", so only an "Authors" field is provided, and a
-single name is interpreted as an "Author".  If a single name contains
+single name is interpreted as an "Author". If a single name contains
 a comma, end it with a semicolon to disambiguate: ":Authors: Doe,
 Jane;".
 
@@ -952,12 +952,12 @@ The "Address" field is for a multi-line surface mailing address.
 Newlines and whitespace will be preserved.
 
 The "Dedication" and "Abstract" fields may contain arbitrary body
-elements.  Only one of each is allowed.  They become topic elements
+elements. Only one of each is allowed. They become topic elements
 with "Dedication" or "Abstract" titles (or language equivalents)
 immediately following the docinfo element.
 
 This field-name-to-element mapping can be replaced for other
-languages.  See the [DocInfo transform] implementation documentation
+languages. See the [DocInfo transform] implementation documentation
 for details.
 
 Unregistered/generic fields may contain one or more paragraphs or
@@ -966,9 +966,9 @@ arbitrary body elements.
 ##### RCS Keywords
 
 [Bibliographic fields] recognized by the parser are normally checked
-for RCS [^footnote-2] keywords and cleaned up [^footnote-3].  RCS keywords may be
+for RCS [^footnote-2] keywords and cleaned up [^footnote-3]. RCS keywords may be
 entered into source files as "\$keyword\$", and once stored under RCS or
-CVS [^footnote-4], they are expanded to "\$keyword: expansion text \$".  For
+CVS [^footnote-4], they are expanded to "\$keyword: expansion text \$". For
 example, a "Status" field will be transformed to a "status" element:
 
 ```
@@ -979,10 +979,10 @@ example, a "Status" field will be transformed to a "status" element:
 
 [^footnote-3]: RCS keyword processing can be turned off (unimplemented).
 
-[^footnote-4]: Concurrent Versions System.  CVS uses the same keywords as RCS.
+[^footnote-4]: Concurrent Versions System. CVS uses the same keywords as RCS.
 
 Processed, the "status" element's text will become simply "expansion
-text".  The dollar sign delimiters and leading RCS keyword name are
+text". The dollar sign delimiters and leading RCS keyword name are
 removed.
 
 The RCS keyword processing only kicks in when the field list is in
@@ -995,7 +995,7 @@ Doctree elements: option_list, option_list_item, option_group, option,
 option_string, option_argument, description.
 
 Option lists are two-column lists of command-line options and
-descriptions, documenting a program's options.  For example:
+descriptions, documenting a program's options. For example:
 
 ```
 -a         Output all.
@@ -1034,27 +1034,27 @@ There are several types of options recognized by reStructuredText:
 - DOS/VMS options consist of a slash and an option letter or word.
 
 Please note that both POSIX-style and DOS/VMS-style options may be
-used by DOS or Windows software.  These and other variations are
-sometimes used mixed together.  The names above have been chosen for
+used by DOS or Windows software. These and other variations are
+sometimes used mixed together. The names above have been chosen for
 convenience only.
 
 The syntax for short and long POSIX options is based on the syntax
 supported by Python's [getopt.py] module, which implements an option
 parser similar to the [GNU libc getopt_long()] function but with some
-restrictions.  There are many variant option systems, and
+restrictions. There are many variant option systems, and
 reStructuredText option lists do not support all of them.
 
 Although long POSIX and DOS/VMS option words may be allowed to be
 truncated by the operating system or the application when used on the
 command line, reStructuredText option lists do not show or support
-this with any special syntax.  The complete option word should be
+this with any special syntax. The complete option word should be
 given, supported by notes about truncation if and when applicable.
 
 Options may be followed by an argument placeholder, whose role and
-syntax should be explained in the description text.  Either a space or
+syntax should be explained in the description text. Either a space or
 an equals sign may be used as a delimiter between options and option
 argument placeholders; short options ("-" or "+" prefix only) may omit
-the delimiter.  Option arguments may take one of two forms:
+the delimiter. Option arguments may take one of two forms:
 
 - Begins with a letter (`[a-zA-Z]`) and subsequently consists of
   letters, numbers, underscores and hyphens (`[a-zA-Z0-9_-]`).
@@ -1063,12 +1063,12 @@ the delimiter.  Option arguments may take one of two forms:
   are allowed internally.
 
 Multiple option "synonyms" may be listed, sharing a single
-description.  They must be separated by comma-space.
+description. They must be separated by comma-space.
 
 There must be at least two spaces between the option(s) and the
-description.  The description may contain multiple body elements.  The
+description. The description may contain multiple body elements. The
 first line after the option marker determines the indentation of the
-description.  As with other types of lists, blank lines are required
+description. As with other types of lists, blank lines are required
 before the first option list item and after the last, but are optional
 between option entries.
 
@@ -1087,9 +1087,9 @@ Syntax diagram (simplified):
 Doctree element: literal_block.
 
 A paragraph consisting of two colons ("::") signifies that the
-following text block(s) comprise a literal block.  The literal block
-must either be indented or quoted (see below).  No markup processing
-is done within a literal block.  It is left as-is, and is typically
+following text block(s) comprise a literal block. The literal block
+must either be indented or quoted (see below). No markup processing
+is done within a literal block. It is left as-is, and is typically
 rendered in a monospaced typeface:
 
 ```
@@ -1112,7 +1112,7 @@ output; no empty paragraph will remain.
 
 As a convenience, the "::" is recognized at the end of any paragraph.
 If immediately preceded by whitespace, both colons will be removed
-from the output (this is the "partially minimized" form).  When text
+from the output (this is the "partially minimized" form). When text
 immediately precedes the "::", *one* colon will be removed from the
 output, leaving only one colon visible (i.e., "::" will be replaced by
 ":"; this is the "fully minimized" form).
@@ -1147,17 +1147,17 @@ colons after "Paragraph"):
    ```
 
 All whitespace (including line breaks, but excluding minimum
-indentation for indented literal blocks) is preserved.  Blank lines
+indentation for indented literal blocks) is preserved. Blank lines
 are required before and after a literal block, but these blank lines
 are not included as part of the literal block.
 
 ##### Indented Literal Blocks
 
 Indented literal blocks are indicated by indentation relative to the
-surrounding text (leading whitespace on each line).  The minimum
+surrounding text (leading whitespace on each line). The minimum
 indentation will be removed from each line of an indented literal
-block.  The literal block need not be contiguous; blank lines are
-allowed between sections of indented text.  The literal block ends
+block. The literal block need not be contiguous; blank lines are
+allowed between sections of indented text. The literal block ends
 with the end of the indentation.
 
 Syntax diagram:
@@ -1176,7 +1176,7 @@ Syntax diagram:
 
 Quoted literal blocks are unindented contiguous blocks of text where
 each line begins with the same non-alphanumeric printable 7-bit ASCII
-character [^footnote-5].  A blank line ends a quoted literal block.  The
+character [^footnote-5]. A blank line ends a quoted literal block. The
 quoting characters are preserved in the processed document.
 
 [^footnote-5]: The following are all valid quoting characters:
@@ -1216,18 +1216,18 @@ Syntax diagram:
 
 #### Line Blocks
 
-Doctree elements: line_block, line.  (New in Docutils 0.3.5.)
+Doctree elements: line_block, line. (New in Docutils 0.3.5.)
 
 Line blocks are useful for address blocks, verse (poetry, song
 lyrics), and unadorned lists, where the structure of lines is
-significant.  Line blocks are groups of lines beginning with vertical
-bar ("|") prefixes.  Each vertical bar prefix indicates a new line, so
-line breaks are preserved.  Initial indents are also significant,
-resulting in a nested structure.  Inline markup is supported.
+significant. Line blocks are groups of lines beginning with vertical
+bar ("|") prefixes. Each vertical bar prefix indicates a new line, so
+line breaks are preserved. Initial indents are also significant,
+resulting in a nested structure. Inline markup is supported.
 Continuation lines are wrapped portions of long lines; they begin with
-a space in place of the vertical bar.  The left edge of a continuation
+a space in place of the vertical bar. The left edge of a continuation
 line must be indented, but need not be aligned with the left edge of
-the text above it.  A line block ends with a blank line.
+the text above it. A line block ends with a blank line.
 
 This example illustrates continuation lines:
 
@@ -1275,7 +1275,7 @@ Doctree element: block_quote, attribution.
 
 A text block that is indented relative to the preceding text, without
 preceding markup indicating it to be a literal block or other content,
-is a block quote.  All markup processing (for body elements and inline
+is a block quote. All markup processing (for body elements and inline
 markup) continues within the block quote:
 
 ```
@@ -1287,7 +1287,7 @@ This is an ordinary paragraph, introducing a block quote.
 ```
 
 A block quote may end with an attribution: a text block beginning with
-"--", "---", or a true em-dash, flush left within the block quote.  If
+"--", "---", or a true em-dash, flush left within the block quote. If
 the attribution consists of multiple lines, the left edges of the
 second and subsequent lines must align.
 
@@ -1347,14 +1347,14 @@ Syntax diagram:
 Doctree element: doctest_block.
 
 Doctest blocks are interactive Python sessions cut-and-pasted into
-docstrings.  They are meant to illustrate usage by example, and
+docstrings. They are meant to illustrate usage by example, and
 provide an elegant and powerful testing environment via the [doctest
 module][doctest module] in the Python standard library.
 
 Doctest blocks are text blocks which begin with `">>> "`, the Python
 interactive interpreter main prompt, and end with a blank line.
 Doctest blocks are treated as a special case of literal blocks,
-without requiring the literal block syntax.  If both are present, the
+without requiring the literal block syntax. If both are present, the
 literal block syntax takes priority over Doctest block syntax:
 
 ```
@@ -1380,32 +1380,32 @@ ReStructuredText provides two syntaxes for delineating table cells:
 [Grid Tables] and [Simple Tables].
 
 As with other body elements, blank lines are required before and after
-tables.  Tables' left edges should align with the left edge of
+tables. Tables' left edges should align with the left edge of
 preceding text blocks; if indented, the table is considered to be part
 of a block quote.
 
 Once isolated, each table cell is treated as a miniature document; the
-top and bottom cell boundaries act as delimiting blank lines.  Each
-cell contains zero or more body elements.  Cell contents may include
+top and bottom cell boundaries act as delimiting blank lines. Each
+cell contains zero or more body elements. Cell contents may include
 left and/or right margins, which are removed before processing.
 
 ##### Grid Tables
 
 Grid tables provide a complete table representation via grid-like
-"ASCII art".  Grid tables allow arbitrary cell contents (body
-elements), and both row and column spans.  However, grid tables can be
-cumbersome to produce, especially for simple data sets.  The [Emacs
+"ASCII art". Grid tables allow arbitrary cell contents (body
+elements), and both row and column spans. However, grid tables can be
+cumbersome to produce, especially for simple data sets. The [Emacs
 table mode][emacs table mode] is a tool that allows easy editing of grid tables, in
-Emacs.  See [Simple Tables] for a simpler (but limited)
+Emacs. See [Simple Tables] for a simpler (but limited)
 representation.
 
 Grid tables are described with a visual grid made up of the characters
-"-", "=", "|", and "+".  The hyphen ("-") is used for horizontal lines
-(row separators).  The equals sign ("=") may be used to separate
+"-", "=", "|", and "+". The hyphen ("-") is used for horizontal lines
+(row separators). The equals sign ("=") may be used to separate
 optional header rows from the table body (not supported by the [Emacs
-table mode][emacs table mode]).  The vertical bar ("|") is used for vertical lines
-(column separators).  The plus sign ("+") is used for intersections of
-horizontal and vertical lines.  Example:
+table mode][emacs table mode]). The vertical bar ("|") is used for vertical lines
+(column separators). The plus sign ("+") is used for intersections of
+horizontal and vertical lines. Example:
 
 ```
 +------------------------+------------+----------+----------+
@@ -1423,7 +1423,7 @@ horizontal and vertical lines.  Example:
 ```
 
 Some care must be taken with grid tables to avoid undesired
-interactions with cell text in rare cases.  For example, the following
+interactions with cell text in rare cases. For example, the following
 table contains a cell in row 2 spanning from column 2 to column 4:
 
 ```
@@ -1449,8 +1449,8 @@ unintended effects if accidentally aligned with column boundaries:
 +--------------+----------+-----------+-----------+
 ```
 
-Several solutions are possible.  All that is needed is to break the
-continuity of the cell outline rectangle.  One possibility is to shift
+Several solutions are possible. All that is needed is to break the
+continuity of the cell outline rectangle. One possibility is to shift
 the text by adding an extra space before:
 
 ```
@@ -1479,30 +1479,30 @@ Another possibility is to add an extra line to row 2:
 ##### Simple Tables
 
 Simple tables provide a compact and easy to type but limited
-row-oriented table representation for simple data sets.  Cell contents
+row-oriented table representation for simple data sets. Cell contents
 are typically single paragraphs, although arbitrary body elements may
-be represented in most cells.  Simple tables allow multi-line rows (in
-all but the first column) and column spans, but not row spans.  See
+be represented in most cells. Simple tables allow multi-line rows (in
+all but the first column) and column spans, but not row spans. See
 [Grid Tables] above for a complete table representation.
 
 Simple tables are described with horizontal borders made up of "=" and
-"-" characters.  The equals sign ("=") is used for top and bottom
+"-" characters. The equals sign ("=") is used for top and bottom
 table borders, and to separate optional header rows from the table
-body.  The hyphen ("-") is used to indicate column spans in a single
+body. The hyphen ("-") is used to indicate column spans in a single
 row by underlining the joined columns, and may optionally be used to
 explicitly and/or visually separate rows.
 
 A simple table begins with a top border of equals signs with one or
 more spaces at each column boundary (two or more spaces recommended).
 Regardless of spans, the top border *must* fully describe all table
-columns.  There must be at least two columns in the table (to
-differentiate it from section headers).  The top border may be
+columns. There must be at least two columns in the table (to
+differentiate it from section headers). The top border may be
 followed by header rows, and the last of the optional header rows is
-underlined with '=', again with spaces at column boundaries.  There
+underlined with '=', again with spaces at column boundaries. There
 may not be a blank line below the header row separator; it would be
-interpreted as the bottom border of the table.  The bottom boundary of
+interpreted as the bottom border of the table. The bottom boundary of
 the table consists of '=' underlines, also with spaces at column
-boundaries.  For example, here is a truth table, a three-column table
+boundaries. For example, here is a truth table, a three-column table
 with one header row and four body rows:
 
 ```
@@ -1517,11 +1517,11 @@ True   True   True
 ```
 
 Underlines of '-' may be used to indicate column spans by "filling in"
-column margins to join adjacent columns.  Column span underlines must
+column margins to join adjacent columns. Column span underlines must
 be complete (they must cover all columns) and align with established
-column boundaries.  Text lines containing column span underlines may
-not contain any other text.  A column span underline applies only to
-one row immediately above it.  For example, here is a table with a
+column boundaries. Text lines containing column span underlines may
+not contain any other text. A column span underline applies only to
+one row immediately above it. For example, here is a table with a
 column span in the header:
 
 ```
@@ -1538,13 +1538,13 @@ True   True   True
 ```
 
 Each line of text must contain spaces at column boundaries, except
-where cells have been joined by column spans.  Each line of text
+where cells have been joined by column spans. Each line of text
 starts a new row, except when there is a blank cell in the first
-column.  In that case, that line of text is parsed as a continuation
-line.  For this reason, cells in the first column of new rows (*not*
+column. In that case, that line of text is parsed as a continuation
+line. For this reason, cells in the first column of new rows (*not*
 continuation lines) *must* contain some text; blank cells would lead
-to a misinterpretation (but see the tip below).  Also, this mechanism
-limits cells in the first column to only one line of text.  Use [grid
+to a misinterpretation (but see the tip below). Also, this mechanism
+limits cells in the first column to only one line of text. Use [grid
 tables][grid tables] if this limitation is unacceptable.
 
 :::{Tip}
@@ -1558,16 +1558,16 @@ column in the processed output, use one of these:
 :::
 
 Underlines of '-' may also be used to visually separate rows, even if
-there are no column spans.  This is especially useful in long tables,
+there are no column spans. This is especially useful in long tables,
 where rows are many lines long.
 
-Blank lines are permitted within simple tables.  Their interpretation
-depends on the context.  Blank lines *between* rows are ignored.
+Blank lines are permitted within simple tables. Their interpretation
+depends on the context. Blank lines *between* rows are ignored.
 Blank lines *within* multi-line rows may separate paragraphs or other
 body elements within cells.
 
 The rightmost column is unbounded; text may continue past the edge of
-the table (as indicated by the table borders).  However, it is
+the table (as indicated by the table borders). However, it is
 recommended that borders be made long enough to contain the entire
 text.
 
@@ -1603,10 +1603,10 @@ An explicit markup block is a text block:
 - which ends before an unindented line.
 
 Explicit markup blocks are analogous to bullet list items, with ".."
-as the bullet.  The text on the lines immediately after the explicit
-markup start determines the indentation of the block body.  The
+as the bullet. The text on the lines immediately after the explicit
+markup start determines the indentation of the block body. The
 maximum common indentation is always removed from the second and
-subsequent lines of the block body.  Therefore if the first construct
+subsequent lines of the block body. Therefore if the first construct
 fits in one line, and the indentation of the first and second
 constructs should differ, the first construct should not begin on the
 same line as the explicit markup start.
@@ -1624,7 +1624,7 @@ Doctree elements: footnote, label.
 
 Each footnote consists of an explicit markup start (".. "), a left
 square bracket, the footnote label, a right square bracket, and
-whitespace, followed by indented body elements.  A footnote label can
+whitespace, followed by indented body elements. A footnote label can
 be:
 
 - a whole decimal number consisting of one or more digits,
@@ -1634,11 +1634,11 @@ be:
 - a single "\*" (denoting [auto-symbol footnotes]).
 
 The footnote content (body elements) must be consistently indented (by
-at least 3 spaces) and left-aligned.  The first body element within a
+at least 3 spaces) and left-aligned. The first body element within a
 footnote may often begin on the same line as the footnote label.
 However, if the first element fits on one line and the indentation of
 the remaining elements differ, the first element must begin on the
-line after the footnote label.  Otherwise, the difference in
+line after the footnote label. Otherwise, the difference in
 indentation will not be detected.
 
 Footnotes may occur anywhere in the document, not only at the end.
@@ -1652,9 +1652,9 @@ Here is a manually numbered footnote:
 ```
 
 Each footnote automatically generates a hyperlink target pointing to
-itself.  The text of the hyperlink target name is the same as that of
-the footnote label.  [Auto-numbered footnotes] generate a number as
-their footnote label and reference name.  See [Implicit Hyperlink
+itself. The text of the hyperlink target name is the same as that of
+the footnote label. [Auto-numbered footnotes] generate a number as
+their footnote label and reference name. See [Implicit Hyperlink
 Targets][implicit hyperlink targets] for a complete description of the mechanism.
 
 Syntax diagram:
@@ -1676,21 +1676,21 @@ reference.
 The first footnote to request automatic numbering is assigned the
 label "1", the second is assigned the label "2", and so on (assuming
 there are no manually numbered footnotes present; see [Mixed Manual
-and Auto-Numbered Footnotes][mixed manual and auto-numbered footnotes] below).  A footnote which has
+and Auto-Numbered Footnotes][mixed manual and auto-numbered footnotes] below). A footnote which has
 automatically received a label "1" generates an implicit hyperlink
 target with name "1", just as if the label was explicitly specified.
 
 (autonumber label)=
 
 A footnote may specify a label explicitly while at the same time
-requesting automatic numbering: `[#label]`.  These labels are called
-`` _`autonumber labels` ``.  Autonumber labels do two things:
+requesting automatic numbering: `[#label]`. These labels are called
+`` _`autonumber labels` ``. Autonumber labels do two things:
 
 - On the footnote itself, they generate a hyperlink target whose name
   is the autonumber label (doesn't include the "#").
 
 - They allow an automatically numbered footnote to be referred to more
-  than once, as a footnote reference or hyperlink reference.  For
+  than once, as a footnote reference or hyperlink reference. For
   example:
 
   ```
@@ -1703,9 +1703,9 @@ requesting automatic numbering: `[#label]`.  These labels are called
   ```
 
 The numbering is determined by the order of the footnotes, not by the
-order of the references.  For footnote references without autonumber
+order of the references. For footnote references without autonumber
 labels (`[#]_`), the footnotes and footnote references must be in
-the same relative order but need not alternate in lock-step.  For
+the same relative order but need not alternate in lock-step. For
 example:
 
 ```
@@ -1721,15 +1721,15 @@ footnote 2.
 
 Special care must be taken if footnotes themselves contain
 auto-numbered footnote references, or if multiple references are made
-in close proximity.  Footnotes and references are noted in the order
+in close proximity. Footnotes and references are noted in the order
 they are encountered in the document, which is not necessarily the
 same as the order in which a person would read them.
 
 ###### Auto-Symbol Footnotes
 
 An asterisk ("\*") may be used for footnote labels to request automatic
-symbol generation for footnotes and footnote references.  The asterisk
-may be the only character in the label.  For example:
+symbol generation for footnotes and footnote references. The asterisk
+may be the only character in the label. For example:
 
 ```
 Here is a symbolic footnote reference: [*]_.
@@ -1738,8 +1738,8 @@ Here is a symbolic footnote reference: [*]_.
 ```
 
 A transform will insert symbols as labels into corresponding footnotes
-and footnote references.  The number of references must be equal to
-the number of footnotes.  One symbol footnote cannot have multiple
+and footnote references. The number of references must be equal to
+the number of footnotes. One symbol footnote cannot have multiple
 references.
 
 The standard Docutils system uses the following symbols for footnote
@@ -1758,8 +1758,8 @@ marks [^footnote-6]:
 
 [^footnote-6]: This list was inspired by the list of symbols for "Note
     Reference Marks" in The Chicago Manual of Style, 14th edition,
-    section 12.51.  "Parallels" ("||") were given in CMoS instead of
-    the pilcrow.  The last four symbols (the card suits) were added
+    section 12.51. "Parallels" ("||") were given in CMoS instead of
+    the pilcrow. The last four symbols (the card suits) were added
     arbitrarily.
 
 If more than ten symbols are required, the same sequence will be
@@ -1767,9 +1767,9 @@ reused, doubled and then tripled, and so on ("\*\*" etc.).
 
 :::{Note}
 When using auto-symbol footnotes, the choice of output
-encoding is important.  Many of the symbols used are not encodable
-in certain common text encodings such as Latin-1 (ISO 8859-1).  The
-use of UTF-8 for the output encoding is recommended.  An
+encoding is important. Many of the symbols used are not encodable
+in certain common text encodings such as Latin-1 (ISO 8859-1). The
+use of UTF-8 for the output encoding is recommended. An
 alternative for HTML and XML output is to use the
 "xmlcharrefreplace" [output encoding error handler](../../user/config.html#output-encoding-error-handler).
 :::
@@ -1777,9 +1777,9 @@ alternative for HTML and XML output is to use the
 ###### Mixed Manual and Auto-Numbered Footnotes
 
 Manual and automatic footnote numbering may both be used within a
-single document, although the results may not be expected.  Manual
-numbering takes priority.  Only unused footnote numbers are assigned
-to auto-numbered footnotes.  The following example should be
+single document, although the results may not be expected. Manual
+numbering takes priority. Only unused footnote numbers are assigned
+to auto-numbered footnotes. The following example should be
 illustrative:
 
 ```
@@ -1801,11 +1801,11 @@ illustrative:
 ##### Citations
 
 Citations are identical to footnotes except that they use only
-non-numeric labels such as `[note]` or `[GVR2001]`.  Citation
+non-numeric labels such as `[note]` or `[GVR2001]`. Citation
 labels are simple [reference names] (case-insensitive single words
 consisting of alphanumerics plus internal hyphens, underscores, and
-periods; no whitespace).  Citations may be rendered separately and
-differently from footnotes.  For example:
+periods; no whitespace). Citations may be rendered separately and
+differently from footnotes. For example:
 
 ```
 Here is a citation reference: [CIT2002]_.
@@ -1826,7 +1826,7 @@ them from [implicit hyperlink targets] defined below.
 Hyperlink targets identify a location within or outside of a document,
 which may be linked to by [hyperlink references].
 
-Hyperlink targets may be named or anonymous.  Named hyperlink targets
+Hyperlink targets may be named or anonymous. Named hyperlink targets
 consist of an explicit markup start (".. "), an underscore, the
 reference name (no trailing underscore), a colon, whitespace, and a
 link block:
@@ -1835,7 +1835,7 @@ link block:
 .. _hyperlink-name: link-block
 ```
 
-Reference names are whitespace-neutral and case-insensitive.  See
+Reference names are whitespace-neutral and case-insensitive. See
 [Reference Names] for details and examples.
 
 Anonymous hyperlink targets consist of an explicit markup start
@@ -1858,10 +1858,10 @@ See [Anonymous Hyperlinks] below.
 There are three types of hyperlink targets: internal, external, and
 indirect.
 
-1. `` _`Internal hyperlink targets` `` have empty link blocks.  They provide
+1. `` _`Internal hyperlink targets` `` have empty link blocks. They provide
    an end point allowing a hyperlink to connect one place to another
-   within a document.  An internal hyperlink target points to the
-   element following the target.  For example:
+   within a document. An internal hyperlink target points to the
+   element following the target. For example:
 
    ```
    Clicking on this internal hyperlink will take us to the target_
@@ -1872,7 +1872,7 @@ indirect.
    The hyperlink target above points to this paragraph.
    ```
 
-   Internal hyperlink targets may be "chained".  Multiple adjacent
+   Internal hyperlink targets may be "chained". Multiple adjacent
    internal hyperlink targets all point to the same element:
 
    ```
@@ -1886,8 +1886,8 @@ indirect.
    If the element "pointed to" is an external hyperlink target (with a
    URI in its link block; see #2 below) the URI from the external
    hyperlink target is propagated to the internal hyperlink targets;
-   they will all "point to" the same URI.  There is no need to
-   duplicate a URI.  For example, all three of the following hyperlink
+   they will all "point to" the same URI. There is no need to
+   duplicate a URI. For example, all three of the following hyperlink
    targets refer to the same URI:
 
    ```
@@ -1900,7 +1900,7 @@ indirect.
    [Inline Internal Targets].
 
 2. `` _`External hyperlink targets` `` have an absolute or relative URI or
-   email address in their link blocks.  For example, take the
+   email address in their link blocks. For example, take the
    following input:
 
    ```
@@ -1925,9 +1925,9 @@ indirect.
    An external hyperlink's URI may begin on the same line as the
    explicit markup start and target name, or it may begin in an
    indented text block immediately following, with no intervening
-   blank lines.  If there are multiple lines in the link block, they
-   are concatenated.  Any whitespace is removed (whitespace is
-   permitted to allow for line wrapping).  The following external
+   blank lines. If there are multiple lines in the link block, they
+   are concatenated. Any whitespace is removed (whitespace is
+   permitted to allow for line wrapping). The following external
    hyperlink targets are equivalent:
 
    ```
@@ -1952,13 +1952,13 @@ indirect.
    ```
 
    It is possible (although not generally recommended) to include URIs
-   directly within hyperlink references.  See [Embedded URIs and Aliases]
+   directly within hyperlink references. See [Embedded URIs and Aliases]
    below.
 
 3. `` _`Indirect hyperlink targets` `` have a hyperlink reference in their
-   link blocks.  In the following example, target "one" indirectly
+   link blocks. In the following example, target "one" indirectly
    references whatever target "two" references, and target "two"
-   references target "three", an internal hyperlink target.  In
+   references target "three", an internal hyperlink target. In
    effect, all three reference the same thing:
 
    ```
@@ -1969,9 +1969,9 @@ indirect.
 
    Just as with [hyperlink references] anywhere else in a document,
    if a phrase-reference is used in the link block it must be enclosed
-   in backquotes.  As with [external hyperlink targets], the link
+   in backquotes. As with [external hyperlink targets], the link
    block of an indirect hyperlink target may begin on the same line as
-   the explicit markup start or the next line.  It may also be split
+   the explicit markup start or the next line. It may also be split
    over multiple lines, in which case the lines are joined with
    whitespace before being normalized.
 
@@ -2023,14 +2023,14 @@ Syntax diagram:
 
 The [World Wide Web Consortium] recommends in its [HTML Techniques
 for Web Content Accessibility Guidelines][html techniques for web content accessibility guidelines] that authors should
-"clearly identify the target of each link."  Hyperlink references
+"clearly identify the target of each link." Hyperlink references
 should be as verbose as possible, but duplicating a verbose hyperlink
-name in the target is onerous and error-prone.  Anonymous hyperlinks
+name in the target is onerous and error-prone. Anonymous hyperlinks
 are designed to allow convenient verbose hyperlink references, and are
-analogous to [Auto-Numbered Footnotes].  They are particularly useful
-in short or one-off documents.  However, this feature is easily abused
+analogous to [Auto-Numbered Footnotes]. They are particularly useful
+in short or one-off documents. However, this feature is easily abused
 and can result in unreadable plaintext and/or unmaintainable
-documents.  Caution is advised.
+documents. Caution is advised.
 
 Anonymous [hyperlink references] are specified with two underscores
 instead of one:
@@ -2054,12 +2054,12 @@ __ http://www.python.org
 ```
 
 The reference name of the reference is not used to match the reference
-to its target.  Instead, the order of anonymous hyperlink references
+to its target. Instead, the order of anonymous hyperlink references
 and targets within the document is significant: the first anonymous
-reference will link to the first anonymous target.  The number of
+reference will link to the first anonymous target. The number of
 anonymous hyperlink references in a document must match the number of
-anonymous targets.  For readability, it is recommended that targets be
-kept close to references.  Take care when editing text containing
+anonymous targets. For readability, it is recommended that targets be
+kept close to references. Take care when editing text containing
 anonymous references; adding, removing, and rearranging references
 require attention to the order of corresponding targets.
 
@@ -2069,10 +2069,10 @@ Doctree elements: depend on the directive.
 
 Directives are an extension mechanism for reStructuredText, a way of
 adding support for new constructs without adding new primary syntax
-(directives may support additional syntax locally).  All standard
+(directives may support additional syntax locally). All standard
 directives (those implemented and registered in the reference
 reStructuredText parser) are described in the [reStructuredText
-Directives][restructuredtext directives] document, and are always available.  Any other directives
+Directives][restructuredtext directives] document, and are always available. Any other directives
 are domain-specific, and may require special action to make them
 available when processing the document.
 
@@ -2100,9 +2100,9 @@ An [admonition] (note, caution, etc.) contains other body elements:
 
 Directives are indicated by an explicit markup start (".. ") followed
 by the directive type, two colons, and whitespace (together called the
-"directive marker").  Directive types are case-insensitive single
+"directive marker"). Directive types are case-insensitive single
 words (alphanumerics plus isolated internal hyphens, underscores,
-plus signs, colons, and periods; no whitespace).  Two colons are used
+plus signs, colons, and periods; no whitespace). Two colons are used
 after the directive type for these reasons:
 
 - Two colons are distinctive, and unlikely to be used in common text.
@@ -2117,12 +2117,12 @@ after the directive type for these reasons:
   directive (i.e., the directive-handler is not installed), a level-3
   (error) system message is generated, and the entire directive block
   (including the directive itself) will be included as a literal
-  block.  Thus "::" is a natural choice.
+  block. Thus "::" is a natural choice.
 
 The directive block is consists of any text on the first line of the
 directive after the directive marker, and any subsequent indented
-text.  The interpretation of the directive block is up to the
-directive code.  There are three logical parts to the directive block:
+text. The interpretation of the directive block is up to the
+directive code. There are three logical parts to the directive block:
 
 1. Directive arguments.
 2. Directive options.
@@ -2131,10 +2131,10 @@ directive code.  There are three logical parts to the directive block:
 Individual directives can employ any combination of these parts.
 Directive arguments can be filesystem paths, URLs, title text, etc.
 Directive options are indicated using [field lists]; the field names
-and contents are directive-specific.  Arguments and options must form
+and contents are directive-specific. Arguments and options must form
 a contiguous block beginning on the first or second line of the
 directive; a blank line indicates the beginning of the directive
-content block.  If either arguments and/or options are employed by the
+content block. If either arguments and/or options are employed by the
 directive, a blank line must separate them from the directive content.
 The "figure" directive employs all three parts:
 
@@ -2145,27 +2145,27 @@ The "figure" directive employs all three parts:
    The larch.
 ```
 
-Simple directives may not require any content.  If a directive that
+Simple directives may not require any content. If a directive that
 does not employ a content block is followed by indented text anyway,
-it is an error.  If a block quote should immediately follow a
+it is an error. If a block quote should immediately follow a
 directive, use an empty comment in-between (see [Comments] below).
 
 Actions taken in response to directives and the interpretation of text
 in the directive content block or subsequent text block(s) are
-directive-dependent.  See [reStructuredText Directives] for details.
+directive-dependent. See [reStructuredText Directives] for details.
 
 Directives are meant for the arbitrary processing of their contents,
 which can be transformed into something possibly unrelated to the
-original text.  It may also be possible for directives to be used as
+original text. It may also be possible for directives to be used as
 pragmas, to modify the behavior of the parser, such as to experiment
-with alternate syntax.  There is no parser support for this
+with alternate syntax. There is no parser support for this
 functionality at present; if a reasonable need for pragma directives
 is found, they may be supported.
 
 Directives do not generate "directive" elements; they are a *parser
 construct* only, and have no intrinsic meaning outside of
-reStructuredText.  Instead, the parser will transform recognized
-directives into (possibly specialized) document elements.  Unknown
+reStructuredText. Instead, the parser will transform recognized
+directives into (possibly specialized) document elements. Unknown
 directives will trigger level-3 (error) system messages.
 
 Syntax diagram:
@@ -2184,10 +2184,10 @@ Doctree element: substitution_definition.
 
 Substitution definitions are indicated by an explicit markup start
 (".. ") followed by a vertical bar, the substitution text, another
-vertical bar, whitespace, and the definition block.  Substitution text
-may not begin or end with whitespace.  A substitution definition block
+vertical bar, whitespace, and the definition block. Substitution text
+may not begin or end with whitespace. A substitution definition block
 contains an embedded inline-compatible directive (without the leading
-".. "), such as "[image]" or "[replace]".  For example:
+".. "), such as "[image]" or "[replace]". For example:
 
 ```
 The |biohazard| symbol must be used on containers used to
@@ -2201,18 +2201,18 @@ indirectly contain a circular substitution reference.
 
 [Substitution references] are replaced in-line by the processed
 contents of the corresponding definition (linked by matching
-substitution text).  Matches are case-sensitive but forgiving; if no
+substitution text). Matches are case-sensitive but forgiving; if no
 exact match is found, a case-insensitive comparison is attempted.
 
 Substitution definitions allow the power and flexibility of
-block-level [directives] to be shared by inline text.  They are a way
+block-level [directives] to be shared by inline text. They are a way
 to include arbitrarily complex inline structures within text, while
-keeping the details out of the flow of text.  They are the equivalent
+keeping the details out of the flow of text. They are the equivalent
 of SGML/XML's named entities or programming language macros.
 
 Without the substitution mechanism, every time someone wants an
 application-specific new inline structure, they would have to petition
-for a syntax change.  In combination with existing directive syntax,
+for a syntax change. In combination with existing directive syntax,
 any inline structure can be coded without new syntax (except possibly
 a new directive).
 
@@ -2226,7 +2226,7 @@ Syntax diagram:
         +-----------------------------------------------------+
 ```
 
-Following are some use cases for the substitution mechanism.  Please
+Following are some use cases for the substitution mechanism. Please
 note that most of the embedded directives shown are examples only and
 have not been implemented.
 
@@ -2255,8 +2255,8 @@ Objects
 
   The same approach can be used in documents which frequently refer
   to a particular type of objects with unique identifiers but
-  ambiguous common names.  Movies, albums, books, photos, court
-  cases, and laws are possible.  For example:
+  ambiguous common names. Movies, albums, books, photos, court
+  cases, and laws are possible. For example:
 
   ```
   |The Transparent Society| offers a fascinating alternate view
@@ -2342,13 +2342,13 @@ Styles [^footnote-7]
 
   [^footnote-7]: There may be sufficient need for a "style" mechanism to
       warrant simpler syntax such as an extension to the interpreted
-      text role syntax.  The substitution mechanism is cumbersome for
+      text role syntax. The substitution mechanism is cumbersome for
       simple text styling.
 
 Templates
 
 : Inline markup may be used for later processing by a template
-  engine.  For example, a [Zope] author might write:
+  engine. For example, a [Zope] author might write:
 
   ```
   Welcome back, |name|!
@@ -2369,9 +2369,9 @@ Templates
 Replacement text
 
 : The substitution mechanism may be used for simple macro
-  substitution.  This may be appropriate when the replacement text
+  substitution. This may be appropriate when the replacement text
   is repeated many times throughout one or more documents,
-  especially if it may need to change later.  A short example is
+  especially if it may need to change later. A short example is
   unavoidably contrived:
 
   ```
@@ -2385,7 +2385,7 @@ Replacement text
   ```
 
   Note the trailing underscore in the first use of a substitution
-  reference.  This indicates a reference to the corresponding
+  reference. This indicates a reference to the corresponding
   hyperlink target.
 
   Substitution is also appropriate when the replacement text cannot
@@ -2410,13 +2410,13 @@ Replacement text
 Doctree element: comment.
 
 Arbitrary indented text may follow the explicit markup start and will
-be processed as a comment element.  No further processing is done on
+be processed as a comment element. No further processing is done on
 the comment block text; a comment contains a single "text blob".
 Depending on the output formatter, comments may be removed from the
-processed output.  The only restriction on comments is that they not
+processed output. The only restriction on comments is that they not
 use the same syntax as any of the other explicit markup constructs:
 substitution definitions, directives, footnotes, citations, or
-hyperlink targets.  To ensure that none of the other explicit markup
+hyperlink targets. To ensure that none of the other explicit markup
 constructs is recognized, leave the ".." on a line by itself:
 
 ```
@@ -2434,9 +2434,9 @@ constructs is recognized, leave the ".." on a line by itself:
 (empty-comments)=
 
 An explicit markup start followed by a blank line and nothing else
-(apart from whitespace) is an "`` _`empty comment` ``".  It serves to
+(apart from whitespace) is an "`` _`empty comment` ``". It serves to
 terminate a preceding construct, and does **not** consume any indented
-text following.  To have a block quote follow a list or any indented
+text following. To have a block quote follow a list or any indented
 construct, insert an unindented empty comment in-between.
 
 Syntax diagram:
@@ -2460,35 +2460,35 @@ Problems of ambiguity due to conflicting duplicate implicit and
 explicit reference names are avoided by following this procedure:
 
 1. [Explicit hyperlink targets] override any implicit targets having
-   the same reference name.  The implicit hyperlink targets are
+   the same reference name. The implicit hyperlink targets are
    removed, and level-1 (info) system messages are inserted.
 2. Duplicate implicit hyperlink targets are removed, and level-1
-   (info) system messages inserted.  For example, if two or more
+   (info) system messages inserted. For example, if two or more
    sections have the same title (such as "Introduction" subsections of
    a rigidly-structured document), there will be duplicate implicit
    hyperlink targets.
 3. Duplicate explicit hyperlink targets are removed, and level-2
-   (warning) system messages are inserted.  Exception: duplicate
+   (warning) system messages are inserted. Exception: duplicate
    [external hyperlink targets] (identical hyperlink names and
    referenced URIs) do not conflict, and are not removed.
 
 System messages are inserted where target links have been removed.
 See "Error Handling" in [PEP 258].
 
-The parser must return a set of *unique* hyperlink targets.  The
+The parser must return a set of *unique* hyperlink targets. The
 calling software (such as the [Docutils]) can warn of unresolvable
 links, giving reasons for the messages.
 
 ### Inline Markup
 
 In reStructuredText, inline markup applies to words or phrases within
-a text block.  The same whitespace and punctuation that serves to
+a text block. The same whitespace and punctuation that serves to
 delimit words in written text is used to delimit the inline markup
-syntax constructs.  The text within inline markup may not begin or end
-with whitespace.  Arbitrary [character-level inline markup] is
-supported although not encouraged.  Inline markup cannot be nested.
+syntax constructs. The text within inline markup may not begin or end
+with whitespace. Arbitrary [character-level inline markup] is
+supported although not encouraged. Inline markup cannot be nested.
 
-There are nine inline markup constructs.  Five of the constructs use
+There are nine inline markup constructs. Five of the constructs use
 identical start-strings and end-strings to indicate the markup:
 
 - [emphasis]: "\*"
@@ -2500,7 +2500,7 @@ identical start-strings and end-strings to indicate the markup:
 Three constructs use different start-strings and end-strings:
 
 - [inline internal targets]: "\_\`" and "\`"
-- [footnote references]: "\[" and "\]\_"
+- [footnote references]: "[" and "]\_"
 - [hyperlink references]: "\`" and "\`\_" (phrases), or just a
   trailing "\_" (single words)
 
@@ -2553,7 +2553,7 @@ the following conditions are met:
 
 7. An unescaped backslash preceding a start-string or end-string will
    disable markup recognition, except for the end-string of [inline
-   literals][inline literals].  See [Escaping Mechanism] above for details.
+   literals][inline literals]. See [Escaping Mechanism] above for details.
 
 [^pipf]: `Pi` (Punctuation, Initial quote) characters are "usually
     closing, sometimes opening". `Pf` (Punctuation, Final quote)
@@ -2567,8 +2567,8 @@ uses of "\*", "\`", "\_", and "|" without escaping. For example, none of the
 following terms are recognized as containing inline markup strings:
 
 - 2\*x a\*\*b O(N\*\*2) e\*\*(x\*y) f(x)\*f(y) a|b file\*.\* (breaks 1)
-- 2 * x  a \*\* b  (\* BOM32\_\* \` \`\` _ \_\_ | (breaks 2)
-- "\*" '|' (\*) \[\*\] {\*} \<\*>
+- 2 * x a \*\* b (\* BOM32\_\* \` \`\` _ \_\_ | (breaks 2)
+- "\*" '|' (\*) [\*] {\*} \<\*>
   ‘\*’ ‚\*‘ ‘\*‚ ’\*’ ‚\*’
   “\*” „\*“ “\*„ ”\*” „\*”
   »\*« ›\*‹ «\*» »\*» ›\*› (breaks 5)
@@ -2577,11 +2577,11 @@ following terms are recognized as containing inline markup strings:
 
 No escaping is required inside the following inline markup examples:
 
-- *2 * x  \*a \*\*b \*.txt* (breaks 3)
+- *2 * x \*a \*\*b \*.txt* (breaks 3)
 - *2\*x a\*\*b O(N\*\*2) e\*\*(x\*y) f(x)\*f(y) a\*(1+2)* (breaks 4)
 
 It may be desirable to use [inline literals] for some of these anyhow,
-especially if they represent code snippets.  It's a judgment call.
+especially if they represent code snippets. It's a judgment call.
 
 These cases *do* require either literal-quoting or escaping to avoid
 misinterpretation:
@@ -2599,7 +2599,7 @@ choice (by default, this also selects a monospaced font):
 
 Inline markup delimiter characters are used for multiple constructs,
 so to avoid ambiguity there must be a specific recognition order for
-each character.  The inline markup recognition order is as follows:
+each character. The inline markup recognition order is as follows:
 
 - Asterisks: [Strong emphasis] ("\*\*") is recognized before [emphasis]
   ("\*").
@@ -2607,7 +2607,7 @@ each character.  The inline markup recognition order is as follows:
   (leading "\_\`", trailing "\`"), are mutually independent, and are
   recognized before phrase [hyperlink references] (leading "\`",
   trailing "\`\_") and [interpreted text] ("\`").
-- Trailing underscores: Footnote references ("\[" + label + "\]\_") and
+- Trailing underscores: Footnote references ("[" + label + "]\_") and
   simple [hyperlink references] (name + trailing "\_") are mutually
   independent.
 - Vertical bars: [Substitution references] ("|") are independently
@@ -2617,7 +2617,7 @@ each character.  The inline markup recognition order is as follows:
 #### Character-Level Inline Markup
 
 It is possible to mark up individual characters within a word with
-backslash escapes (see [Escaping Mechanism] above).  Backslash
+backslash escapes (see [Escaping Mechanism] above). Backslash
 escapes can be used to allow arbitrary text to immediately follow
 inline markup:
 
@@ -2625,7 +2625,7 @@ inline markup:
 Python ``list``\s use square bracket syntax.
 ```
 
-The backslash will disappear from the processed document.  The word
+The backslash will disappear from the processed document. The word
 "list" will appear as inline literal text, and the letter "s" will
 immediately follow it as normal text, with no space in-between.
 
@@ -2641,8 +2641,8 @@ above will disappear from the processed document.
 
 :::{CAUTION}
 The use of backslash-escapes for character-level inline markup is
-not encouraged.  Such use is ugly and detrimental to the
-unprocessed document's readability.  Please use this feature
+not encouraged. Such use is ugly and detrimental to the
+unprocessed document's readability. Please use this feature
 sparingly and only where absolutely necessary.
 :::
 
@@ -2683,7 +2683,7 @@ Start-string = end-string = "\`".
 
 Interpreted text is text that is meant to be related, indexed, linked,
 summarized, or otherwise processed, but the text itself is typically
-left alone.  Interpreted text is enclosed by single backquote
+left alone. Interpreted text is enclosed by single backquote
 characters:
 
 ```
@@ -2691,12 +2691,12 @@ This is `interpreted text`.
 ```
 
 The "role" of the interpreted text determines how the text is
-interpreted.  The role may be inferred implicitly (as above; the
+interpreted. The role may be inferred implicitly (as above; the
 "default role" is used) or indicated explicitly, using a role marker.
 A role marker consists of a colon, the role name, and another colon.
 A role name is a single word consisting of alphanumerics plus isolated
 internal hyphens, underscores, plus signs, colons, and periods;
-no whitespace or other characters are allowed.  A role marker is
+no whitespace or other characters are allowed. A role marker is
 either a prefix or a suffix to the interpreted text, whichever reads
 better; it's up to the author:
 
@@ -2707,14 +2707,14 @@ better; it's up to the author:
 ```
 
 Interpreted text allows extensions to the available inline descriptive
-markup constructs.  To [emphasis], [strong emphasis], [inline
+markup constructs. To [emphasis], [strong emphasis], [inline
 literals][inline literals], and [hyperlink references], we can add "title reference",
 "index entry", "acronym", "class", "red", "blinking" or anything else
-we want.  Only pre-determined roles are recognized; unknown roles will
-generate errors.  A core set of standard roles is implemented in the
+we want. Only pre-determined roles are recognized; unknown roles will
+generate errors. A core set of standard roles is implemented in the
 reference parser; see [reStructuredText Interpreted Text Roles] for
-individual descriptions.  The [role] directive can be used to define
-custom interpreted text roles.  In addition, applications may support
+individual descriptions. The [role] directive can be used to define
+custom interpreted text roles. In addition, applications may support
 specialized roles.
 
 #### Inline Literals
@@ -2731,17 +2731,17 @@ This text is an example of ``inline literals``.
 
 Inline literals may contain any characters except two adjacent
 backquotes in an end-string context (according to the recognition
-rules above).  No markup interpretation (including backslash-escape
+rules above). No markup interpretation (including backslash-escape
 interpretation) is done within inline literals.
 
-Line breaks are *not* preserved in inline literals.  Although a
+Line breaks are *not* preserved in inline literals. Although a
 reStructuredText parser will preserve runs of spaces in its output,
 the final representation of the processed document is dependent on the
 output formatter, thus the preservation of whitespace cannot be
-guaranteed.  If the preservation of line breaks and/or other
+guaranteed. If the preservation of line breaks and/or other
 whitespace is important, [literal blocks] should be used.
 
-Inline literals are useful for short code snippets.  For example:
+Inline literals are useful for short code snippets. For example:
 
 ```
 The regular expression ``[+-]?(\d+(\.\d*)?|\.\d+)`` matches
@@ -2755,20 +2755,20 @@ Doctree element: reference.
 - Named hyperlink references:
 
   - Start-string = "" (empty string), end-string = "\_".
-  - Start-string = "\`", end-string = "\`\_".  (Phrase references.)
+  - Start-string = "\`", end-string = "\`\_". (Phrase references.)
 
 - Anonymous hyperlink references:
 
   - Start-string = "" (empty string), end-string = "\_\_".
-  - Start-string = "\`", end-string = "\`\_\_".  (Phrase references.)
+  - Start-string = "\`", end-string = "\`\_\_". (Phrase references.)
 
 Hyperlink references are indicated by a trailing underscore, "\_",
 except for [standalone hyperlinks] which are recognized
-independently.  The underscore can be thought of as a right-pointing
-arrow.  The trailing underscores point away from hyperlink references,
+independently. The underscore can be thought of as a right-pointing
+arrow. The trailing underscores point away from hyperlink references,
 and the leading underscores point toward [hyperlink targets].
 
-Hyperlinks consist of two parts.  In the text body, there is a source
+Hyperlinks consist of two parts. In the text body, there is a source
 link, a reference name with a trailing underscore (or two underscores
 for [anonymous hyperlinks]):
 
@@ -2777,7 +2777,7 @@ See the Python_ home page for info.
 ```
 
 A target link with a matching reference name must exist somewhere else
-in the document.  See [Hyperlink Targets] for a full description).
+in the document. See [Hyperlink Targets] for a full description).
 
 [Anonymous hyperlinks] (which see) do not use reference names to
 match references to targets, but otherwise behave similarly to named
@@ -2812,8 +2812,8 @@ before the end string.
 With a single trailing underscore, the reference is named and the same
 target URI may be referred to again.
 With two trailing underscores, the reference and target are both
-anonymous, and the target cannot be referred to again.  These are
-"one-off" hyperlinks.  For example:
+anonymous, and the target cannot be referred to again. These are
+"one-off" hyperlinks. For example:
 
 ```
 `RFC 2396 <http://www.rfc-editor.org/rfc/rfc2396.txt>`__ and `RFC
@@ -2858,7 +2858,7 @@ See `HTML Element: \<a>`_, `HTML Element: <b\> `_, and
 ```
 
 The reference text may also be omitted, in which case the URI will be
-duplicated for use as the reference text.  This is useful for relative
+duplicated for use as the reference text. This is useful for relative
 URIs where the address or file name is also the desired reference
 text:
 
@@ -2869,10 +2869,10 @@ for details.
 
 :::{CAUTION}
 This construct offers easy authoring and maintenance of hyperlinks
-at the expense of general readability.  Inline URIs, especially
-long ones, inevitably interrupt the natural flow of text.  For
+at the expense of general readability. Inline URIs, especially
+long ones, inevitably interrupt the natural flow of text. For
 documents meant to be read in source form, the use of independent
-block-level [hyperlink targets] is **strongly recommended**.  The
+block-level [hyperlink targets] is **strongly recommended**. The
 embedded URI construct is most suited to documents intended *only*
 to be read in processed form.
 :::
@@ -2884,9 +2884,9 @@ Doctree element: target.
 Start-string = "\_\`", end-string = "\`".
 
 Inline internal targets are the equivalent of explicit [internal
-hyperlink targets][internal hyperlink targets], but may appear within running text.  The syntax
+hyperlink targets][internal hyperlink targets], but may appear within running text. The syntax
 begins with an underscore and a backquote, is followed by a hyperlink
-name or phrase, and ends with a backquote.  Inline internal targets
+name or phrase, and ends with a backquote. Inline internal targets
 may not be anonymous.
 
 For example, the following paragraph contains a hyperlink target named
@@ -2903,10 +2903,10 @@ reference names.
 
 Doctree element: footnote_reference.
 
-Start-string = "\[", end-string = "\]\_".
+Start-string = "[", end-string = "]\_".
 
 Each footnote reference consists of a square-bracketed label followed
-by a trailing underscore.  Footnote labels are one of:
+by a trailing underscore. Footnote labels are one of:
 
 - one or more digits (i.e., a number),
 - a single "#" (denoting [auto-numbered footnotes]),
@@ -2926,10 +2926,10 @@ Please RTFM [1]_.
 
 Doctree element: citation_reference.
 
-Start-string = "\[", end-string = "\]\_".
+Start-string = "[", end-string = "]\_".
 
 Each citation reference consists of a square-bracketed label followed
-by a trailing underscore.  Citation labels are simple [reference
+by a trailing underscore. Citation labels are simple [reference
 names][reference names] (case-insensitive single words, consisting of alphanumerics
 plus internal hyphens, underscores, and periods; no whitespace).
 
@@ -2948,14 +2948,14 @@ Doctree element: substitution_reference, reference.
 Start-string = "|", end-string = "|" (optionally followed by "\_" or
 "\_\_").
 
-Vertical bars are used to bracket the substitution reference text.  A
+Vertical bars are used to bracket the substitution reference text. A
 substitution reference may also be a hyperlink reference by appending
 a "\_" (named) or "\_\_" (anonymous) suffix; the substitution text is
 used for the reference text in the named case.
 
 The processing system replaces substitution references with the
 processed contents of the corresponding [substitution definitions]
-(which see for the definition of "correspond").  Substitution
+(which see for the definition of "correspond"). Substitution
 definitions produce inline-compatible elements.
 
 Examples:
@@ -2979,7 +2979,7 @@ Start-string = end-string = "" (empty string).
 
 A URI (absolute URI [^uri] or standalone email address) within a text
 block is treated as a general external hyperlink with the URI itself
-as the link's text.  For example:
+as the link's text. For example:
 
 ```
 See http://www.python.org for info.
@@ -2994,12 +2994,12 @@ info.
 
 Two forms of URI are recognized:
 
-1. Absolute URIs.  These consist of a scheme, a colon (":"), and a
+1. Absolute URIs. These consist of a scheme, a colon (":"), and a
    scheme-specific part whose interpretation depends on the scheme.
 
    The scheme is the name of the protocol, such as "http", "ftp",
-   "mailto", or "telnet".  The scheme consists of an initial letter,
-   followed by letters, numbers, and/or "+", "-", ".".  Recognition is
+   "mailto", or "telnet". The scheme consists of an initial letter,
+   followed by letters, numbers, and/or "+", "-", ".". Recognition is
    limited to known schemes, per the [Official IANA Registry of URI
    Schemes][official iana registry of uri schemes] and the W3C's [Retired Index of WWW Addressing Schemes].
 
@@ -3016,7 +3016,7 @@ Two forms of URI are recognized:
      ftp://ftp.python.org/pub/python
      ```
 
-   - Opaque identifiers do not begin with slashes.  Examples are
+   - Opaque identifiers do not begin with slashes. Examples are
      email addresses and newsgroups:
 
      ```
@@ -3026,11 +3026,11 @@ Two forms of URI are recognized:
      ```
 
    With queries, fragments, and %-escape sequences, URIs can become
-   quite complicated.  A reStructuredText parser must be able to
+   quite complicated. A reStructuredText parser must be able to
    recognize any absolute URI, as defined in [RFC2396] and [RFC2732].
 
 2. Standalone email addresses, which are treated as if they were
-   absolute URIs with a "mailto:" scheme.  Example:
+   absolute URIs with a "mailto:" scheme. Example:
 
    ```
    someone@somewhere.com
@@ -3042,8 +3042,8 @@ Backslashes may be used in URIs to escape markup characters,
 specifically asterisks ("\*") and underscores ("\_") which are valid URI
 characters (see [Escaping Mechanism] above).
 
-[^uri]: Uniform Resource Identifier.  URIs are a general form of
-    URLs (Uniform Resource Locators).  For the syntax of URIs see
+[^uri]: Uniform Resource Identifier. URIs are a general form of
+    URLs (Uniform Resource Locators). For the syntax of URIs see
     [RFC2396] and [RFC2732].
 
 ### Units
@@ -3084,7 +3084,7 @@ specific documentation in the [user doc](../../user/) for details.
 
 #### Percentage Units
 
-Percentage values have a percent sign ("%") as unit.  Percentage
+Percentage values have a percent sign ("%") as unit. Percentage
 values are relative to other values, depending on the context in which
 they occur.
 

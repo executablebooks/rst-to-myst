@@ -1,7 +1,8 @@
 """Convert to markdown-it tokens, which can then be rendered by mdformat."""
+
 from io import StringIO
 from textwrap import indent
-from typing import IO, Any, Dict, List, NamedTuple, Optional, Tuple
+from typing import IO, Any, NamedTuple, Optional
 
 from docutils import nodes
 from markdown_it.token import Token
@@ -9,8 +10,8 @@ from mdit_py_plugins import __version__ as mdit_plug_version
 
 
 class RenderOutput(NamedTuple):
-    tokens: List[Token]
-    env: Dict[str, Any]
+    tokens: list[Token]
+    env: dict[str, Any]
 
 
 class MarkdownItRenderer(nodes.GenericNodeVisitor):
@@ -41,12 +42,12 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
 
     def reset_state(self):
         # record current state, that can affect children tokens
-        self._tokens: List[Token] = []
+        self._tokens: list[Token] = []
         self._env = {"references": {}, "duplicate_refs": []}
         self._inline: Optional[Token] = None
-        self.parent_tokens: Dict[str, int] = {}
+        self.parent_tokens: dict[str, int] = {}
         # [(key path, tokens), ...]
-        self._front_matter_tokens: List[Tuple[List[str], List[Token]]] = []
+        self._front_matter_tokens: list[tuple[list[str], list[Token]]] = []
         self._tight_list = True
 
     @property
@@ -79,7 +80,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
 
         return RenderOutput(self._tokens[:], self._env)
 
-    def nested_parse(self, nodes: List[nodes.Element]) -> List[Token]:
+    def nested_parse(self, nodes: list[nodes.Element]) -> list[Token]:
         new_inst = MarkdownItRenderer(
             document=self._document,
             warning_stream=self._warning_stream,
@@ -339,7 +340,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         raise nodes.SkipNode
 
     def visit_target(self, node):
-        if "inline" in node and node["inline"]:
+        if node.get("inline"):
             # TODO inline targets
             message = f"inline targets not implemented: {node.rawsource}"
             self.warning(message, node.line)
@@ -414,10 +415,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         if len(thead.children) != 1 or len(thead.children[0]) != ncolumns:
             return False
         # each body row should have the full amount of columns
-        for row in tbody.children:
-            if len(row.children) != ncolumns:
-                return False
-        return True
+        return all(len(row.children) == ncolumns for row in tbody.children)
 
     def visit_table(self, node):
         if not self.parse_gfm_table(node):
@@ -555,7 +553,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
 
     def visit_FrontMatterNode(self, node):
         for field in node:
-            if not len(field) == 2:
+            if len(field) != 2:
                 continue
             key = field[0][0].astext()
             tokens = self.nested_parse(field[1].children)
@@ -670,7 +668,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
                 text += "\n" + content.astext().strip() + "\n"
             if node["options_list"]:
                 label = node["options_list"][0][1]
-                major, minor, patch = [int(i) for i in mdit_plug_version.split(".")]
+                major, minor, patch = (int(i) for i in mdit_plug_version.split("."))
                 name = "math_block_label"
                 if major == 0 and minor < 3:
                     name = "math_block_eqno"
