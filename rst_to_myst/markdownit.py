@@ -27,6 +27,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         default_role: Optional[str] = None,
         colon_fences: bool = True,
         dollar_math: bool = True,
+        code_to_code_cell: bool = False,
     ):
         self._document = document
         self._warning_stream = warning_stream or StringIO()
@@ -37,6 +38,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         self.default_role = default_role
         self.colon_fences = colon_fences
         self.dollar_math = dollar_math
+        self.code_to_code_cell = code_to_code_cell
 
         self.reset_state()
 
@@ -88,6 +90,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
             default_role=self.default_role,
             colon_fences=self.colon_fences,
             dollar_math=self.dollar_math,
+            code_to_code_cell=self.code_to_code_cell,
         )
         for node in nodes:
             node.walkabout(new_inst)
@@ -634,10 +637,15 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
             and len(node.children) == 2
         ):
             # special case, where we can use standard Markdown fences
+            token_type = "fence"
+            directive_name = "code"
+            if self.code_to_code_cell:
+                token_type = "directive"
+                directive_name = "code-cell"
             argument, content = node.children
             self.add_token(
-                "fence",
-                "code",
+                token_type,
+                directive_name,
                 0,
                 content=content.astext() + "\n",
                 markup="```",
