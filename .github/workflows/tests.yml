@@ -17,7 +17,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: "3.8"
+        python-version: "3.9"
     - uses: pre-commit/action@v3.0.0
 
   tests:
@@ -25,7 +25,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9", "3.10"]
+        python-version: ["3.9", "3.10", "3.11"]
         os: [ubuntu-latest, windows-latest]
 
     steps:
@@ -46,7 +46,7 @@ jobs:
         pytest --cov=rst_to_myst --cov-report=xml --cov-report=term-missing
 
     - name: Upload to Codecov
-      if: matrix.os == 'ubuntu-latest'
+      if: matrix.os == 'ubuntu-latest' && github.ref == 'refs/heads/main'
       uses: codecov/codecov-action@v3
       with:
         name: pytests
@@ -54,6 +54,16 @@ jobs:
         file: ./coverage.xml
         fail_ci_if_error: true
 
+  # https://github.com/marketplace/actions/alls-green#why
+  check:  # This job does nothing and is only used for the branch protection
+    if: always()
+    needs: [pre-commit, tests]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Decide whether the needed jobs succeeded or failed
+      uses: re-actors/alls-green@release/v1
+      with:
+        jobs: ${{ toJSON(needs) }}
 
   publish:
     name: Publish to PyPi
@@ -63,10 +73,10 @@ jobs:
     steps:
     - name: Checkout source
       uses: actions/checkout@v3
-    - name: Set up Python 3.8
+    - name: Set up Python 3.9
       uses: actions/setup-python@v4
       with:
-        python-version: "3.8"
+        python-version: "3.9"
     - name: install flit
       run: |
         pip install flit~=3.0

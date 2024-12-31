@@ -1,4 +1,4 @@
-from typing import Any, List, Tuple
+from typing import Any
 
 from docutils import nodes
 
@@ -25,7 +25,7 @@ class DirectiveNode(nodes.Element):
         name: str,
         module: str,
         conversion: str,
-        options_list: List[Tuple[str, Any]],
+        options_list: list[tuple[str, Any]],
         **kwargs,
     ) -> None:
         super().__init__(

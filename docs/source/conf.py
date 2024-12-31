@@ -4,10 +4,11 @@ It is recommended to use tox to run the build (see tox.ini):
 `tox -e docs-clean` and `tox -e docs-update`,
 or directly: `sphinx-build -n -W --keep-going docs/source docs/_build`
 """
+
 from rst_to_myst import __version__
 
 project = "RST-to-MyST"
-copyright = "2021, Executable Book Project"  # noqa: A001
+copyright = "2021, Executable Book Project"
 author = "Executable Book Project"
 version = __version__
 
@@ -36,11 +37,17 @@ html_theme_options = {
 }
 
 intersphinx_mapping = {
-    "python": ("https://docs.python.org/3.8", None),
+    "python": ("https://docs.python.org/3.9", None),
     "sphinx": ("https://www.sphinx-doc.org/en/master", None),
     "markdown_it": ("https://markdown-it-py.readthedocs.io/en/latest", None),
 }
 
 nitpick_ignore = [
-    ("py:class", name) for name in ["IO", "_io.StringIO", "docutils.nodes.document"]
+    ("py:class", name)
+    for name in [
+        "IO",
+        "_io.StringIO",
+        "docutils.nodes.document",
+        "rst_to_myst.namespace.ApplicationNamespace",
+    ]
 ]

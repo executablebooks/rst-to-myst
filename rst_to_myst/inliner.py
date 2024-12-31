@@ -41,8 +41,11 @@ hyperlink uri   http://a.net/
 embedded uri    `uri <a.org>`_
 --------------- --------------- --------------------------------------------------------
 """
+
+import contextlib
 import re
-from typing import Any, Callable, List, Match, Pattern, Tuple
+from re import Match, Pattern
+from typing import Any, Callable
 
 from docutils import ApplicationError, nodes
 from docutils.nodes import fully_normalize_name as normalize_name
@@ -61,11 +64,11 @@ from docutils.utils import (
 from .nodes import RoleNode
 
 
-class MarkupMismatch(Exception):
+class MarkupMismatch(Exception):  # noqa: N818
     """A mismatch occurred in the Markup."""
 
 
-def build_regexp(definition: Tuple[str, str, str, List], compile_regexp: bool = True):
+def build_regexp(definition: tuple[str, str, str, list], compile_regexp: bool = True):
     """Build, compile and return a regular expression based on `definition`.
 
     :param definition: a 4-tuple (group name, prefix, suffix, parts),
@@ -281,8 +284,8 @@ class Regexes:
         )
 
 
-DispatchResult = Tuple[str, List[nodes.Node], str, List[nodes.system_message]]
-ImplicitResult = List[nodes.Node]
+DispatchResult = tuple[str, list[nodes.Node], str, list[nodes.system_message]]
+ImplicitResult = list[nodes.Node]
 
 
 class Inliner:
@@ -299,7 +302,7 @@ class Inliner:
     def __init__(self, regex_class=None):
         """Initialise inliner."""
         # list of (pattern, bound method) tuples, used by `self.implicit_inline`.
-        self.implicit_dispatch: List[Tuple[Pattern, Callable]] = []
+        self.implicit_dispatch: list[tuple[Pattern, Callable]] = []
         self.regex_class = regex_class or Regexes
         # this is required by ``rfc_reference_role()``
         self.rfc_url = "rfc%d.html"
@@ -320,15 +323,8 @@ class Inliner:
             start_string_prefix = "(^|(?<!\x00))"
             end_string_suffix = ""
         else:
-            start_string_prefix = "(^|(?<=\\s|[%s%s]))" % (
-                punctuation_chars.openers,
-                punctuation_chars.delimiters,
-            )
-            end_string_suffix = "($|(?=\\s|[\x00%s%s%s]))" % (
-                punctuation_chars.closing_delimiters,
-                punctuation_chars.delimiters,
-                punctuation_chars.closers,
-            )
+            start_string_prefix = f"(^|(?<=\\s|[{punctuation_chars.openers}{punctuation_chars.delimiters}]))"
+            end_string_suffix = f"($|(?=\\s|[\x00{punctuation_chars.closing_delimiters}{punctuation_chars.delimiters}{punctuation_chars.closers}]))"
 
         self.patterns = self.regex_class(
             start_string_prefix=start_string_prefix, end_string_suffix=end_string_suffix
@@ -357,7 +353,7 @@ class Inliner:
 
     def parse(
         self, text: str, lineno: int, memo: Any, parent: Any
-    ) -> Tuple[List[nodes.Node], List[nodes.system_message]]:
+    ) -> tuple[list[nodes.Node], list[nodes.system_message]]:
         """
         Return 2 lists: nodes (text and inline elements), and system_messages.
 
@@ -473,8 +469,8 @@ class Inliner:
             if rawsource[-1:] == "_":
                 if role:
                     msg = self.reporter.warning(
-                        "Mismatch: both interpreted text role %s and "
-                        "reference suffix." % position,
+                        f"Mismatch: both interpreted text role {position} and "
+                        "reference suffix.",
                         line=lineno,
                     )
                     text = unescape(string[rolestart:textend], True)
@@ -530,7 +526,7 @@ class Inliner:
                 target = nodes.target(match.group(1), refuri=alias)
                 target.referenced = 1
             if not aliastext:
-                raise ApplicationError("problem with embedded link: %r" % aliastext)
+                raise ApplicationError(f"problem with embedded link: {aliastext!r}")
             if not text:
                 text = alias
                 rawtext = rawaliastext
@@ -555,21 +551,20 @@ class Inliner:
                 reference["refuri"] = alias
             else:
                 reference["anonymous"] = 1
-        else:
-            if target:
-                target["names"].append(refname)
-                if aliastype == "name":
-                    reference["refname"] = alias
-                    self.document.note_indirect_target(target)
-                    self.document.note_refname(reference)
-                else:
-                    reference["refuri"] = alias
-                    self.document.note_explicit_target(target, self.parent)
-                # target.note_referenced_by(name=refname)
-                node_list.append(target)
-            else:
-                reference["refname"] = refname
+        elif target:
+            target["names"].append(refname)
+            if aliastype == "name":
+                reference["refname"] = alias
+                self.document.note_indirect_target(target)
                 self.document.note_refname(reference)
+            else:
+                reference["refuri"] = alias
+                self.document.note_explicit_target(target, self.parent)
+            # target.note_referenced_by(name=refname)
+            node_list.append(target)
+        else:
+            reference["refname"] = refname
+            self.document.note_refname(reference)
         return before, node_list, after, []
 
     def adjust_uri(self, uri: str) -> str:
@@ -582,7 +577,7 @@ class Inliner:
 
     def interpreted(
         self, rawsource: str, text: str, role: str, lineno: int
-    ) -> Tuple[List[nodes.Node], List[nodes.system_message]]:
+    ) -> tuple[list[nodes.Node], list[nodes.system_message]]:
         """Handle an interpreted text role, e.g. :role:interpreted` or `interpreted`:role:
 
         The role function is located and returned, then used to create the requisite
@@ -592,16 +587,14 @@ class Inliner:
         role_fn, messages = roles.role(role, self.language, lineno, self.reporter)
         if role_fn:
             nodes, messages2 = role_fn(role, rawsource, text, lineno, self)
-            try:
+            with contextlib.suppress(IndexError):
                 nodes[0][0].rawsource = unescape(text, True)
-            except IndexError:
-                pass
             return nodes, messages + messages2
         else:
             msg = self.reporter.error(
-                'Unknown interpreted text role "%s".' % role, line=lineno
+                f'Unknown interpreted text role "{role}".', line=lineno
             )
-            return ([self.problematic(rawsource, rawsource, msg)], messages + [msg])
+            return ([self.problematic(rawsource, rawsource, msg)], [*messages, msg])
 
     def literal(self, match: Match, lineno: int) -> DispatchResult:
         """Handle a string literal, e.g. ``literals``"""
@@ -639,9 +632,7 @@ class Inliner:
                 subref_text = subref_node.astext()
                 self.document.note_substitution_ref(subref_node, subref_text)
                 if endstring[-1:] == "_":
-                    reference_node = nodes.reference(
-                        "|%s%s" % (subref_text, endstring), ""
-                    )
+                    reference_node = nodes.reference(f"|{subref_text}{endstring}", "")
                     if endstring[-2:] == "__":
                         reference_node["anonymous"] = 1
                     else:
@@ -737,7 +728,7 @@ class Inliner:
                 endmatch.group(1),
             )
         msg = self.reporter.warning(
-            "Inline %s start-string without end-string." % nodeclass.__name__,
+            f"Inline {nodeclass.__name__} start-string without end-string.",
             line=lineno,
         )
         text = unescape(string[matchstart:matchend], True)
@@ -785,10 +776,7 @@ class Inliner:
             not match.group("scheme")
             or match.group("scheme").lower() in urischemes.schemes
         ):
-            if match.group("email"):
-                addscheme = "mailto:"
-            else:
-                addscheme = ""
+            addscheme = "mailto:" if match.group("email") else ""
             text = match.group("whole")
             unescaped = unescape(text)
             rawsource = unescape(text, True)
@@ -834,7 +822,7 @@ class InlinerMyst(Inliner):
 
     def interpreted(
         self, rawsource: str, text: str, role: str, lineno: int
-    ) -> Tuple[List[nodes.Node], List[nodes.system_message]]:
+    ) -> tuple[list[nodes.Node], list[nodes.system_message]]:
         """Handle an interpreted text role, e.g. :role:interpreted` or `interpreted`:role:
 
         MyST Adaption: The role function is located and returned,
@@ -883,7 +871,7 @@ class InlinerMyst(Inliner):
                 target = nodes.target(match.group(1), refuri=alias)
                 target.referenced = 1
             if not aliastext:
-                raise ApplicationError("problem with embedded link: %r" % aliastext)
+                raise ApplicationError(f"problem with embedded link: {aliastext!r}")
             if not text:
                 text = alias
                 rawtext = rawaliastext
@@ -909,15 +897,14 @@ class InlinerMyst(Inliner):
                 reference["refuri"] = alias
             else:
                 reference["anonymous"] = 1
-        else:
-            if target:
-                if aliastype == "name":
-                    reference["refname"] = alias
-                    self.document.note_refname(reference)
-                else:
-                    reference["refuri"] = alias
-            else:
-                reference["refname"] = refname
+        elif target:
+            if aliastype == "name":
+                reference["refname"] = alias
                 self.document.note_refname(reference)
+            else:
+                reference["refuri"] = alias
+        else:
+            reference["refname"] = refname
+            self.document.note_refname(reference)
 
         return before, [reference], after, []
