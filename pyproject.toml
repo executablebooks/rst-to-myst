@@ -38,7 +38,7 @@ Documentation = "https://rst-to-myst.readthedocs.io"
 rst2myst = "rst_to_myst.cli:main"
 
 [project.optional-dependencies]
-sphinx = ["sphinx>=5,<7"]
+sphinx = ["sphinx>=5,<8"]
 test = [
     "pytest~=8.3",
     "coverage",
