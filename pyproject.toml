@@ -23,7 +23,7 @@ requires-python=">=3.9"
 dependencies=[
     "docutils>=0.17,<0.22",
     "pyyaml",
-    "markdown-it-py~=2.0",
+    "markdown-it-py~=3.0",
     "mdformat~=0.7.16",
     "mdformat-myst~=0.1.5",
     "mdformat-deflist~=0.1.2",
