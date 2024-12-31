@@ -21,7 +21,7 @@ keywords = ["restructuredtext","markdown", "myst"]
 
 requires-python=">=3.9"
 dependencies=[
-    "docutils>=0.17,<0.20",
+    "docutils>=0.17,<0.22",
     "pyyaml",
     "markdown-it-py~=2.0",
     "mdformat~=0.7.16",
