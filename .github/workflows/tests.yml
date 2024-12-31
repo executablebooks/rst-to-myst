@@ -45,14 +45,15 @@ jobs:
       run: |
         pytest --cov=rst_to_myst --cov-report=xml --cov-report=term-missing
 
-    - name: Upload to Codecov
-      if: matrix.os == 'ubuntu-latest' && github.ref == 'refs/heads/main'
-      uses: codecov/codecov-action@v3
-      with:
-        name: pytests
-        flags: pytests
-        file: ./coverage.xml
-        fail_ci_if_error: true
+    # skipping for now, since its not working properly
+    # - name: Upload to Codecov
+    #   if: matrix.os == 'ubuntu-latest' && github.ref == 'refs/heads/main'
+    #   uses: codecov/codecov-action@v3
+    #   with:
+    #     name: pytests
+    #     flags: pytests
+    #     file: ./coverage.xml
+    #     fail_ci_if_error: true
 
   # https://github.com/marketplace/actions/alls-green#why
   check:  # This job does nothing and is only used for the branch protection
