@@ -1,7 +1,7 @@
 """docutils states."""
 
 import re
-from typing import List, Optional
+from typing import Optional
 
 from docutils import nodes
 from docutils.nodes import fully_normalize_name as normalize_name
@@ -202,7 +202,7 @@ class ExplicitMixin:
 
     @staticmethod
     def eval_rst(
-        name: str, block_text: str, indent: int, indented: List[str], blank_finish: bool
+        name: str, block_text: str, indent: int, indented: list[str], blank_finish: bool
     ):
         """Return an EvalRstNode."""
         node = EvalRstNode(block_text, name=name, indent=indent)

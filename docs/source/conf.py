@@ -37,11 +37,17 @@ html_theme_options = {
 }
 
 intersphinx_mapping = {
-    "python": ("https://docs.python.org/3.8", None),
+    "python": ("https://docs.python.org/3.9", None),
     "sphinx": ("https://www.sphinx-doc.org/en/master", None),
     "markdown_it": ("https://markdown-it-py.readthedocs.io/en/latest", None),
 }
 
 nitpick_ignore = [
-    ("py:class", name) for name in ["IO", "_io.StringIO", "docutils.nodes.document"]
+    ("py:class", name)
+    for name in [
+        "IO",
+        "_io.StringIO",
+        "docutils.nodes.document",
+        "rst_to_myst.namespace.ApplicationNamespace",
+    ]
 ]

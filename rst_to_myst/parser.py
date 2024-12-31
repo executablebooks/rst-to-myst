@@ -1,6 +1,7 @@
+from collections.abc import Iterable
 from functools import lru_cache
 from io import StringIO
-from typing import Any, Dict, Iterable, Optional, Tuple
+from typing import Any, Optional
 
 from docutils import nodes
 from docutils.frontend import OptionParser
@@ -128,8 +129,8 @@ class FrontMatter(Transform):
             candidate.replace_self(front_matter)
 
 
-@lru_cache()
-def _load_directive_data() -> Dict[str, Any]:
+@lru_cache
+def _load_directive_data() -> dict[str, Any]:
     return yaml.safe_load(
         files(package_data).joinpath("directives.yml").read_text("utf8")
     )
@@ -148,7 +149,7 @@ def to_docutils_ast(
     conversions: Optional[dict] = None,
     front_matter: bool = True,
     namespace: Optional[ApplicationNamespace] = None,
-) -> Tuple[nodes.document, StringIO]:
+) -> tuple[nodes.document, StringIO]:
     """Convert a string of text to a docutils AST.
 
     :param text: The text to convert.

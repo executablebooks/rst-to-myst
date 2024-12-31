@@ -41,18 +41,18 @@ Directives have the following syntax:
 
 Directives begin with an explicit markup start (two periods and a
 space), followed by the directive type and two colons (collectively,
-the "directive marker").  The directive block begins immediately after
-the directive marker, and includes all subsequent indented lines.  The
+the "directive marker"). The directive block begins immediately after
+the directive marker, and includes all subsequent indented lines. The
 directive block is divided into arguments, options (a field list), and
-content (in that order), any of which may appear.  See the [Directives]
+content (in that order), any of which may appear. See the [Directives]
 section in the [reStructuredText Markup Specification] for syntax
 details.
 
 Descriptions below list "doctree elements" (document tree element
 names; XML DTD generic identifiers) corresponding to individual
-directives.  For details on the hierarchy of elements, please see [The
+directives. For details on the hierarchy of elements, please see [The
 Docutils Document Tree][the docutils document tree] and the [Docutils Generic DTD] XML document
-type definition.  For directive implementation details, see [Creating
+type definition. For directive implementation details, see [Creating
 reStructuredText Directives][creating restructuredtext directives].
 
 ## Admonitions
@@ -88,10 +88,10 @@ reStructuredText Directives][creating restructuredtext directives].
 ```
 
 Admonitions are specially marked "topics" that can appear anywhere an
-ordinary body element can.  They contain arbitrary body elements.
+ordinary body element can. They contain arbitrary body elements.
 Typically, an admonition is rendered as an offset block in a document,
 sometimes outlined or shaded, with a title matching the admonition
-type.  For example:
+type. For example:
 
 ```
 .. DANGER::
@@ -122,7 +122,7 @@ The following admonition directives have been implemented:
 
 Any text immediately following the directive indicator (on the same
 line and/or indented on following lines) is interpreted as a directive
-block and is parsed for normal body elements.  For example, the
+block and is parsed for normal body elements. For example, the
 following "note" admonition directive contains one paragraph and a
 bullet list consisting of two list items:
 
@@ -146,13 +146,13 @@ bullet list consisting of two list items:
 :Directive Content: Interpreted as body elements.
 ```
 
-This is a generic, titled admonition.  The title may be anything the
+This is a generic, titled admonition. The title may be anything the
 author desires.
 
 The author-supplied title is also used as a ["classes"] attribute value
 after being converted into a valid identifier form (down-cased;
 non-alphanumeric characters converted to single hyphens; "admonition-"
-prefixed).  For example, this admonition:
+prefixed). For example, this admonition:
 
 ```
 .. admonition:: And, by the way...
@@ -206,15 +206,15 @@ Inline images can be defined with an "image" directive in a [substitution
 definition][substitution definition]
 
 The URI for the image source file is specified in the directive
-argument.  As with hyperlink targets, the image URI may begin on the
+argument. As with hyperlink targets, the image URI may begin on the
 same line as the explicit markup start and target name, or it may
 begin in an indented text block immediately following, with no
-intervening blank lines.  If there are multiple lines in the link
+intervening blank lines. If there are multiple lines in the link
 block, they are stripped of leading and trailing whitespace and joined
 together.
 
 Optionally, the image link block may contain a flat field list, the
-`` _`image options` ``.  For example:
+`` _`image options` ``. For example:
 
 ```
 .. image:: picture.jpeg
@@ -236,19 +236,19 @@ The following options are recognized:
 `height`
 
 : The desired height of the image.
-  Used to reserve space or scale the image vertically.  When the "scale"
-  option is also specified, they are combined.  For example, a height of
+  Used to reserve space or scale the image vertically. When the "scale"
+  option is also specified, they are combined. For example, a height of
   200px and a scale of 50 is equivalent to a height of 100px with no scale.
 
 `width`
 
 : The width of the image.
-  Used to reserve space or scale the image horizontally.  As with "height"
+  Used to reserve space or scale the image horizontally. As with "height"
   above, when the "scale" option is also specified, they are combined.
 
 `scale`
 
-: The uniform scaling factor of the image.  The default is "100 %", i.e.
+: The uniform scaling factor of the image. The default is "100 %", i.e.
   no scaling.
 
   If no "height" or "width" options are specified, the [Python Imaging
@@ -258,17 +258,17 @@ The following options are recognized:
 `align`
 
 : The alignment of the image, equivalent to the HTML `<img>` tag's
-  "align" attribute.  The values "top", "middle", and "bottom"
+  "align" attribute. The values "top", "middle", and "bottom"
   control an image's vertical alignment (relative to the text
   baseline); they are only useful for inline images (substitutions).
   The values "left", "center", and "right" control an image's
   horizontal alignment, allowing the image to float and have the
-  text flow around it.  The specific behavior depends upon the
+  text flow around it. The specific behavior depends upon the
   browser or rendering software used.
 
 `target`
 
-: Makes the image into a hyperlink reference ("clickable").  The
+: Makes the image into a hyperlink reference ("clickable"). The
   option argument may be a URI (relative or absolute), or a
   [reference name] with underscore suffix (e.g. `` `a name`_ ``).
 
@@ -314,7 +314,7 @@ position if this helps the page layout.
 ```
 
 There must be blank lines before the caption paragraph and before the
-legend.  To specify a legend without a caption, use an empty comment
+legend. To specify a legend without a caption, use an empty comment
 ("..") in place of the caption.
 
 The "figure" directive supports all of the options of the "image"
@@ -324,7 +324,7 @@ directive (see [image options] above). These options (except
 `align`
 
 : The horizontal alignment of the figure, allowing the image to
-  float and have the text flow around it.  The specific behavior
+  float and have the text flow around it. The specific behavior
   depends upon the browser or rendering software used.
 
 In addition, the following options are recognized:
@@ -362,7 +362,7 @@ In addition, the following options are recognized:
 
 `figclass`
 
-: Set a ["classes"] attribute value on the figure element.  See the
+: Set a ["classes"] attribute value on the figure element. See the
   [class] directive below.
 
 ## Body Elements
@@ -379,14 +379,14 @@ In addition, the following options are recognized:
 ```
 
 A topic is like a block quote with a title, or a self-contained
-section with no subsections.  Use the "topic" directive to indicate a
+section with no subsections. Use the "topic" directive to indicate a
 self-contained idea that is separate from the flow of the document.
-Topics may occur anywhere a section or transition may occur.  Body
+Topics may occur anywhere a section or transition may occur. Body
 elements and topics may not contain nested topics.
 
 The directive's sole argument is interpreted as the topic title; the
-next line must be blank.  All subsequent lines make up the topic body,
-interpreted as body elements.  For example:
+next line must be blank. All subsequent lines make up the topic body,
+interpreted as body elements. For example:
 
 ```
 .. topic:: Topic Title
@@ -408,19 +408,19 @@ interpreted as body elements.  For example:
 ```
 
 Sidebars are like miniature, parallel documents that occur inside
-other documents, providing related or reference material.  A sidebar
+other documents, providing related or reference material. A sidebar
 is typically offset by a border and "floats" to the side of the page;
-the document's main text may flow around it.  Sidebars can also be
+the document's main text may flow around it. Sidebars can also be
 likened to super-footnotes; their content is outside of the flow of
 the document's main text.
 
-Sidebars may occur anywhere a section or transition may occur.  Body
+Sidebars may occur anywhere a section or transition may occur. Body
 elements (including sidebars) may not contain nested sidebars.
 
 The directive's sole argument is interpreted as the sidebar title,
 which may be followed by a subtitle option (see below); the next line
-must be blank.  All subsequent lines make up the sidebar body,
-interpreted as body elements.  For example:
+must be blank. All subsequent lines make up the sidebar body,
+interpreted as body elements. For example:
 
 ```
 .. sidebar:: Sidebar Title
@@ -442,7 +442,7 @@ and the common options [:class:] and [:name:].
 ### Line Block
 
 :::{admonition} Deprecated
-The "line-block" directive is deprecated.  Use the [line block
+The "line-block" directive is deprecated. Use the [line block
 syntax][line block syntax] instead.
 :::
 
@@ -456,13 +456,13 @@ syntax][line block syntax] instead.
 ```
 
 The "line-block" directive constructs an element where line breaks and
-initial indentation is significant and inline markup is supported.  It
+initial indentation is significant and inline markup is supported. It
 is equivalent to a [parsed literal block] with different rendering:
 typically in an ordinary serif typeface instead of a
-typewriter/monospaced face, and not automatically indented.  (Have the
+typewriter/monospaced face, and not automatically indented. (Have the
 line-block directive begin a block quote to get an indented line
-block.)  Line blocks are useful for address blocks and verse (poetry,
-song lyrics), where the structure of lines is significant.  For
+block.) Line blocks are useful for address blocks and verse (poetry,
+song lyrics), where the structure of lines is significant. For
 example, here's a classic:
 
 ```
@@ -495,14 +495,14 @@ Unlike an ordinary literal block, the "parsed-literal" directive
 constructs a literal block where the text is parsed for inline markup.
 It is equivalent to a [line block] with different rendering:
 typically in a typewriter/monospaced typeface, like an ordinary
-literal block.  Parsed literal blocks are useful for adding hyperlinks
+literal block. Parsed literal blocks are useful for adding hyperlinks
 to code examples.
 
 However, care must be taken with the text, because inline markup is
-recognized and there is no protection from parsing.  Backslash-escapes
-may be necessary to prevent unintended parsing.  And because the
+recognized and there is no protection from parsing. Backslash-escapes
+may be necessary to prevent unintended parsing. And because the
 markup characters are removed by the parser, care must also be taken
-with vertical alignment.  Parsed "ASCII art" is tricky, and extra
+with vertical alignment. Parsed "ASCII art" is tricky, and extra
 whitespace may be necessary.
 
 For example, all the element names in this content model are links:
@@ -596,7 +596,7 @@ symbols, for example:
 ```
 
 Support is limited to a subset of *LaTeX math* by the conversion
-required for many output formats.  For HTML, the the [math_output]
+required for many output formats. For HTML, the the [math_output]
 configuration setting (or the corresponding `--math-output`
 command line option) select between alternative output formats with
 different subsets of supported elements. If a writer does not
@@ -627,7 +627,7 @@ For inline math, use the ["math" role].
 > <p class="attribution">-Random House Webster's College Dictionary, 1991</p>
 
 The "rubric" directive inserts a "rubric" element into the document
-tree.  A rubric is like an informal heading that doesn't correspond to
+tree. A rubric is like an informal heading that doesn't correspond to
 the document's structure.
 
 ### Epigraph
@@ -695,7 +695,7 @@ See [Epigraph] above for an analogous example.
 ```
 
 A pull-quote is a small selection of text "pulled out and quoted",
-typically in a larger typeface.  Pull-quotes are used to attract
+typically in a larger typeface. Pull-quotes are used to attract
 attention, especially in long articles.
 
 The "pull-quote" directive produces a "pull-quote"-class block quote.
@@ -717,7 +717,7 @@ See [Epigraph] above for an analogous example.
 The "compound" directive is used to create a compound paragraph, which
 is a single logical paragraph containing multiple physical body
 elements such as simple paragraphs, literal blocks, tables, lists,
-etc., instead of directly containing text and inline elements.  For
+etc., instead of directly containing text and inline elements. For
 example:
 
 ```
@@ -737,7 +737,7 @@ that begins in one physical paragraph and ends in another.
 
 :::{note}
 The "compound" directive is *not* a generic block-level container
-like HTML's `<div>` element.  Do not use it only to group a
+like HTML's `<div>` element. Do not use it only to group a
 sequence of elements, or you may get unexpected results.
 
 If you need a generic block-level container, please use the
@@ -768,9 +768,9 @@ unity:
 (New in Docutils 0.3.10)
 
 The "container" directive surrounds its contents (arbitrary body
-elements) with a generic block-level "container" element.  Combined
+elements) with a generic block-level "container" element. Combined
 with the optional "[classes]" attribute argument(s), this is an
-extension mechanism for users & applications.  For example:
+extension mechanism for users & applications. For example:
 
 ```
 .. container:: custom
@@ -787,15 +787,15 @@ Parsing the above results in the following pseudo-XML:
 ```
 
 The "container" directive is the equivalent of HTML's `<div>`
-element.  It may be used to group a sequence of elements for user- or
+element. It may be used to group a sequence of elements for user- or
 application-specific purposes.
 
 ## Tables
 
 Formal tables need more structure than the reStructuredText syntax
-supplies.  Tables may be given titles with the [table] directive.
+supplies. Tables may be given titles with the [table] directive.
 Sometimes reStructuredText tables are inconvenient to write, or table
-data in a standard format is readily available.  The [csv-table]
+data in a standard format is readily available. The [csv-table]
 directive supports CSV data.
 
 ### Table
@@ -840,15 +840,15 @@ title with a table:
 
 :::{WARNING}
 The "csv-table" directive's ":file:" and ":url:" options represent
-a potential security holes.  They can be disabled with the
+a potential security holes. They can be disabled with the
 "[file_insertion_enabled]" runtime setting.
 :::
 
 (New in Docutils 0.3.4)
 
 The "csv-table" directive is used to create a table from CSV
-(comma-separated values) data.  CSV is a common data format generated
-by spreadsheet applications and commercial databases.  The data may be
+(comma-separated values) data. CSV is a common data format generated
+by spreadsheet applications and commercial databases. The data may be
 internal (an integral part of the document) or external (a separate
 file).
 
@@ -865,13 +865,13 @@ Example:
    "Gannet Ripple", 1.99, "On a stick!"
 ```
 
-Block markup and inline markup within cells is supported.  Line ends
+Block markup and inline markup within cells is supported. Line ends
 are recognized within cells.
 
 Working limitations:
 
 - There is no support for checking that the number of columns in each
-  row is the same.  However, this directive supports CSV generators
+  row is the same. However, this directive supports CSV generators
   that do not insert "empty" entries at the end of short rows, by
   automatically adding empty entries.
 
@@ -890,7 +890,7 @@ The following options are recognized:
 
 `widths`
 
-: A comma- or space-separated list of relative column widths.  The
+: A comma- or space-separated list of relative column widths. The
   default is equal-width columns (100%/#columns).
 
 `header-rows`
@@ -901,12 +901,12 @@ The following options are recognized:
 `stub-columns`
 
 : The number of table columns to use as stubs (row titles, on the
-  left).  Defaults to 0.
+  left). Defaults to 0.
 
 `header`
 
 : Supplemental data for the table header, added independently of and
-  before any `header-rows` from the main CSV data.  Must use the
+  before any `header-rows` from the main CSV data. Must use the
   same CSV format as the main CSV data.
 
 `file`
@@ -925,29 +925,29 @@ The following options are recognized:
 `delim`
 
 : A one-character string[^ascii-char] used to separate fields.
-  Defaults to `,` (comma).  May be specified as a Unicode code
+  Defaults to `,` (comma). May be specified as a Unicode code
   point; see the [unicode] directive for syntax details.
 
 `quote`
 
 : A one-character string[^ascii-char] used to quote elements
   containing the delimiter or which start with the quote
-  character.  Defaults to `"` (quote).  May be specified as a
+  character. Defaults to `"` (quote). May be specified as a
   Unicode code point; see the [unicode] directive for syntax
   details.
 
 `keepspace`
 
 : Treat whitespace immediately following the delimiter as
-  significant.  The default is to ignore such whitespace.
+  significant. The default is to ignore such whitespace.
 
 `escape`
 
 : A one-character[^ascii-char] string used to escape the
-  delimiter or quote characters.  May be specified as a Unicode
-  code point; see the [unicode] directive for syntax details.  Used
+  delimiter or quote characters. May be specified as a Unicode
+  code point; see the [unicode] directive for syntax details. Used
   when the delimiter is used in an unquoted field, or when quote
-  characters are used within a field.  The default is to double-up
+  characters are used within a field. The default is to double-up
   the character, e.g. "He said, ""Hi!"""
 
   % Add another possible value, "double", to explicitly indicate
@@ -966,11 +966,11 @@ and the common options [:class:] and [:name:].
 :Directive Content: A uniform two-level bullet list.
 ```
 
-(New in Docutils 0.3.8.  This is an initial implementation; [further
+(New in Docutils 0.3.8. This is an initial implementation; [further
 ideas](../../dev/rst/alternatives.html#list-driven-tables) may be implemented in the future.)
 
 The "list-table" directive is used to create a table from data in a
-uniform two-level bullet list.  "Uniform" means that each sublist
+uniform two-level bullet list. "Uniform" means that each sublist
 (second-level list) must contain the same number of list items.
 
 Example:
@@ -999,7 +999,7 @@ The following options are recognized:
 
 `widths`
 
-: A comma- or space-separated list of relative column widths.  The
+: A comma- or space-separated list of relative column widths. The
   default is equal-width columns (100%/#columns).
 
 `header-rows`
@@ -1010,7 +1010,7 @@ The following options are recognized:
 `stub-columns`
 
 : The number of table columns to use as stubs (row titles, on the
-  left).  Defaults to 0.
+  left). Defaults to 0.
 
 and the common options [:class:] and [:name:].
 
@@ -1030,8 +1030,8 @@ and the common options [:class:] and [:name:].
 ```
 
 The "contents" directive generates a table of contents (TOC) in a
-[topic].  Topics, and therefore tables of contents, may occur anywhere
-a section or transition may occur.  Body elements and topics may not
+[topic]. Topics, and therefore tables of contents, may occur anywhere
+a section or transition may occur. Body elements and topics may not
 contain tables of contents.
 
 Here's the directive in its simplest form:
@@ -1040,7 +1040,7 @@ Here's the directive in its simplest form:
 .. contents::
 ```
 
-Language-dependent boilerplate text will be used for the title.  The
+Language-dependent boilerplate text will be used for the title. The
 English default title text is "Contents".
 
 An explicit title may be specified:
@@ -1075,12 +1075,12 @@ The following options are recognized:
 `depth`
 
 : The number of section levels that are collected in the table of
-  contents.  The default is unlimited depth.
+  contents. The default is unlimited depth.
 
 `local`
 
-: Generate a local table of contents.  Entries will only include
-  subsections of the section in which the directive is given.  If no
+: Generate a local table of contents. Entries will only include
+  subsections of the section in which the directive is given. If no
   explicit title is given, the table of contents will not be titled.
 
 `backlinks`
@@ -1090,7 +1090,7 @@ The following options are recognized:
 
 `class`
 
-: Set a ["classes"] attribute value on the topic element.  See the
+: Set a ["classes"] attribute value on the topic element. See the
   [class] directive below.
 
 (sectnum)=
@@ -1115,14 +1115,14 @@ sections and subsections in a document (if not disabled by the
 configuration setting).
 
 Section numbers are of the "multiple enumeration" form, where each
-level has a number, separated by periods.  For example, the title of section
+level has a number, separated by periods. For example, the title of section
 1, subsection 2, subsubsection 3 would have "1.2.3" prefixed.
 
 The "sectnum" directive does its work in two passes: the initial parse
-and a transform.  During the initial parse, a "pending" element is
+and a transform. During the initial parse, a "pending" element is
 generated which acts as a placeholder, storing any options internally.
 At a later stage in the processing, the "pending" element triggers a
-transform, which adds section numbers to titles.  Section numbers are
+transform, which adds section numbers to titles. Section numbers are
 enclosed in a "generated" element, and titles have their "auto"
 attribute set to "1".
 
@@ -1136,21 +1136,21 @@ The following options are recognized:
 `prefix`
 
 : An arbitrary string that is prefixed to the automatically
-  generated section numbers.  It may be something like "3.2.", which
-  will produce "3.2.1", "3.2.2", "3.2.2.1", and so on.  Note that
+  generated section numbers. It may be something like "3.2.", which
+  will produce "3.2.1", "3.2.2", "3.2.2.1", and so on. Note that
   any separating punctuation (in the example, a period, ".") must be
-  explicitly provided.  The default is no prefix.
+  explicitly provided. The default is no prefix.
 
 `suffix`
 
 : An arbitrary string that is appended to the automatically
-  generated section numbers.  The default is no suffix.
+  generated section numbers. The default is no suffix.
 
 `start`
 
 : The value that will be used for the first section number.
   Combined with `prefix`, this may be used to force the right
-  numbering for a document split over several source files.  The
+  numbering for a document split over several source files. The
   default is 1.
 
 (header)=
@@ -1171,7 +1171,7 @@ The following options are recognized:
 (New in Docutils 0.3.8)
 
 The "header" and "footer" directives create document decorations,
-useful for page navigation, notes, time/datestamp, etc.  For example:
+useful for page navigation, notes, time/datestamp, etc. For example:
 
 ```
 .. header:: This space for rent.
@@ -1180,7 +1180,7 @@ useful for page navigation, notes, time/datestamp, etc.  For example:
 This will add a paragraph to the document header, which will appear at
 the top of the generated web page or at the top of every printed page.
 
-These directives may be used multiple times, cumulatively.  There is
+These directives may be used multiple times, cumulatively. There is
 currently support for only one header and footer.
 
 :::{note}
@@ -1190,14 +1190,14 @@ that Docutils is meant to be used for *document* processing, and
 that a navigation bar is not typically part of a document.
 
 Thus, you may soon find Docutils' abilities to be insufficient for
-these purposes.  At that time, you should consider using a
+these purposes. At that time, you should consider using a
 documentation generator like [Sphinx] rather than the "header" and
 "footer" directives.
 :::
 
 In addition to the use of these directives to populate header and
 footer content, content may also be added automatically by the
-processing system.  For example, if certain runtime settings are
+processing system. For example, if certain runtime settings are
 enabled, the document footer is populated with processing information
 such as a datestamp, a link to [the Docutils website], etc.
 
@@ -1219,7 +1219,7 @@ such as a datestamp, a link to [the Docutils website], etc.
 
 The "target-notes" directive creates a footnote for each external
 target in the text, and corresponding footnote references after each
-reference.  For every explicit target (of the form, `.. _target name:
+reference. For every explicit target (of the form, `.. _target name:
 URL`) in the text, a footnote will be generated containing the
 visible URL as content.
 
@@ -1267,16 +1267,16 @@ visible URL as content.
 ```
 
 The "meta" directive is used to specify HTML metadata stored in HTML
-META tags.  "Metadata" is data about data, in this case data about web
-pages.  Metadata is used to describe and classify web pages in the
+META tags. "Metadata" is data about data, in this case data about web
+pages. Metadata is used to describe and classify web pages in the
 World Wide Web, in a form that is easy for search engines to extract
 and collate.
 
 Within the directive block, a flat field list provides the syntax for
-metadata.  The field name becomes the contents of the "name" attribute
+metadata. The field name becomes the contents of the "name" attribute
 of the META tag, and the field body (interpreted as a single string
 without inline markup) becomes the contents of the "content"
-attribute.  For example:
+attribute. For example:
 
 ```
 .. meta::
@@ -1310,7 +1310,7 @@ And their HTML equivalents:
 ```
 
 Some META tags use an "http-equiv" attribute instead of the "name"
-attribute.  To specify "http-equiv" META tags, simply omit the name:
+attribute. To specify "http-equiv" META tags, simply omit the name:
 
 ```
 .. meta::
@@ -1333,7 +1333,7 @@ Non-standard element: imagemap.
 ## Directives for Substitution Definitions
 
 The directives in this section may only be used in substitution
-definitions.  They may not be used directly, in standalone context.
+definitions. They may not be used directly, in standalone context.
 The [image] directive may be used both in substitution definitions
 and in the standalone context.
 
@@ -1351,8 +1351,8 @@ and in the standalone context.
 ```
 
 The "replace" directive is used to indicate replacement text for a
-substitution reference.  It may be used within substitution
-definitions only.  For example, this directive can be used to expand
+substitution reference. It may be used within substitution
+definitions only. For example, this directive can be used to expand
 abbreviations:
 
 ```
@@ -1402,7 +1402,7 @@ The arguments, separated by spaces, can be:
 
 - **text**, which is used as-is.
 
-Text following " .. " is a comment and is ignored.  The spaces between
+Text following " .. " is a comment and is ignored. The spaces between
 the arguments are ignored and thus do not appear in the output.
 Hexadecimal codes are case-insensitive.
 
@@ -1451,13 +1451,13 @@ The following options are recognized:
 ```
 
 The "date" directive generates the current local date and inserts it
-into the document as text.  This directive may be used in substitution
+into the document as text. This directive may be used in substitution
 definitions only.
 
 The optional directive content is interpreted as the desired date
-format, using the same codes as Python's time.strftime function.  The
+format, using the same codes as Python's time.strftime function. The
 default format is "%Y-%m-%d" (ISO 8601 date), but time fields can also
-be used.  Examples:
+be used. Examples:
 
 ```
 .. |date| date::
@@ -1486,7 +1486,7 @@ This document was generated on |date| at |time|.
 ```
 
 :::{WARNING}
-The "include" directive represents a potential security hole.  It
+The "include" directive represents a potential security hole. It
 can be disabled with the "[file_insertion_enabled]" runtime setting.
 :::
 
@@ -1517,7 +1517,7 @@ adornments must match those of the master document.
 Standard data files intended for inclusion in reStructuredText
 documents are distributed with the Docutils source code, located in
 the "docutils" package in the `docutils/parsers/rst/include`
-directory.  To access these files, use the special syntax for standard
+directory. To access these files, use the special syntax for standard
 "include" data files, angle brackets around the file name:
 
 ```
@@ -1525,7 +1525,7 @@ directory.  To access these files, use the special syntax for standard
 ```
 
 The current set of standard "include" data files consists of sets of
-substitution definitions.  See [reStructuredText Standard Definition
+substitution definitions. See [reStructuredText Standard Definition
 Files](definitions.html) for details.
 
 The following options are recognized:
@@ -1570,7 +1570,7 @@ The following options are recognized:
 
 `encoding`
 
-: The text encoding of the external data file.  Defaults to the
+: The text encoding of the external data file. Defaults to the
   document's [input_encoding].
 
 `tab-width`
@@ -1602,28 +1602,28 @@ included content).
 ```
 
 :::{WARNING}
-The "raw" directive represents a potential security hole.  It can
+The "raw" directive represents a potential security hole. It can
 be disabled with the "[raw_enabled]" or "[file_insertion_enabled]"
 runtime settings.
 :::
 
 :::{Caution}
 The "raw" directive is a stop-gap measure allowing the author to
-bypass reStructuredText's markup.  It is a "power-user" feature
-that should not be overused or abused.  The use of "raw" ties
+bypass reStructuredText's markup. It is a "power-user" feature
+that should not be overused or abused. The use of "raw" ties
 documents to specific output formats and makes them less portable.
 
 If you often need to use the "raw" directive or a "raw"-derived
 interpreted text role, that is a sign either of overuse/abuse or
-that functionality may be missing from reStructuredText.  Please
+that functionality may be missing from reStructuredText. Please
 describe your situation in a message to the [Docutils-users] mailing
 list.
 :::
 
 The "raw" directive indicates non-reStructuredText data that is to be
-passed untouched to the Writer.  The names of the output formats are
-given in the directive arguments.  The interpretation of the raw data
-is up to the Writer.  A Writer may ignore any raw output not matching
+passed untouched to the Writer. The names of the output formats are
+given in the directive arguments. The interpretation of the raw data
+is up to the Writer. A Writer may ignore any raw output not matching
 its format.
 
 For example, the following input would be passed untouched by an HTML
@@ -1645,7 +1645,7 @@ output stream:
 ```
 
 Raw data can also be read from an external file, specified in a
-directive option.  In this case, the content block must be empty.  For
+directive option. In this case, the content block must be empty. For
 example:
 
 ```
@@ -1687,7 +1687,7 @@ The following options are recognized:
 ```
 
 The "class" directive sets the ["classes"] attribute value on its content
-or on the first immediately following non-comment element [^footnote-1].  For
+or on the first immediately following non-comment element [^footnote-1]. For
 details of the "classes" attribute, see [its entry](../doctree.html#classes) in [The Docutils
 Document Tree][the docutils document tree].
 
@@ -1759,14 +1759,14 @@ The text above is parsed and transformed into this doctree fragment:
 
 :::{topic} Rationale for "classes" Attribute Value Conversion
 Docutils identifiers are converted to conform to the regular
-expression `[a-z](-?[a-z0-9]+)*`.  For HTML + CSS compatibility,
+expression `[a-z](-?[a-z0-9]+)*`. For HTML + CSS compatibility,
 identifiers (the "classes" and "id" attributes) should have no
-underscores, colons, or periods.  Hyphens may be used.
+underscores, colons, or periods. Hyphens may be used.
 
 - The [HTML 4.01 spec] defines identifiers based on SGML tokens:
 
-  > ID and NAME tokens must begin with a letter (\[A-Za-z\]) and
-  > may be followed by any number of letters, digits (\[0-9\]),
+  > ID and NAME tokens must begin with a letter ([A-Za-z]) and
+  > may be followed by any number of letters, digits ([0-9]),
   > hyphens ("-"), underscores ("\_"), colons (":"), and periods
   > (".").
 
@@ -1784,7 +1784,7 @@ underscores, colons, or periods.  Hyphens may be used.
 
 The CSS rule does not include underscores ("\_"), colons (":"), or
 periods ("."), therefore "classes" and "id" attributes should not
-contain these characters.  Combined with HTML's requirements (the
+contain these characters. Combined with HTML's requirements (the
 first character must be a letter; no "unicode", "latin1", or
 "escape" characters), this results in the regular expression
 `[A-Za-z][-A-Za-z0-9]*`. Docutils adds a normalisation by
@@ -1808,7 +1808,7 @@ downcasing and merge of consecutive hyphens.
 (New in Docutils 0.3.2)
 
 The "role" directive dynamically creates a custom interpreted text
-role and registers it with the parser.  This means that after
+role and registers it with the parser. This means that after
 declaring a role like this:
 
 ```
@@ -1860,12 +1860,12 @@ inline [raw data pass-through], e.g.:
 ```
 
 If no base role is explicitly specified, a generic custom role is
-automatically used.  Subsequent interpreted text will produce an
+automatically used. Subsequent interpreted text will produce an
 "inline" element with a ["classes"] attribute, as in the first example
 above.
 
 With most roles, the ":class:" option can be used to set a "classes"
-attribute that is different from the role name.  For example:
+attribute that is different from the role name. For example:
 
 ```
 .. role:: custom
@@ -1891,12 +1891,12 @@ base roles:
 
 : Set the ["classes"] attribute value on the element produced
   (`inline`, or element associated with a base class) when the
-  custom interpreted text role is used.  If no directive options are
+  custom interpreted text role is used. If no directive options are
   specified, a "class" option with the directive argument (role
-  name) as the value is implied.  See the [class] directive above.
+  name) as the value is implied. See the [class] directive above.
 
 Specific base roles may support other options and/or directive
-content.  See the [reStructuredText Interpreted Text Roles] document
+content. See the [reStructuredText Interpreted Text Roles] document
 for details.
 
 (default-role)=
@@ -1941,11 +1941,11 @@ This will be parsed into the following document tree fragment:
 
 Custom roles may be used (see the "[role]" directive above), but it
 must have been declared in a document before it can be set as the
-default role.  See the [reStructuredText Interpreted Text Roles]
+default role. See the [reStructuredText Interpreted Text Roles]
 document for details of built-in roles.
 
 The directive may be used without an argument to restore the initial
-default interpreted text role, which is application-dependent.  The
+default interpreted text role, which is application-dependent. The
 initial default interpreted text role of the standard reStructuredText
 parser is "title-reference".
 
@@ -1961,8 +1961,8 @@ parser is "title-reference".
 ```
 
 The "title" directive specifies the document title as metadata, which
-does not become part of the document body.  It overrides a
-document-supplied title.  For example, in HTML output the metadata
+does not become part of the document body. It overrides a
+document-supplied title. For example, in HTML output the metadata
 document title appears in the title bar of the browser window.
 
 ### Restructuredtext-Test-Directive
@@ -1976,8 +1976,8 @@ document title appears in the title bar of the browser window.
 :Directive Content: Interpreted as a literal block.
 ```
 
-This directive is provided for test purposes only.  (Nobody is
-expected to type in a name *that* long!)  It is converted into a
+This directive is provided for test purposes only. (Nobody is
+expected to type in a name *that* long!) It is converted into a
 level-1 (info) system message showing the directive data, possibly
 followed by a literal block containing the rest of the directive
 block.

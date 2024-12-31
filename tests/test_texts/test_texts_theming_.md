@@ -59,7 +59,7 @@ you wish to create your own theme, refer to
 {doc}`/development/theming`.
 :::
 
-Sphinx supports changing the appearance of its HTML output via *themes*.  A
+Sphinx supports changing the appearance of its HTML output via *themes*. A
 theme is a collection of HTML templates, stylesheet(s) and other static files.
 Additionally, it has a configuration file which specifies from which theme to
 inherit, which highlighting style to use, and what options exist for customizing
@@ -80,7 +80,7 @@ html_theme = "classic"
 ```
 
 You can also set theme-specific options using the {confval}`html_theme_options`
-config value.  These options are generally used to change the look and feel of
+config value. These options are generally used to change the look and feel of
 the theme. For example, to place the sidebar on the right side and a black
 background for the relation bar (the bar with the navigation links at the
 page's top and bottom), add the following {file}`conf.py`:
@@ -98,7 +98,7 @@ Python package. For the static forms, either a directory (containing
 contents is supported. The directory or zipfile must be put where Sphinx can
 find it; for this there is the config value {confval}`html_theme_path`. This
 can be a list of directories, relative to the directory containing
-{file}`conf.py`, that can contain theme directories or zip files.  For example,
+{file}`conf.py`, that can contain theme directories or zip files. For example,
 if you have a theme in the file {file}`blue.zip`, you can put it right in the
 directory containing {file}`conf.py` and use this configuration:
 
@@ -107,7 +107,7 @@ html_theme = "blue"
 html_theme_path = ["."]
 ```
 
-The third form is a Python package.  If a theme you want to use is distributed
+The third form is a Python package. If a theme you want to use is distributed
 as a Python package, you can use it after installing
 
 ```bash
@@ -152,16 +152,16 @@ These themes are:
 **basic**
 
 : This is a basically unstyled layout used as the base for the
-  other themes, and usable as the base for custom themes as well.  The HTML
-  contains all important elements like sidebar and relation bar.  There are
+  other themes, and usable as the base for custom themes as well. The HTML
+  contains all important elements like sidebar and relation bar. There are
   these options (which are inherited by the other themes):
 
-  - **nosidebar** (true or false): Don't include the sidebar.  Defaults to
+  - **nosidebar** (true or false): Don't include the sidebar. Defaults to
     `False`.
 
   - **sidebarwidth** (int or str): Width of the sidebar in pixels.
     This can be an int, which is interpreted as pixels or a valid CSS
-    dimension string such as '70em' or '50%'.  Defaults to 230 pixels.
+    dimension string such as '70em' or '50%'. Defaults to 230 pixels.
 
   - **body_min_width** (int or str): Minimal width of the document body.
     This can be an int, which is interpreted as pixels or a valid CSS
@@ -174,7 +174,7 @@ These themes are:
     want a width limit. Defaults may depend on the theme (often 800px).
 
   - **navigation_with_keys** (true or false): Allow navigating to the
-    previous/next page using the keyboard's left and right arrows.  Defaults to
+    previous/next page using the keyboard's left and right arrows. Defaults to
     `False`.
 
   - **globaltoc_collapse** (true or false): Only expand subsections
@@ -195,7 +195,7 @@ These themes are:
     :::
 
   - **globaltoc_maxdepth** (int): The maximum depth of the toctree in
-    `globaltoc.html` (see {confval}`html_sidebars`).  Set it to -1 to allow
+    `globaltoc.html` (see {confval}`html_sidebars`). Set it to -1 to allow
     unlimited depth. Defaults to the max depth selected in the toctree directive.
 
     :::{versionadded} 3.2
@@ -205,26 +205,26 @@ These themes are:
 
 : [Alabaster theme] is a modified "Kr" Sphinx theme from @kennethreitz
   (especially as used in his Requests project), which was itself originally
-  based on @mitsuhiko's theme used for Flask & related projects.  Refer to its
+  based on @mitsuhiko's theme used for Flask & related projects. Refer to its
   [installation page] for information on how to configure
   {confval}`html_sidebars` for its use.
 
 **classic**
 
 : This is the classic theme, which looks like [the Python 2
-  documentation](https://docs.python.org/2/).  It can be customized via
+  documentation](https://docs.python.org/2/). It can be customized via
   these options:
 
   - **rightsidebar** (true or false): Put the sidebar on the right side.
     Defaults to `False`.
   - **stickysidebar** (true or false): Make the sidebar "fixed" so that it
-    doesn't scroll out of view for long body content.  This may not work well
-    with all browsers.  Defaults to `False`.
+    doesn't scroll out of view for long body content. This may not work well
+    with all browsers. Defaults to `False`.
   - **collapsiblesidebar** (true or false): Add an *experimental* JavaScript
     snippet that makes the sidebar collapsible via a button on its side.
     Defaults to `False`.
   - **externalrefs** (true or false): Display external links differently from
-    internal links.  Defaults to `False`.
+    internal links. Defaults to `False`.
 
   There are also various color and font options that can change the color scheme
   without having to write a custom stylesheet:
@@ -265,7 +265,7 @@ These themes are:
 
 **scrolls**
 
-: A more lightweight theme, based on [the Jinja documentation](http://jinja.pocoo.org/).  The following color options are available:
+: A more lightweight theme, based on [the Jinja documentation](http://jinja.pocoo.org/). The following color options are available:
 
   - **headerbordercolor**
   - **subheadlinecolor**
@@ -275,7 +275,7 @@ These themes are:
 
 **agogo**
 
-: A theme created by Andi Albrecht.  The following options are supported:
+: A theme created by Andi Albrecht. The following options are supported:
 
   - **bodyfont** (CSS font family): Font for normal text.
   - **headerfont** (CSS font family): Font for headings.
@@ -300,7 +300,7 @@ These themes are:
 
 **nature**
 
-: A greenish theme.  There are currently no options beyond
+: A greenish theme. There are currently no options beyond
   *nosidebar* and *sidebarwidth*.
 
 **pyramid**
@@ -310,11 +310,11 @@ These themes are:
 
 **haiku**
 
-: A theme without sidebar inspired by the [Haiku OS user guide](https://www.haiku-os.org/docs/userguide/en/contents.html).  The following
+: A theme without sidebar inspired by the [Haiku OS user guide](https://www.haiku-os.org/docs/userguide/en/contents.html). The following
   options are supported:
 
   - **full_logo** (true or false, default `False`): If this is true, the
-    header will only show the {confval}`html_logo`.  Use this for large logos.
+    header will only show the {confval}`html_logo`. Use this for large logos.
     If this is false, the logo (if present) will be shown floating right, and
     the documentation title will be put in the header.
   - **textcolor**, **headingcolor**, **linkcolor**, **visitedlinkcolor**,
@@ -322,18 +322,18 @@ These themes are:
 
 **traditional**
 
-: A theme resembling the old Python documentation.  There are
+: A theme resembling the old Python documentation. There are
   currently no options beyond *nosidebar* and *sidebarwidth*.
 
 **epub**
 
-: A theme for the epub builder.  This theme tries to save visual
-  space which is a sparse resource on ebook readers.  The following options
+: A theme for the epub builder. This theme tries to save visual
+  space which is a sparse resource on ebook readers. The following options
   are supported:
 
   - **relbar1** (true or false, default `True`): If this is true, the
     `relbar1` block is inserted in the epub output, otherwise it is omitted.
-  - **footer**  (true or false, default `True`): If this is true, the
+  - **footer** (true or false, default `True`): If this is true, the
     `footer` block is inserted in the epub output, otherwise it is omitted.
 
 **bizstyle**

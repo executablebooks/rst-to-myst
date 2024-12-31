@@ -1,6 +1,7 @@
+from collections.abc import Iterable
 import logging
 from textwrap import indent
-from typing import IO, Any, Dict, Iterable, List, NamedTuple, Optional, Set
+from typing import IO, Any, NamedTuple, Optional
 
 from markdown_it.token import Token
 from mdformat.plugins import PARSER_EXTENSIONS
@@ -149,7 +150,7 @@ def from_tokens(
     return text
 
 
-def get_myst_extensions(tokens: List[Token]) -> Set[str]:
+def get_myst_extensions(tokens: list[Token]) -> set[str]:
     """Return the MyST extensions required to parse a token sequence."""
     extensions = set()
     for token in tokens:
@@ -172,10 +173,10 @@ class ConvertedOutput(NamedTuple):
     """Output from ``rst_to_myst``."""
 
     text: str
-    tokens: List[Token]
-    env: Dict[str, Any]
+    tokens: list[Token]
+    env: dict[str, Any]
     warning_stream: IO
-    extensions: Set[str]
+    extensions: set[str]
 
 
 def rst_to_myst(
@@ -185,7 +186,7 @@ def rst_to_myst(
     language_code="en",
     use_sphinx: bool = True,
     extensions: Iterable[str] = (),
-    conversions: Optional[Dict[str, str]] = None,
+    conversions: Optional[dict[str, str]] = None,
     default_domain: str = "py",
     default_role: Optional[str] = None,
     raise_on_warning: bool = False,

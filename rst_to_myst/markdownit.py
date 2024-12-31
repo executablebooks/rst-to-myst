@@ -2,7 +2,7 @@
 
 from io import StringIO
 from textwrap import indent
-from typing import IO, Any, Dict, List, NamedTuple, Optional, Tuple
+from typing import IO, Any, NamedTuple, Optional
 
 from docutils import nodes
 from markdown_it.token import Token
@@ -10,8 +10,8 @@ from mdit_py_plugins import __version__ as mdit_plug_version
 
 
 class RenderOutput(NamedTuple):
-    tokens: List[Token]
-    env: Dict[str, Any]
+    tokens: list[Token]
+    env: dict[str, Any]
 
 
 class MarkdownItRenderer(nodes.GenericNodeVisitor):
@@ -42,12 +42,12 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
 
     def reset_state(self):
         # record current state, that can affect children tokens
-        self._tokens: List[Token] = []
+        self._tokens: list[Token] = []
         self._env = {"references": {}, "duplicate_refs": []}
         self._inline: Optional[Token] = None
-        self.parent_tokens: Dict[str, int] = {}
+        self.parent_tokens: dict[str, int] = {}
         # [(key path, tokens), ...]
-        self._front_matter_tokens: List[Tuple[List[str], List[Token]]] = []
+        self._front_matter_tokens: list[tuple[list[str], list[Token]]] = []
         self._tight_list = True
 
     @property
@@ -80,7 +80,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
 
         return RenderOutput(self._tokens[:], self._env)
 
-    def nested_parse(self, nodes: List[nodes.Element]) -> List[Token]:
+    def nested_parse(self, nodes: list[nodes.Element]) -> list[Token]:
         new_inst = MarkdownItRenderer(
             document=self._document,
             warning_stream=self._warning_stream,

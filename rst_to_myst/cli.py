@@ -1,6 +1,7 @@
+from collections.abc import Mapping
 from io import TextIOWrapper
 from pathlib import Path
-from typing import List, Mapping, Optional
+from typing import Optional
 
 import click
 import yaml
@@ -219,7 +220,7 @@ def tokens(
     stream: TextIOWrapper,
     language: str,
     sphinx: bool,
-    extensions: List[str],
+    extensions: list[str],
     default_domain: str,
     default_role: Optional[str],
     cite_prefix: str,
@@ -262,7 +263,7 @@ def stream(
     stream: TextIOWrapper,
     language: str,
     sphinx: bool,
-    extensions: List[str],
+    extensions: list[str],
     default_domain: str,
     default_role: Optional[str],
     cite_prefix: str,
@@ -309,14 +310,14 @@ def stream(
 @OPT_ENCODING
 @OPT_CONFIG
 def convert(
-    paths: List[str],
+    paths: list[str],
     dry_run: bool,
     replace_files: bool,
     raise_on_warning: bool,
     stop_on_fail: bool,
     language: str,
     sphinx: bool,
-    extensions: List[str],
+    extensions: list[str],
     default_domain: str,
     default_role: Optional[str],
     cite_prefix: str,

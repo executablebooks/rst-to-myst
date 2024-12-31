@@ -44,7 +44,8 @@ embedded uri    `uri <a.org>`_
 
 import contextlib
 import re
-from typing import Any, Callable, List, Match, Pattern, Tuple
+from re import Match, Pattern
+from typing import Any, Callable
 
 from docutils import ApplicationError, nodes
 from docutils.nodes import fully_normalize_name as normalize_name
@@ -67,7 +68,7 @@ class MarkupMismatch(Exception):  # noqa: N818
     """A mismatch occurred in the Markup."""
 
 
-def build_regexp(definition: Tuple[str, str, str, List], compile_regexp: bool = True):
+def build_regexp(definition: tuple[str, str, str, list], compile_regexp: bool = True):
     """Build, compile and return a regular expression based on `definition`.
 
     :param definition: a 4-tuple (group name, prefix, suffix, parts),
@@ -283,8 +284,8 @@ class Regexes:
         )
 
 
-DispatchResult = Tuple[str, List[nodes.Node], str, List[nodes.system_message]]
-ImplicitResult = List[nodes.Node]
+DispatchResult = tuple[str, list[nodes.Node], str, list[nodes.system_message]]
+ImplicitResult = list[nodes.Node]
 
 
 class Inliner:
@@ -301,7 +302,7 @@ class Inliner:
     def __init__(self, regex_class=None):
         """Initialise inliner."""
         # list of (pattern, bound method) tuples, used by `self.implicit_inline`.
-        self.implicit_dispatch: List[Tuple[Pattern, Callable]] = []
+        self.implicit_dispatch: list[tuple[Pattern, Callable]] = []
         self.regex_class = regex_class or Regexes
         # this is required by ``rfc_reference_role()``
         self.rfc_url = "rfc%d.html"
@@ -352,7 +353,7 @@ class Inliner:
 
     def parse(
         self, text: str, lineno: int, memo: Any, parent: Any
-    ) -> Tuple[List[nodes.Node], List[nodes.system_message]]:
+    ) -> tuple[list[nodes.Node], list[nodes.system_message]]:
         """
         Return 2 lists: nodes (text and inline elements), and system_messages.
 
@@ -576,7 +577,7 @@ class Inliner:
 
     def interpreted(
         self, rawsource: str, text: str, role: str, lineno: int
-    ) -> Tuple[List[nodes.Node], List[nodes.system_message]]:
+    ) -> tuple[list[nodes.Node], list[nodes.system_message]]:
         """Handle an interpreted text role, e.g. :role:interpreted` or `interpreted`:role:
 
         The role function is located and returned, then used to create the requisite
@@ -821,7 +822,7 @@ class InlinerMyst(Inliner):
 
     def interpreted(
         self, rawsource: str, text: str, role: str, lineno: int
-    ) -> Tuple[List[nodes.Node], List[nodes.system_message]]:
+    ) -> tuple[list[nodes.Node], list[nodes.system_message]]:
         """Handle an interpreted text role, e.g. :role:interpreted` or `interpreted`:role:
 
         MyST Adaption: The role function is located and returned,
