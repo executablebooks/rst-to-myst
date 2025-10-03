@@ -99,6 +99,19 @@ def _directive_render(node: RenderTreeNode, context: RenderContext) -> str:
     return f"{fence_str}{{{name}}}{info_str}\n{option_block}{code_block}{fence_str}"
 
 
+def _strip_nuls_in_tokens(tokens: list[Token]):
+    """Recursively remove NUL padding (\x00) from token contents."""
+    if not tokens:
+        return
+    for token in tokens:
+        if isinstance(getattr(token, "content", None), str) and "\x00" in token.content:
+            # Docutils table parser may insert '\x00' for East Asian double-width padding.
+            # These must never reach mdformat/commonmark renderers.
+            token.content = token.content.replace("\x00", "")
+    if getattr(token, "children", None):
+        _strip_nuls_in_tokens(token.children)
+
+
 class AdditionalRenderers:
     RENDERERS = {
         "unprocessed": _unprocessed_render,
@@ -134,6 +147,8 @@ def from_tokens(
         warning_handler.setLevel(logging.WARNING)
         LOGGER.addHandler(warning_handler)
     try:
+        _strip_nuls_in_tokens(output.tokens)
+
         # mdformat outputs only used reference definitions during 'finalize'
         # instead we want to output all parsed reference definitions
         text = md_renderer.render(output.tokens, options, output.env, finalize=False)
