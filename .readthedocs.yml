@@ -1,8 +1,5 @@
 version: 2
 
-sphinx:
-  configuration: /source/conf.py
-
 build:
   os: ubuntu-22.04
   tools:
@@ -18,3 +15,4 @@ python:
 sphinx:
   builder: html
   fail_on_warning: true
+  configuration: /source/conf.py
