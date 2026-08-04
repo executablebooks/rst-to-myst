@@ -42,10 +42,11 @@ embedded uri    `uri <a.org>`_
 --------------- --------------- --------------------------------------------------------
 """
 
+from collections.abc import Callable
 import contextlib
 import re
 from re import Match, Pattern
-from typing import Any, Callable
+from typing import Any
 
 from docutils import ApplicationError, nodes
 from docutils.nodes import fully_normalize_name as normalize_name
