@@ -6,7 +6,7 @@ from inspect import getdoc
 from itertools import chain
 import threading
 from types import ModuleType
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 from unittest.mock import Mock
 
 from docutils.parsers.rst import Directive, directives, languages, roles
@@ -34,7 +34,7 @@ class ApplicationNamespace:
     def __init__(
         self,
         language_code: str = "en",
-        default_domain: Optional[str] = "py",
+        default_domain: str | None = "py",
     ):
         self.extensions: dict[str, Extension] = {}
         self.directives: dict[str, Directive] = {}
@@ -43,7 +43,7 @@ class ApplicationNamespace:
         # the default domain will be tried even without the domain prefix
         self.default_domain = default_domain
 
-        self.language_module: Optional[ModuleType] = languages.get_language(
+        self.language_module: ModuleType | None = languages.get_language(
             language_code
         )
 

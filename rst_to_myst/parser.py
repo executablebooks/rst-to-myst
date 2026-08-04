@@ -1,7 +1,7 @@
 from collections.abc import Iterable
 from functools import lru_cache
 from io import StringIO
-from typing import Any, Optional
+from typing import Any
 
 from docutils import nodes
 from docutils.frontend import OptionParser
@@ -141,14 +141,14 @@ def to_docutils_ast(
     uri: str = "source",
     report_level: int = 2,
     halt_level: int = 4,
-    warning_stream: Optional[StringIO] = None,
+    warning_stream: StringIO | None = None,
     language_code: str = "en",
     use_sphinx: bool = True,
     extensions: Iterable[str] = (),
     default_domain: str = "py",
-    conversions: Optional[dict] = None,
+    conversions: dict | None = None,
     front_matter: bool = True,
-    namespace: Optional[ApplicationNamespace] = None,
+    namespace: ApplicationNamespace | None = None,
 ) -> tuple[nodes.document, StringIO]:
     """Convert a string of text to a docutils AST.
 

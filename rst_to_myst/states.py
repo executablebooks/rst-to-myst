@@ -1,7 +1,6 @@
 """docutils states."""
 
 import re
-from typing import Optional
 
 from docutils import nodes
 from docutils.nodes import fully_normalize_name as normalize_name
@@ -122,7 +121,7 @@ class ExplicitMixin:
         # directive_class, messages = directives.directive(
         #     type_name, self.memo.language, self.document
         # )
-        directive_class: Optional[Directive] = (
+        directive_class: Directive | None = (
             self.document.settings.namespace.get_directive(type_name)
         )
 

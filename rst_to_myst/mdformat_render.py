@@ -1,7 +1,7 @@
 from collections.abc import Iterable
 import logging
 from textwrap import indent
-from typing import IO, Any, NamedTuple, Optional
+from typing import IO, Any, NamedTuple
 
 from markdown_it.token import Token
 from mdformat.plugins import PARSER_EXTENSIONS
@@ -113,7 +113,7 @@ def from_tokens(
     output: RenderOutput,
     *,
     consecutive_numbering: bool = True,
-    warning_stream: Optional[IO] = None,
+    warning_stream: IO | None = None,
 ) -> str:
     """Convert markdown-it tokens to text."""
     md_renderer = MDRenderer()
@@ -182,13 +182,13 @@ class ConvertedOutput(NamedTuple):
 def rst_to_myst(
     text: str,
     *,
-    warning_stream: Optional[IO] = None,
+    warning_stream: IO | None = None,
     language_code="en",
     use_sphinx: bool = True,
     extensions: Iterable[str] = (),
-    conversions: Optional[dict[str, str]] = None,
+    conversions: dict[str, str] | None = None,
     default_domain: str = "py",
-    default_role: Optional[str] = None,
+    default_role: str | None = None,
     raise_on_warning: bool = False,
     cite_prefix: str = "cite_",
     consecutive_numbering: bool = True,

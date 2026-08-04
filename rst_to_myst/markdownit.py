@@ -2,7 +2,7 @@
 
 from io import StringIO
 from textwrap import indent
-from typing import IO, Any, NamedTuple, Optional
+from typing import IO, Any, NamedTuple
 
 from docutils import nodes
 from markdown_it.token import Token
@@ -21,10 +21,10 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         self,
         document: nodes.document,
         *,
-        warning_stream: Optional[IO] = None,
+        warning_stream: IO | None = None,
         raise_on_warning: bool = False,
         cite_prefix: str = "cite_",
-        default_role: Optional[str] = None,
+        default_role: str | None = None,
         colon_fences: bool = True,
         dollar_math: bool = True,
     ):
@@ -44,7 +44,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
         # record current state, that can affect children tokens
         self._tokens: list[Token] = []
         self._env = {"references": {}, "duplicate_refs": []}
-        self._inline: Optional[Token] = None
+        self._inline: Token | None = None
         self.parent_tokens: dict[str, int] = {}
         # [(key path, tokens), ...]
         self._front_matter_tokens: list[tuple[list[str], list[Token]]] = []
@@ -54,7 +54,7 @@ class MarkdownItRenderer(nodes.GenericNodeVisitor):
     def document(self) -> nodes.document:
         return self._document
 
-    def warning(self, message: str, line: Optional[int]):
+    def warning(self, message: str, line: int | None):
         if line is not None:
             self._warning_stream.write(f"RENDER WARNING:{line}: {message}\n")
         else:
