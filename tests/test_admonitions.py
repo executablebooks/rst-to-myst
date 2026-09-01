@@ -3,8 +3,8 @@
 from docutils import nodes
 from docutils.parsers.rst.directives.admonitions import BaseAdmonition
 
-from rst_to_myst.mdformat_render import from_tokens
 from rst_to_myst.markdownit import MarkdownItRenderer
+from rst_to_myst.mdformat_render import from_tokens
 from rst_to_myst.namespace import compile_namespace
 from rst_to_myst.parser import to_docutils_ast
 
