@@ -17,6 +17,19 @@ docutils.parsers.rst.directives.admonitions.Note: parse_content
 docutils.parsers.rst.directives.admonitions.Tip: parse_content
 docutils.parsers.rst.directives.admonitions.Warning: parse_content
 
+# admonitions (sphinx 8.2+ overrides the docutils classes)
+sphinx.directives.admonitions.Admonition: parse_all
+sphinx.directives.admonitions.Attention: parse_content
+sphinx.directives.admonitions.Caution: parse_content
+sphinx.directives.admonitions.Danger: parse_content
+sphinx.directives.admonitions.Error: parse_content
+sphinx.directives.admonitions.Hint: parse_content
+sphinx.directives.admonitions.Important: parse_content
+sphinx.directives.admonitions.Note: parse_content
+sphinx.directives.admonitions.Tip: parse_content
+sphinx.directives.admonitions.Warning: parse_content
+sphinx.directives.admonitions.SeeAlso: parse_content
+
 # docutils other (see https://docutils.sourceforge.io/docs/ref/rst/directives.html#figure)
 docutils.parsers.rst.directives.body.CodeBlock: direct
 docutils.parsers.rst.directives.body.Compound: eval_rst
