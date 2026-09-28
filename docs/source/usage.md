@@ -32,6 +32,7 @@ or use the API:
 
 ```python
 from rst_to_myst import rst_to_myst
+
 output = rst_to_myst(":role:`content`")
 print(output.text)
 ```
