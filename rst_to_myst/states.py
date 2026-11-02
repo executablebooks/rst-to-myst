@@ -161,7 +161,7 @@ class ExplicitMixin:
             ) = self.parse_directive_block(indented, line_offset, directive_class)
         except states.MarkupError as error:
             self.reporter.warning(
-                f'Error in {type_name!r} directive parse:\n{" ".join(error.args)}',
+                f"Error in {type_name!r} directive parse:\n{' '.join(error.args)}",
                 nodes.literal_block(block_text, block_text),
                 line=lineno,
             )
